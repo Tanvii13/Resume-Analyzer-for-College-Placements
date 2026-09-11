@@ -8,7 +8,7 @@
 
 | Name | Student ID |
 |------|------------|
-| Tanvi Nakum | 202401262 |
+| Nakum Tanvi Dhiren (Leader)| 202401262 |
 | Sujal Balva | 202401216 |
 | Tanishk Dhawan | 202401224 |
 | Topaliya Shlok Ashokbhai | 202401229 |
