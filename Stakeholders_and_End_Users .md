@@ -1,4 +1,4 @@
-# Resume Analyser – Stakeholders and End Users
+# Resume Analyser - Stakeholders and End Users
 
 This document lists everyone who has a stake in the **Resume Analyser for College Placements** system. For each one, it explains their role and what they need from the system or how they are affected by it.
 
@@ -14,7 +14,7 @@ People who directly use the system or work with its results.
 |---|---|---|
 | **Students / Job Seekers** | The main users. They upload their resume to get it analysed and to prepare for placements. | Accurate resume scoring, skill analysis, job and internship matching, keyword and formatting suggestions, and clear tips on what to improve. |
 | **Placement Cell / Placement Officers** | Run placement and internship activities, and use the system's results to see how ready students are. | Resume insights across students, a view of common mistakes, and information that helps them plan training and improve placement readiness. |
-| **Faculty / Placement Coordinators / Career Counselors** | Guide students in building and improving their resumes and profiles. | Feedback that is clear and explainable, so they can sit with a student and discuss it — not just a raw number. |
+| **Faculty / Placement Coordinators / Career Counselors** | Guide students in building and improving their resumes and profiles. | Feedback that is clear and explainable, so they can sit with a student and discuss it - not just a raw number. |
 | **Recruiters / HR Professionals** | Screen candidate resumes and shortlist people who fit a job. | Reliable skill extraction and good candidate-to-job matching, so manual screening effort goes down. |
 | **Hiring Managers** | Review the shortlist and make the final hiring call. | Trustworthy and unbiased candidate summaries they can rely on for a decision. |
 
@@ -37,7 +37,7 @@ People who build, test, run, and evaluate the system.
 
 ## 3. Privacy and Fairness Stakeholders
 
-Our system stores personal data and uses AI to score people. These two roles are not extras — they create real requirements for us.
+Our system stores personal data and uses AI to score people. These two roles are not extras - they create real requirements for us.
 
 | Stakeholder | Role | What They Need |
 |---|---|---|
@@ -69,8 +69,6 @@ They do not use the system directly, but the system's outputs affect them.
 ---
 
 ## 6. Overview
-
-Putting it simply, the Resume Analyser touches the whole placement process:
 
 - **Students** use it to analyse and improve their resumes.
 - **Placement staff, faculty, and counselors** use the results to guide students.
