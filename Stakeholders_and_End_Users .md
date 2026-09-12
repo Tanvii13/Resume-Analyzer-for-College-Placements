@@ -1,81 +1,81 @@
 # Resume Analyser – Stakeholders and End Users
 
-This document identifies the major stakeholders and end users of the **Resume Analyser for College Placements** system. It describes their role in the system and what they need or how they may be affected by its use.
+This document lists everyone who has a stake in the **Resume Analyser for College Placements** system. For each one, it explains their role and what they need from the system or how they are affected by it.
+
+Knowing this before we collect requirements matters, because it stops us from designing only for the student uploading a resume and forgetting everyone else involved in the placement process.
+
+---
 
 ## 1. End Users
 
-These stakeholders directly use the Resume Analyser or use its outputs during the college placement and recruitment process.
+People who directly use the system or work with its results.
 
-| Stakeholder | Why Involved / Role | Interest / Impact |
+| Stakeholder | Role | What They Need |
 |---|---|---|
-| **Students / Job Seekers / Candidates** | Primary users who upload their resumes for analysis and placement preparation. | Need accurate resume scoring, skill analysis, job/internship matching, keyword and formatting suggestions, and recommendations for improvement. |
-| **Placement Cell / Placement Officers** | Support students during internship and placement activities and may use the system's outputs to understand student readiness. | Need student resume insights, identification of common resume issues, and information that can help improve placement readiness. |
-| **Faculty / Placement Coordinators / Career Counselors** | Guide students in preparing resumes and improving their profiles. | Need clear and explainable feedback, skill relevance analysis, and recommendations that can be discussed with students. |
-| **Recruiters / HR Professionals** | Review candidate resumes during the screening stage and identify suitable candidates based on job requirements. | Need relevant skill information, reliable resume analysis, effective candidate-job matching, and reduced manual screening effort. |
-| **Hiring Managers** | Review shortlisted candidates and resume analysis before making the final hiring decision. | Need trustworthy and unbiased candidate summaries to support final decision-making. |
+| **Students / Job Seekers** | The main users. They upload their resume to get it analysed and to prepare for placements. | Accurate resume scoring, skill analysis, job and internship matching, keyword and formatting suggestions, and clear tips on what to improve. |
+| **Placement Cell / Placement Officers** | Run placement and internship activities, and use the system's results to see how ready students are. | Resume insights across students, a view of common mistakes, and information that helps them plan training and improve placement readiness. |
+| **Faculty / Placement Coordinators / Career Counselors** | Guide students in building and improving their resumes and profiles. | Feedback that is clear and explainable, so they can sit with a student and discuss it — not just a raw number. |
+| **Recruiters / HR Professionals** | Screen candidate resumes and shortlist people who fit a job. | Reliable skill extraction and good candidate-to-job matching, so manual screening effort goes down. |
+| **Hiring Managers** | Review the shortlist and make the final hiring call. | Trustworthy and unbiased candidate summaries they can rely on for a decision. |
 
 ---
 
 ## 2. Internal / Technical Stakeholders
 
-These stakeholders are involved in developing, testing, maintaining, and managing the system.
+People who build, test, run, and evaluate the system.
 
-| Stakeholder | Why Involved / Role | Interest / Impact |
+| Stakeholder | Role | What They Need |
 |---|---|---|
-| **Development Team** | Responsible for designing, developing, testing, and maintaining the system, including resume-parsing and scoring functionality. | Need clear requirements, stakeholder feedback, proper documentation, and technically feasible requirements. |
-| **UI/UX Designer** | Designs the resume upload process, results interface, and overall user experience. | Needs usability, accessibility, and a smooth end-to-end user experience. |
-| **QA / Testers** | Test the accuracy and consistency of resume parsing, scoring, recommendations, and other system functionality. | Need defined test cases, consistent system behaviour, and reproducible results. |
-| **System Administrator** | Manages user accounts, permissions, application availability, and resume data storage and backups. | Needs system stability, secure access control, reliable data storage, and backup/recovery support. |
-| **Product Owner / Project Manager** | Defines project requirements and priorities and coordinates development, design, and testing activities. | Needs the project delivered within the agreed scope, timeline, and available resources. |
-| **Academic Supervisor / Professor** | Evaluates the project in an academic setting and checks whether the system meets the required objectives. | Expects adherence to project requirements, originality, proper documentation, and satisfactory project outcomes. |
+| **Development Team (us)** | Design, build, test, and maintain the system, including resume parsing and the scoring logic. | Clear requirements, regular stakeholder feedback, proper documentation, and requirements that are actually feasible to build. |
+| **UI/UX Designer** | Designs the resume upload flow, the results screen, and the overall experience. | A design that is usable, accessible, and smooth from upload to results. |
+| **QA / Testers** | Check that parsing, scoring, and recommendations work correctly and consistently. | Defined test cases, predictable system behaviour, and results that can be reproduced. |
+| **System Administrator** | Manages accounts, permissions, uptime, and resume data storage and backups. | System stability, secure access control, and reliable backup and recovery. |
+| **Product Owner / Project Manager** | Sets priorities, defines scope, and coordinates work across sprints. | The project delivered within the agreed scope, timeline, and resources. |
+| **Academic Supervisor / Professor** | Evaluates the project for the course. | Original work, proper documentation, and a system that meets the stated project objectives. |
 
 ---
 
-## 3. Institutional Stakeholders
+## 3. Privacy and Fairness Stakeholders
 
-These stakeholders are connected to the college placement environment and are interested in the overall outcomes of the system.
+Our system stores personal data and uses AI to score people. These two roles are not extras — they create real requirements for us.
 
-| Stakeholder | Why Involved / Role | Interest / Impact |
+| Stakeholder | Role | What They Need |
 |---|---|---|
-| **College / University Management** | Interested in improving student placement readiness and the effectiveness of placement support. | Needs overall insights into student preparation, resume quality, placement readiness, and student outcomes. |
-| **Placement Cell / Placement Officers** | Coordinate placement activities and support communication between students and recruiting organizations. | Interested in better student preparation, resume quality, and placement-related insights. |
+| **Data Privacy Reviewer** | Makes sure resume data (name, contact details, personal information) is collected, stored, and used safely and with student consent. | Secure storage, restricted access, and clear rules on who can view a student's data and how long it is kept. |
+| **Bias / Fairness Reviewer** | Checks that the scoring and matching logic does not unfairly favour or reject candidates based on things like gender-coded words, college name, or similar factors. | A scoring system that is checked for fairness, not only for accuracy. |
 
 ---
 
 ## 4. External Stakeholders
 
-These stakeholders may provide information or services that support the Resume Analyser.
+Outside parties the system depends on for data or services.
 
-| Stakeholder | Why Involved / Role | Interest / Impact |
+| Stakeholder | Role | What They Need |
 |---|---|---|
-| **Job / Internship Data Providers** | Provide information about available jobs, internships, roles, and required skills for comparison and matching. | Need accurate and updated job/internship information for effective matching. |
-| **Job Portals / APIs** | Platforms such as LinkedIn, Naukri, or Indeed may be used for job-description data if such integration is implemented. | Interested in proper API usage and compliance with applicable terms of service. |
-| **AI / NLP Model Providers** | External services or libraries may support resume parsing and analysis. | Interested in service usage, licensing requirements, usage limits, and API costs where applicable. |
+| **Job Portals / Job Data Sources** (e.g. LinkedIn, Naukri, Indeed) | Supply job descriptions, roles, and required-skill data used for comparison and matching, if such integration is implemented. | Accurate and up-to-date job information, proper API usage, and compliance with their terms of service. |
 
 ---
 
 ## 5. Indirectly Affected Parties
 
-These stakeholders do not necessarily use the system directly but may be affected by its outputs.
+They do not use the system directly, but the system's outputs affect them.
 
-| Stakeholder | Why Involved / Role | Interest / Impact |
+| Stakeholder | Role | What They Need |
 |---|---|---|
-| **Employer Organizations** | Organizations that ultimately recruit students through recruiters and hiring managers. | Affected by the quality and fairness of candidate shortlisting and matching outcomes. |
-| **Rejected Candidates** | Candidates whose resumes receive low scores or are filtered out during a screening process. | Affected by whether their resume reaches a human reviewer and by the fairness of the screening process. |
-| **Educational Institutions** | Institutions affected at the broader placement and student-outcome level. | Interested in placement success rates, student outcomes, and overall placement performance. |
+| **College / University Management** | Cares about placement readiness and how well placement support is working overall. | Insights into student preparation, resume quality, and placement outcomes across batches. |
+| **Employer Organizations** | The companies that ultimately hire students shortlisted through this system. | Fair and accurate shortlisting, so the right candidates reach them. |
+| **Rejected Candidates** | Students whose resumes score low or get filtered out during screening. | A fair screening process, and ideally the chance for their resume to still be seen by a human reviewer. |
 
 ---
 
-## 6. Stakeholder Overview
+## 6. Overview
 
-The Resume Analyser involves stakeholders across the complete college-placement process:
+Putting it simply, the Resume Analyser touches the whole placement process:
 
-- **Students and job seekers** use the system to analyse and improve their resumes.
-- **Placement staff, faculty, and career counselors** use the results to guide students.
-- **Recruiters and hiring managers** can use resume analysis and matching information during candidate screening.
-- **The development and technical team** builds, tests, and maintains the system.
-- **College management and academic supervisors** provide institutional oversight and evaluate project outcomes.
-- **External job-data and AI/NLP providers** can support job matching and resume analysis where required.
-- **Employers and candidates affected by screening outcomes** represent the wider impact of the system.
-
-Identifying these stakeholders helps the project consider the requirements and expectations of everyone involved in the college placement workflow, rather than focusing only on the student using the application.
+- **Students** use it to analyse and improve their resumes.
+- **Placement staff, faculty, and counselors** use the results to guide students.
+- **Recruiters and hiring managers** use the analysis and matching during screening.
+- **Our development and technical team** builds, tests, and maintains it, with the professor evaluating the outcome.
+- **Privacy and fairness reviewers** keep the system safe to use and fair to the people it scores.
+- **Job portals** supply the job and skill data used for matching.
+- **College management, employers, and rejected candidates** are affected by the results even though they never open the app.
