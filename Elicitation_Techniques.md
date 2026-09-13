@@ -144,3 +144,38 @@ A short glossary for anyone reading this without a requirements-engineering back
 | **Proxy Elicitation** | Gathering a stakeholder's requirements indirectly, through another stakeholder or public artifact, when direct engagement isn't feasible. |
 
 ---
+
+## 10. Review and Refinement of Elicitation Techniques
+
+To keep the elicitation plan focused on the requirements-elicitation objectives of the project, the techniques were reviewed for their relevance and suitability to the identified stakeholders.
+
+Some techniques in the initial plan are more closely associated with system testing, validation, security analysis, or specialized decision-making rather than primary requirements elicitation. These techniques can still be useful in later stages of the project but are not treated as core elicitation techniques for this task.
+
+### Refined Technique Selection
+
+| Technique | Decision | Reason |
+|---|---|---|
+| Interviews | Keep | Provides detailed information directly from stakeholders and allows follow-up questions. |
+| Surveys / Questionnaires | Keep | Efficient for collecting requirements from a large number of students or other users. |
+| Observation / Shadowing | Keep | Helps identify practical needs and behaviours that stakeholders may not explicitly describe. |
+| Brainstorming | Keep | Useful for generating and discussing possible requirements within the development team. |
+| Document Analysis | Keep | Existing placement documents, reports, policies, and job descriptions can provide useful requirements. |
+| Focus Groups | Keep | Useful for gathering shared opinions and discussing requirements among multiple stakeholders. |
+| Requirements Workshop (JAD) | Keep | Helps multiple stakeholders discuss and agree on requirements together. |
+| Prototyping / Prototype Evaluation | Keep | Allows stakeholders to react to a concrete representation of the proposed system and clarify requirements. |
+| Delphi Technique | Reclassify as optional | It is a specialized technique and is not necessary for the core requirements-elicitation task of this project. |
+| Algorithmic / Output Audit | Remove from core elicitation list | Primarily evaluates system outputs and potential bias rather than eliciting initial requirements. |
+| Testability Review / Decision-Table Analysis | Remove from core elicitation list | More closely related to requirements validation and software testing than initial elicitation. |
+| Data-Flow / Threat-Modeling Workshop | Reclassify as optional | Useful for security and privacy analysis, but more specialized than the core elicitation techniques required for this task. |
+| Empathy Mapping / Persona-Based Elicitation | Reclassify as optional | Can support understanding of users, but is not essential when direct user elicitation techniques such as surveys and interviews are available. |
+| Proxy Elicitation | Reclassify as an approach | It can be used when direct access to a stakeholder is not possible, but it does not need to be treated as a separate core technique. |
+
+### Final Recommendation
+
+For this project, the core elicitation techniques are:
+
+**Interviews, Surveys/Questionnaires, Observation, Brainstorming, Document Analysis, Focus Groups, Requirements Workshops, and Prototyping/Prototype Evaluation.**
+
+The specialized techniques can be considered later if they become relevant during requirements analysis, validation, security, privacy, or testing. This keeps the Task 2 elicitation plan focused while preserving the possibility of using additional techniques in later stages.
+
+---
