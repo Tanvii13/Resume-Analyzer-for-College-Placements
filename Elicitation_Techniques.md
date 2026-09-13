@@ -179,3 +179,26 @@ For this project, the core elicitation techniques are:
 The specialized techniques can be considered later if they become relevant during requirements analysis, validation, security, privacy, or testing. This keeps the Task 2 elicitation plan focused while preserving the possibility of using additional techniques in later stages.
 
 ---
+
+## 11. Technique Selection Criteria
+
+The elicitation techniques were reviewed using four criteria to ensure that the selected technique is appropriate for both the stakeholder and the type of information required.
+
+| Selection Criterion | Meaning | Example |
+|---|---|---|
+| Stakeholder Accessibility | How easily the stakeholder can be reached and involved in elicitation | Students can be reached through surveys, while external employers may be harder to access directly. |
+| Requirement Depth | Whether the stakeholder needs to provide detailed or broad information | Interviews are suitable when detailed explanations and follow-up questions are required. |
+| Number of Participants | Whether requirements need to be collected from a small or large group | Surveys are suitable when feedback is required from a large number of students. |
+| Nature of Information | Whether the requirement is based on opinions, existing documents, behaviour, or group agreement | Document analysis is suitable for existing placement policies, while observation can reveal actual user behaviour. |
+
+### Application of the Selection Criteria
+
+The criteria help avoid selecting techniques only because they are available or commonly used. The technique should match the stakeholder's accessibility and the type and depth of information required.
+
+For example, students are a large stakeholder group, so surveys provide broad feedback while interviews can provide deeper insights. Placement officers can provide detailed information about existing placement procedures, making interviews and document analysis appropriate. Recruiters can provide information about resume screening expectations through interviews and existing job descriptions.
+
+Using these criteria also helps distinguish core elicitation techniques from specialized activities that may be more appropriate during later stages such as validation, testing, security, or privacy analysis.
+
+
+
+---
