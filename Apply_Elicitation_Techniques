@@ -172,19 +172,19 @@ This is particularly useful for placement officers and recruiters because their 
 
 ### Requirements Identified
 
-#### Functional Requirements
+**Functional Requirements**
 
 - Authorized placement staff should be able to view relevant student analysis.
 - The system should provide placement-related reports or dashboard information.
 - The system should help identify common resume problems among students.
 
-#### Non-Functional Requirements
+**Non-Functional Requirements**
 
 - Student information should be accessible only to authorized users.
 - Dashboard information should be easy to understand.
 - Sensitive student information should not be unnecessarily displayed.
 
-#### Domain Requirements
+**Domain Requirements**
 
 - The system should follow the college's placement process.
 - The system should support placement staff rather than automatically make placement decisions.
@@ -205,19 +205,19 @@ This is particularly useful for placement officers and recruiters because their 
 
 ### Requirements Identified
 
-#### Functional Requirements
+**Functional Requirements**
 
 - The system should highlight important areas for improvement.
 - The system should provide understandable explanations for recommendations.
 - Authorized counselors should be able to review student feedback.
 
-#### Non-Functional Requirements
+**Non-Functional Requirements**
 
 - Feedback should be easy for students to understand.
 - Recommendations should be practical and actionable.
 - Important scores should not be shown without useful explanation.
 
-#### Domain Requirements
+**Domain Requirements**
 
 - Resume guidance should support college placement preparation.
 - Automated feedback should support the counselor's role rather than completely replace it.
@@ -243,23 +243,9 @@ Therefore, recruiter interviews can be combined with observation of a resume-scr
 7. Which candidate information should not affect matching?
 8. Should the system make the final hiring decision automatically?
 
-### Screening Activity
-
-A typical screening process can be represented as:
-
-**Job Description → Resume Review → Skill Check → Requirement Matching → Shortlisting**
-
-During observation, the following points can be considered:
-
-- Which resume information is checked first.
-- Which skills are considered important.
-- Whether required and preferred skills are treated differently.
-- What information is ignored.
-- Where human judgement is required.
-
 ### Requirements Identified
 
-#### Functional Requirements
+**Functional Requirements**
 
 - The system should extract relevant skills from a resume.
 - The system should compare resume skills with job requirements.
@@ -267,14 +253,14 @@ During observation, the following points can be considered:
 - The system should provide a job-match result.
 - The system should explain important matching results.
 
-#### Non-Functional Requirements
+**Non-Functional Requirements**
 
 - Skill extraction should be sufficiently accurate for the intended use.
 - The same input should produce consistent results under the same configuration.
 - Results should be understandable.
 - Irrelevant personal information should not unnecessarily affect screening.
 
-#### Domain Requirements
+**Domain Requirements**
 
 - Job matching should be based on job-specific requirements.
 - Required and preferred skills should be treated differently when the job description provides this information.
@@ -305,8 +291,6 @@ For example, a student may say that a system is simple, but during actual use th
 
 ### Student Observation Activity
 
-A student can be asked to perform the following flow:
-
 **Upload Resume → View Analysis → Check Score → Review Skills → Check Job Matches → Read Suggestions**
 
 The following points can be observed:
@@ -320,14 +304,14 @@ The following points can be observed:
 
 ### Requirements Identified
 
-#### Functional Requirements
+**Functional Requirements**
 
 - The system should provide a simple resume upload process.
 - Analysis results should be divided into understandable sections.
 - Extracted skills should be visible to the user.
 - Important extracted information should be correctable if required.
 
-#### Non-Functional Requirements
+**Non-Functional Requirements**
 
 - Navigation should be simple.
 - The interface should be easy to understand.
@@ -358,9 +342,7 @@ Some requirements already exist in documents followed by the placement team or r
 
 Document analysis helps the team identify these rules and convert relevant information into system requirements.
 
----
-
-## Example 1: Job Description Analysis
+### Example: Job Description Analysis
 
 Suppose a job description contains:
 
@@ -371,29 +353,23 @@ Suppose a job description contains:
 | Git | Preferred |
 | Machine Learning | Preferred |
 
-From this document, the following requirements can be identified.
-
-### Functional Requirement
+**Functional Requirement**
 
 > The system should compare resume skills with the skills mentioned in a job description.
 
-### Domain Requirement
+**Domain Requirement**
 
 > Required and preferred skills should be distinguished when this information is available in the job description.
 
----
+### Example: Placement Guidelines
 
-## Example 2: Placement Guidelines
+If the college placement guidelines specify eligibility conditions for a placement drive:
 
-If the college placement guidelines specify eligibility conditions for a placement drive, the system should not assume that every student is eligible.
-
-### Domain Requirement
+**Domain Requirement**
 
 > Placement eligibility information should follow the rules defined by the relevant placement process.
 
----
-
-## Example 3: Privacy Policy
+### Example: Privacy Policy
 
 Privacy-related documents can help identify:
 
@@ -407,7 +383,7 @@ These points can be converted into security and privacy-related requirements.
 
 ---
 
-## F. Brainstorming
+# F. Brainstorming
 
 ### Participants
 
@@ -457,11 +433,9 @@ The discussion helped separate the features into **core features** and **future 
 3. Personalized career roadmap
 4. Advanced fairness analysis
 
-This helped keep the first version of the project manageable and prevented unnecessary features from increasing the project scope.
-
 ---
 
-## G. Requirements Workshop
+# G. Requirements Workshop
 
 ### Participants
 
@@ -473,8 +447,6 @@ This helped keep the first version of the project manageable and prevented unnec
 ### Purpose
 
 Different stakeholders may have different expectations from the system.
-
-For example:
 
 **Student:**  
 "I want detailed feedback about my resume."
@@ -512,7 +484,7 @@ The workshop helps the team discuss these differences and decide which requireme
 
 ---
 
-## H. Focus Group Discussion
+# H. Focus Group Discussion
 
 ### Participants
 
@@ -522,8 +494,6 @@ The workshop helps the team discuss these differences and decide which requireme
 ### Purpose
 
 A focus group is useful when the team wants to understand common opinions and differences between users.
-
-A small group can discuss what they expect from a resume analysis system and what type of feedback they find useful.
 
 ### Discussion Topics
 
@@ -564,9 +534,7 @@ A low-fidelity prototype can contain:
 
 **Upload Resume → Analysis Dashboard → Resume Score → Skills → Job Matches → Suggestions**
 
-The prototype can be reviewed by stakeholders to collect feedback about the information and layout.
-
-### Questions Used for Evaluation
+### Evaluation Questions
 
 1. Is the information easy to understand?
 2. What information should appear first?
@@ -579,7 +547,7 @@ The prototype can be reviewed by stakeholders to collect feedback about the info
 
 ### Requirements Identified
 
-#### Functional Requirements
+**Functional Requirements**
 
 - The system should display resume analysis results.
 - The system should display extracted skills.
@@ -587,7 +555,7 @@ The prototype can be reviewed by stakeholders to collect feedback about the info
 - The system should display improvement suggestions.
 - The system should explain important results.
 
-#### Non-Functional Requirements
+**Non-Functional Requirements**
 
 - The interface should be intuitive.
 - Important information should be easy to find.
@@ -661,7 +629,7 @@ Domain requirements come from the **college placement and recruitment domain** r
 
 Requirement traceability was used to connect requirements with the elicitation activities from which they were identified.
 
-## Example 1 – Student Requirement
+### Example 1 – Student Requirement
 
 **Stakeholder:** Student  
 ↓  
@@ -673,9 +641,7 @@ Requirement traceability was used to connect requirements with the elicitation a
 ↓  
 **Type:** Functional Requirement
 
----
-
-## Example 2 – Recruiter Requirement
+### Example 2 – Recruiter Requirement
 
 **Stakeholder:** Recruiter  
 ↓  
@@ -687,9 +653,7 @@ Requirement traceability was used to connect requirements with the elicitation a
 ↓  
 **Type:** Functional + Domain Requirement
 
----
-
-## Example 3 – Explainability Requirement
+### Example 3 – Explainability Requirement
 
 **Stakeholder:** Student + Faculty  
 ↓  
@@ -701,9 +665,7 @@ Requirement traceability was used to connect requirements with the elicitation a
 ↓  
 **Type:** Non-Functional Requirement
 
----
-
-## Example 4 – Privacy Requirement
+### Example 4 – Privacy Requirement
 
 **Stakeholder:** Placement Staff + Privacy / System Administration  
 ↓  
@@ -744,8 +706,6 @@ These requirements will be used in the next stages of the project to prepare **U
 
 # 3.10 Evidence of Elicitation Activities
 
-Evidence should be maintained for the elicitation activities that were actually performed.
-
 | Technique | Evidence to Maintain |
 |---|---|
 | Survey | Questionnaire and response summary |
@@ -757,13 +717,3 @@ Evidence should be maintained for the elicitation activities that were actually 
 | Focus Group | Participants, questions and common findings |
 | Prototype Evaluation | Prototype screenshots, feedback and changes made |
 | Traceability | Requirement ID → Stakeholder → Technique → Finding |
-
----
-
-# Conclusion
-
-The elicitation activities provided requirements from students, placement staff, faculty, recruiters and other relevant stakeholders.
-
-Using multiple techniques helped the team understand not only the required features, but also usability, privacy, placement rules and recruitment-related constraints.
-
-The resulting requirements provide the foundation for the next stages of the project, including **User Stories, EPICs, Product Backlog and Sprint Planning**.
