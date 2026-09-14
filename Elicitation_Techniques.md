@@ -2,7 +2,7 @@
 
 This document describes how requirements will be collected from the different stakeholders and end users of the Resume Analyser system.
 
-For each stakeholder, the suitable elicitation techniques are listed along with the reason for using them and the information expected from the session.
+For each stakeholder, the suitable elicitation techniques are listed along with the reason for using them and the information expected from the given session.
 
 ---
 
