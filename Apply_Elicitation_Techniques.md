@@ -2,9 +2,9 @@
 
 ## 3.1 Objective
 
-After identifying the stakeholders, suitable elicitation techniques were selected for the **Resume Analyser for College Placements** system.
+After identifying the stakeholders, we selected suitable elicitation techniques for the **Resume Analyser for College Placements** system.
 
-The main purpose of this activity was to understand:
+The main purpose of this activity was to understand the following:
 
 - What different stakeholders expect from the system.
 - Problems faced by students during resume preparation.
@@ -13,13 +13,13 @@ The main purpose of this activity was to understand:
 - What qualities the system should have (**Non-Functional Requirements**).
 - What rules and constraints come from the college placement and recruitment domain (**Domain Requirements**).
 
-The requirements were collected by connecting stakeholder needs with specific elicitation activities instead of directly assuming system features.
+Instead of directly assuming the features, we connected stakeholder needs with specific elicitation activities and used the findings to derive requirements.
 
 ---
 
 # 3.2 Elicitation Process
 
-The following flow was followed during requirement elicitation:
+We followed the following flow during requirement elicitation:
 
 **Stakeholder → Elicitation Technique → Questions / Activity → Finding → Requirement → Requirement Type**
 
@@ -35,7 +35,7 @@ Students want to know which skills are missing from their resume.
 ↓  
 **Type:** Functional Requirement
 
-Different techniques were selected because each technique provides a different type of information.
+We used different techniques because each one gives a different kind of information.
 
 | Technique | Main Purpose |
 |---|---|
@@ -62,9 +62,9 @@ Different techniques were selected because each technique provides a different t
 
 ### Purpose
 
-Students are one of the main users of the Resume Analyser. Since there can be many students with different expectations, a questionnaire is useful for finding common problems and frequently requested features.
+Students are the main users of the Resume Analyser. Since students can have different expectations and problems, a questionnaire helps us identify common issues and features that are frequently needed.
 
-The survey focuses mainly on:
+The survey mainly covered the following areas:
 
 - Resume preparation
 - Resume analysis
@@ -92,9 +92,9 @@ The survey focuses mainly on:
 13. What concerns would you have about uploading your resume?
 14. What would make you trust or distrust an automated recommendation?
 
-### Information Collected
+### Information Collected from the Survey
 
-The survey helps identify:
+From the survey, we can identify:
 
 - Common resume preparation problems.
 - Features students find useful.
@@ -148,11 +148,11 @@ The survey helps identify:
 
 ### Purpose
 
-Interviews are useful when detailed information is required from a stakeholder.
+We used interviews when detailed information was needed from a stakeholder.
 
-A semi-structured interview uses a prepared set of questions, while additional questions can be asked when an answer needs clarification.
+In a semi-structured interview, we prepare a basic set of questions and ask additional questions whenever an answer needs clarification.
 
-This is particularly useful for placement officers and recruiters because their requirements may depend on the actual placement and screening process.
+This is useful for placement officers and recruiters because their requirements are closely related to the actual placement and screening process.
 
 ---
 
@@ -170,7 +170,7 @@ This is particularly useful for placement officers and recruiters because their 
 8. Which decisions should remain with the placement team?
 9. What type of reports are useful during placement activities?
 
-### Requirements Identified
+### Requirements Identified from the Interview
 
 **Functional Requirements**
 
@@ -203,7 +203,7 @@ This is particularly useful for placement officers and recruiters because their 
 6. Should counselors be able to review the generated feedback?
 7. What terminology would be easier for students to understand?
 
-### Requirements Identified
+### Requirements Identified from the Interview
 
 **Functional Requirements**
 
@@ -228,9 +228,9 @@ This is particularly useful for placement officers and recruiters because their 
 
 ### Why Both Techniques Are Useful
 
-Recruiters can explain what they expect from a resume, but their actual screening process may reveal additional requirements.
+Recruiters can explain what they expect from a resume, while observing the screening process can reveal additional requirements that may not be mentioned during an interview.
 
-Therefore, recruiter interviews can be combined with observation of a resume-screening activity, where access is available.
+Therefore, where possible, we can combine recruiter interviews with observation of a resume-screening activity.
 
 ### Interview Questions
 
@@ -243,7 +243,7 @@ Therefore, recruiter interviews can be combined with observation of a resume-scr
 7. Which candidate information should not affect matching?
 8. Should the system make the final hiring decision automatically?
 
-### Requirements Identified
+### Requirements Identified from the Interview
 
 **Functional Requirements**
 
@@ -279,7 +279,7 @@ Therefore, recruiter interviews can be combined with observation of a resume-scr
 
 ### Purpose
 
-Observation is useful because users do not always describe their actual difficulties while answering questions.
+Observation is useful because users may not always mention their actual difficulties while answering questions.
 
 For example, a student may say that a system is simple, but during actual use the student may:
 
@@ -302,7 +302,7 @@ The following points can be observed:
 - Whether the suggestions are clear.
 - Whether the upload process is simple.
 
-### Requirements Identified
+### Requirements Identified from the Interview
 
 **Functional Requirements**
 
@@ -338,9 +338,9 @@ The following types of documents can be analysed:
 
 ### Purpose
 
-Some requirements already exist in documents followed by the placement team or recruiters.
+Some requirements are already defined in documents used by the placement team or recruiters.
 
-Document analysis helps the team identify these rules and convert relevant information into system requirements.
+By analysing these documents, we can identify the relevant rules and convert them into system requirements.
 
 ### Example: Job Description Analysis
 
@@ -371,7 +371,7 @@ If the college placement guidelines specify eligibility conditions for a placeme
 
 ### Example: Privacy Policy
 
-Privacy-related documents can help identify:
+Privacy-related documents can help us identify:
 
 - Who can access resume information.
 - What information can be stored.
@@ -379,7 +379,7 @@ Privacy-related documents can help identify:
 - Whether user consent is required.
 - Whether users can request deletion.
 
-These points can be converted into security and privacy-related requirements.
+These points can then be converted into security and privacy-related requirements.
 
 ---
 
@@ -391,7 +391,7 @@ These points can be converted into security and privacy-related requirements.
 
 ### Purpose
 
-Brainstorming was used to generate possible features and discuss technical possibilities before finalizing the project scope.
+We used brainstorming to discuss possible features and technical ideas before finalizing the project scope.
 
 ### Topics Discussed
 
@@ -414,7 +414,7 @@ Brainstorming was used to generate possible features and discuss technical possi
 
 ### Result
 
-The discussion helped separate the features into **core features** and **future features**.
+The discussion helped us separate the features into **core features** and **future features**.
 
 ### Core Features
 
@@ -446,7 +446,7 @@ The discussion helped separate the features into **core features** and **future 
 
 ### Purpose
 
-Different stakeholders may have different expectations from the system.
+Different stakeholders can have different expectations from the system.
 
 **Student:**  
 "I want detailed feedback about my resume."
@@ -457,7 +457,7 @@ Different stakeholders may have different expectations from the system.
 **Recruiter:**  
 "I need relevant and reliable job matching."
 
-The workshop helps the team discuss these differences and decide which requirements should be included in the initial version.
+The workshop helps us discuss these differences and decide which requirements should be included in the initial version.
 
 ### Discussion Points
 
@@ -493,7 +493,7 @@ The workshop helps the team discuss these differences and decide which requireme
 
 ### Purpose
 
-A focus group is useful when the team wants to understand common opinions and differences between users.
+We used the focus group to understand common opinions as well as differences between users.
 
 ### Discussion Topics
 
@@ -505,7 +505,7 @@ A focus group is useful when the team wants to understand common opinions and di
 6. What information should be kept private?
 7. How much information should be shown on one screen?
 
-### Information Obtained
+### Information Obtained from the Discussion
 
 The discussion can help identify:
 
@@ -528,9 +528,9 @@ The discussion can help identify:
 
 ### Purpose
 
-Some requirements become easier to understand after stakeholders can see a basic version of the proposed system.
+Some requirements become easier to understand when stakeholders can see a basic version of the proposed system.
 
-A low-fidelity prototype can contain:
+For example, a low-fidelity prototype can contain:
 
 **Upload Resume → Analysis Dashboard → Resume Score → Skills → Job Matches → Suggestions**
 
@@ -545,7 +545,7 @@ A low-fidelity prototype can contain:
 7. Is too much information displayed?
 8. Can the user understand why a particular job was recommended?
 
-### Requirements Identified
+### Requirements Identified from the Interview
 
 **Functional Requirements**
 
@@ -566,7 +566,7 @@ A low-fidelity prototype can contain:
 
 # 3.5 Consolidated Functional Requirements
 
-After applying the different elicitation techniques, the major functional requirements were consolidated as follows:
+After applying the different elicitation techniques, we consolidated the major functional requirements as follows:
 
 | ID | Functional Requirement | Main Elicitation Source |
 |---|---|---|
@@ -627,7 +627,7 @@ Domain requirements come from the **college placement and recruitment domain** r
 
 # 3.8 Requirement Traceability
 
-Requirement traceability was used to connect requirements with the elicitation activities from which they were identified.
+We used requirement traceability to connect each requirement with the elicitation activities from which it was identified.
 
 ### Example 1 – Student Requirement
 
@@ -681,7 +681,7 @@ Requirement traceability was used to connect requirements with the elicitation a
 
 # 3.9 Summary of Elicitation Results
 
-The different elicitation techniques helped the team study the system from different perspectives.
+The different elicitation techniques helped us understand the system from different perspectives.
 
 | Technique | Main Information Obtained |
 |---|---|
@@ -694,19 +694,19 @@ The different elicitation techniques helped the team study the system from diffe
 | Focus Group | Common opinions and differences among students and counselors |
 | Prototyping | Usability, presentation and feedback requirements |
 
-The collected requirements were grouped into:
+The collected requirements were grouped into the following three categories:
 
 - **Functional Requirements**
 - **Non-Functional Requirements**
 - **Domain Requirements**
 
-These requirements will be used in the next stages of the project to prepare **User Stories, EPICs, Product Backlog items and Sprint planning** for the Agile SCRUM process.
+These requirements will be used in the next stages of the project to prepare **User Stories, EPICs, Product Backlog items and Sprint Planning** for the Agile SCRUM process.
 
 ---
 
 # 3.10 Evidence of Elicitation Activities
 
-| Technique | Evidence to Maintain |
+| Technique | Evidence to Keep |
 |---|---|
 | Survey | Questionnaire and response summary |
 | Interview | Questions, stakeholder role and interview notes |
