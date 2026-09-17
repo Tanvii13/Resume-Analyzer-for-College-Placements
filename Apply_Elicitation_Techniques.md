@@ -4,7 +4,7 @@
 
 After identifying the stakeholders, we selected suitable elicitation techniques for the **Resume Analyser for College Placements** system.
 
-The main purpose of this activity was to understand the following information which is important to know :
+The main purpose of this activity was to understand the following information which is important to know for making or observing this project :
 
 - What different stakeholders expect from the system.
 - Problems faced by students during resume preparation.
