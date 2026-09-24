@@ -124,20 +124,62 @@ Each conflict is logged in the same style as requirement traceability:
 
 ---
 
-## 6.3 Conflict Resolution Summary Table
+### C-08 — AI-Assisted Requirements vs. Requirements Accuracy
 
-| ID | Conflict | Stakeholders | Resolution Approach |
-|---|---|---|---|
-| C-01 | Explanation depth vs. speed | Students, Recruiters | Default short explanation + on-demand detail |
-| C-02 | Staff visibility vs. student privacy | Placement/Faculty, Privacy Reviewer | Role-based access + aggregated dashboards |
-| C-03 | Automated ranking vs. human final decision | Recruiters/Hiring Managers, Fairness Reviewer | Rank & explain, never auto-reject |
-| C-04 | Feature wishlist vs. feasible scope | Students/Recruiters/Management, Dev Team | MoSCoW prioritization, deferred "Could Have" items |
-| C-05 | Efficient filtering vs. fair review | Recruiters/Employers, Rejected Candidates | Filter affects visibility/order, not permanent removal |
-| C-06 | Analytics retention vs. data deletion | Management, Privacy Reviewer | Aggregated/de-identified analytics stored separately |
-| C-07 | Simple score vs. detailed score | Students, Faculty/Counselors | Single score by default with expandable breakdown |
+**Stakeholders:** Development Team, Product Owner, Domain Experts, Academic Supervisor, and Privacy Reviewer
+
+**Conflicting Needs:**
+- The development team wants to use AI to summarize interviews and generate requirements quickly.
+- The academic supervisor and domain experts require requirements to be correct, complete, and traceable.
+- The privacy reviewer requires that sensitive student and resume data be protected.
+
+**Why It's a Conflict:** AI-generated requirements may contain incorrect assumptions, omissions, or hallucinated stakeholder needs. Sending sensitive information to an external AI service may also create privacy risks.
+
+**Resolution:** AI-generated requirements shall be treated as draft suggestions only. A human team member must review and approve every requirement. Each approved requirement shall include its source, rationale, stakeholder, and traceability links. Sensitive data shall be anonymized before being provided to an AI tool. Ollama or another institution-approved local model should be used where appropriate.
+
+**Verification:** Human review records, requirements traceability matrix, and comparison of AI-generated requirements against stakeholder evidence.
+
+**Affects:** Requirements engineering, AI-assisted requirements engineering, privacy, and traceability
 
 ---
 
-## 6.4 Process Used to Find These Conflicts
+### C-09 — AI-Assisted Implementation vs. Code Quality
+
+**Stakeholders:** Development Team, QA/Testers, Academic Supervisor, and Future Maintainers
+
+**Conflicting Needs:**
+- Developers want to use GitHub Copilot, Ollama, or LangChain to generate code quickly.
+- QA testers and maintainers require secure, readable, modular, and tested code.
+- The academic supervisor requires that students understand and can explain the submitted implementation.
+
+**Why It's a Conflict:** AI-generated code may contain bugs, security weaknesses, duplicated logic, or design decisions that the developers cannot explain.
+
+**Resolution:** AI-generated code shall be reviewed by a student developer, checked through code review, and validated with automated tests. AI assistance shall not replace developer responsibility. Important AI-generated changes shall include an explanation of the design decision and the tests performed.
+
+**Verification:** Pull-request review, static analysis, unit tests, integration tests, and AI-code-review records.
+
+**Affects:** NFR-10, maintainability, code review, testing, and AI-assisted implementation
+
+---
+
+### C-10 — Rapid Feature Development vs. Modular Architecture
+
+**Stakeholders:** Development Team, Product Owner, QA/Testers, System Administrator, and Future Maintainers
+
+**Conflicting Needs:**
+- The team wants to develop resume parsing, scoring, matching, dashboards, and AI features quickly.
+- QA testers and maintainers require loosely coupled, testable, and replaceable components.
+
+**Why It's a Conflict:** Implementing all functionality in one module may speed up the prototype but will make testing, debugging, and future changes difficult.
+
+**Resolution:** The system shall separate resume upload, document parsing, skill extraction, scoring, job matching, explanation generation, data storage, and presentation. Suitable design patterns may include Strategy for interchangeable scoring models, Adapter for external job portals, Repository for data access, and Facade for the analysis workflow.
+
+**Verification:** Architecture documentation, component-level tests, dependency analysis, and a change-impact test demonstrating that one component can be modified without breaking unrelated components.
+
+**Affects:** Software architecture, design patterns, AI-driven design, and NFR-10
+
+---
+
+## 6.3 Process Used to Find These Conflicts
 
 Conflicts were identified by comparing the "What They Need" column of the Stakeholder document against the Functional/Non-Functional/Domain requirements each stakeholder's elicitation session produced (Section 3.5–3.7 of the Elicitation document), and by re-reading the Requirements Workshop discussion points (Section 3.3-G), where competing expectations between students, placement officers, and recruiters were first raised explicitly. Any pair of requirements that could not both be fully satisfied at the same time was logged here, along with the design or process decision that lets both sides be reasonably served.
