@@ -2,7 +2,7 @@
 
 ### Subject: IT314 – Software Engineering
 ### Instructor: Prof. Saurabh Tiwari 
-### Mentor: Dhruvilbhai
+### Mentor: Dhruvil Mehta
 
 ### Team Members
 
