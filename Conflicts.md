@@ -2,7 +2,7 @@
 
 ## 6.1 Purpose
 
-Requirements collected from different stakeholders during elicitation do not always agree with each other. This section identifies the conflicts found across stakeholders, EPICs, and user stories, explains why each conflict exists, and records how the team resolved it, building directly on the stakeholders (Section 1), elicitation results (Sections 2–3), user stories (Section 4), and EPICs/Sprints (Section 5) already produced for the Resume Analyser.
+Requirements collected from different stakeholders during elicitation do not always agree with each other. This section identifies the conflicts found across stakeholders, EPICs, and user stories, explains why each conflict exists, and how we should resolve it.
 
 Each conflict is logged in the same style as requirement traceability:
 
