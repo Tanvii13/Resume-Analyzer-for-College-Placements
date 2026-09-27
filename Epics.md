@@ -1,45 +1,46 @@
 # 5. Create EPICs (Grouped into Sprints)
 
-Organize the user stories into EPICs and use the EPICs to generate Sprints in dependency order. Each Sprint contains related user stories that deliver a meaningful part of the Resume Analyser system.
+The user stories are grouped into EPICs based on the functionality they provide and the dependencies between them. The Sprints are arranged in a logical order so that each Sprint builds on the work completed in the previous Sprints.
 
 ---
 
-## Sprint 1 — User Authentication & Resume Processing
+## Sprint 1 — Resume Upload & Processing
 
-### EPIC 1: User Authentication & Resume Upload
+### EPIC 1: Resume Upload & Processing
 
-**Goal:** Allow users to securely access the system and upload their resumes for analysis.
+**Goal:** Allow students to upload their resumes, process the resume content, and handle invalid or unreadable files.
 
 **User Stories:**
 
-- **US-01:** User Login
-- **US-02:** Upload Resume
-- **US-03:** Parse Uploaded Resume
-- **US-04:** Handle Invalid Resume
+- **US-01:** Upload Resume
+- **US-02:** Parse Uploaded Resume
+- **US-03:** Handle Invalid Resume
 
 **Requirement IDs Covered:** FR-01, FR-02, FR-14, NFR-01, NFR-06
 
-**Why grouped together:**  
-Users must first authenticate themselves before accessing the system and their resume data. After login, the user can upload a resume, the system can parse it, and invalid resumes can be handled safely.
+**Why grouped together:**
+
+These stories form the starting point of the system. The student first uploads a resume, after which the system reads and organises its content for further analysis. If the resume cannot be processed, the system should clearly explain the problem and allow the student to try again.
 
 ---
 
-## Sprint 2 — Resume Scoring & Analysis
+## Sprint 2 — Resume Analysis & Scoring
 
-### EPIC 2: Resume Scoring & Analysis
+### EPIC 2: Resume Analysis & Scoring
 
-**Goal:** Turn the parsed resume into a placement-relevant evaluation.
+**Goal:** Analyse the processed resume and provide a placement-related evaluation.
 
 **User Stories:**
 
-- **US-05:** Extract Skills from Resume
-- **US-06:** Analyse Resume for Placement Preparation
-- **US-07:** Get an Overall Resume Score
+- **US-04:** Extract Skills from Resume
+- **US-05:** Analyse Resume for Placement Preparation
+- **US-06:** Get an Overall Resume Score
 
 **Requirement IDs Covered:** FR-03, FR-04, FR-05, DR-01, NFR-04, NFR-08
 
-**Why grouped together:**  
-Skill extraction feeds directly into the analysis engine, and the analysis engine produces the overall resume score. These stories form one continuous analysis process.
+**Why grouped together:**
+
+The system needs the information extracted from the resume before it can perform the main analysis and calculate a score. These stories together form the core resume analysis process.
 
 ---
 
@@ -47,18 +48,19 @@ Skill extraction feeds directly into the analysis engine, and the analysis engin
 
 ### EPIC 3: Feedback & Explainability
 
-**Goal:** Make the score and analysis useful and understandable to the student.
+**Goal:** Help students understand their resume analysis results and identify what they can improve.
 
 **User Stories:**
 
-- **US-08:** Identify Areas That Need Improvement
-- **US-09:** Get Resume Improvement Suggestions
-- **US-10:** Understand the Score and Recommendations
+- **US-07:** Identify Areas That Need Improvement
+- **US-08:** Get Resume Improvement Suggestions
+- **US-09:** Understand the Score and Recommendations
 
 **Requirement IDs Covered:** FR-06, FR-07, FR-11, NFR-05, NFR-08
 
-**Why grouped together:**  
-A raw score alone is not enough. Students need to know what is wrong, what they should improve, and why the system provided a particular result.
+**Why grouped together:**
+
+An overall score alone does not tell a student what needs to be changed. These stories provide improvement areas, suggestions, and explanations so that students can understand the result and take action.
 
 ---
 
@@ -66,18 +68,19 @@ A raw score alone is not enough. Students need to know what is wrong, what they 
 
 ### EPIC 4: Job / Internship Matching
 
-**Goal:** Connect the analysed resume to relevant job and internship opportunities.
+**Goal:** Help students compare their resumes with job opportunities and understand their skill match.
 
 **User Stories:**
 
-- **US-11:** Compare Resume with a Job Description
-- **US-12:** Find Relevant Job or Internship Opportunities
-- **US-13:** View Matching and Missing Skills
+- **US-10:** Compare Resume with a Job Description
+- **US-11:** Find Relevant Job or Internship Opportunities
+- **US-12:** View Matching and Missing Skills
 
 **Requirement IDs Covered:** FR-08, FR-09, FR-10, DR-02, DR-03, DR-04
 
-**Why grouped together:**  
-All three stories depend on skill extraction from EPIC 2. Together they provide the complete matching experience: compare the resume, find opportunities, and identify missing skills.
+**Why grouped together:**
+
+These stories use the skills and information obtained during resume analysis. Together, they allow students to compare their resume with a job description, find relevant opportunities, and understand which skills match or are missing.
 
 ---
 
@@ -85,37 +88,39 @@ All three stories depend on skill extraction from EPIC 2. Together they provide 
 
 ### EPIC 5: Placement Staff Access & Reporting
 
-**Goal:** Give placement officers and counselors role-appropriate access to student resume analysis and placement information.
+**Goal:** Provide placement officers and counselors with appropriate access to student resume analysis and placement-related information.
 
 **User Stories:**
 
-- **US-14:** View Student Resume Analysis
-- **US-15:** View Placement Dashboard and Reports
+- **US-13:** View Student Resume Analysis
+- **US-14:** View Placement Dashboard and Reports
 
 **Requirement IDs Covered:** FR-12, FR-13, DR-05
 
-**Why grouped together:**  
-Both stories provide staff-facing views using data generated by the previous EPICs. Placement staff can access student analysis and view overall placement information through reports and dashboards.
+**Why grouped together:**
+
+Both stories provide staff-facing functionality using information generated by the resume analysis and matching features. Placement staff can review student analysis and view summary information that can help with placement preparation activities.
 
 ---
 
-## Sprint 6 — Security, Privacy & Governance
+## Sprint 6 — Security, Privacy & Responsible Use
 
-### EPIC 6: Security, Privacy & Governance
+### EPIC 6: Security, Privacy & Responsible Use
 
-**Goal:** Ensure secure access, proper data handling, responsible automated decisions, and fair scoring.
+**Goal:** Protect student information and ensure that automated analysis and recommendations are used appropriately.
 
 **User Stories:**
 
-- **US-16:** Manage Role-Based Access
-- **US-17:** Protect Student Resume Data
-- **US-18:** Keep Automated Results as Supporting Information
-- **US-19:** Check Scoring and Matching for Fairness
+- **US-15:** Manage Role-Based Access
+- **US-16:** Protect Student Resume Data
+- **US-17:** Keep Automated Results as Supporting Information
+- **US-18:** Check Scoring and Matching for Fairness
 
 **Requirement IDs Covered:** FR-15, NFR-03, NFR-07, NFR-09, DR-06, DR-07, DR-08, DR-09
 
-**Why grouped together:**  
-These stories address security, privacy, responsible use of automated results, and fairness. Login and authentication are also supported by role-based access control, ensuring that students, placement officers, and counselors can access only the information appropriate to their roles.
+**Why grouped together:**
+
+These stories cover access control, privacy, responsible use of automated results, and fairness. Since the system handles student resumes and produces automated scores and recommendations, these requirements are important for the overall system.
 
 ---
 
@@ -123,16 +128,17 @@ These stories address security, privacy, responsible use of automated results, a
 
 ### EPIC 7: System Quality & Maintainability
 
-**Goal:** Keep the codebase maintainable, reliable, and easy to extend as the system grows.
+**Goal:** Keep the main system components organised, reliable, and easier to maintain as the project develops.
 
 **User Stories:**
 
-- **US-20:** Keep Core Components Maintainable
+- **US-19:** Keep Core Components Maintainable
 
 **Requirement IDs Covered:** NFR-10
 
-**Why grouped together:**  
-This is a cross-cutting engineering concern. Parsing, scoring, matching, authentication, and other core components should remain properly separated and maintainable. This EPIC ensures that code quality, module boundaries, documentation, and review practices receive dedicated attention.
+**Why grouped together:**
+
+Maintainability is a system-wide concern. The parsing, scoring, matching, and other major components should remain reasonably separated so that changes and fixes can be made without unnecessarily affecting other parts of the system.
 
 ---
 
@@ -140,24 +146,32 @@ This is a cross-cutting engineering concern. Parsing, scoring, matching, authent
 
 | Sprint | EPIC | User Stories | Priority |
 |---|---|---|---|
-| Sprint 1 | User Authentication & Resume Upload | US-01, US-02, US-03, US-04 | Must Have |
-| Sprint 2 | Resume Scoring & Analysis | US-05, US-06, US-07 | Must Have |
-| Sprint 3 | Feedback & Explainability | US-08, US-09, US-10 | Must Have |
-| Sprint 4 | Job / Internship Matching | US-11, US-12, US-13 | Must Have |
-| Sprint 5 | Placement Staff Access & Reporting | US-14, US-15 | Should Have |
-| Sprint 6 | Security, Privacy & Governance | US-16, US-17, US-18, US-19 | Must Have |
-| Sprint 7 | System Quality & Maintainability | US-20 | Should Have |
+| Sprint 1 | Resume Upload & Processing | US-01, US-02, US-03 | Must Have |
+| Sprint 2 | Resume Analysis & Scoring | US-04, US-05, US-06 | Must Have |
+| Sprint 3 | Feedback & Explainability | US-07, US-08, US-09 | Must Have |
+| Sprint 4 | Job / Internship Matching | US-10, US-11, US-12 | Must Have |
+| Sprint 5 | Placement Staff Access & Reporting | US-13, US-14 | Should Have |
+| Sprint 6 | Security, Privacy & Responsible Use | US-15, US-16, US-17, US-18 | Must Have |
+| Sprint 7 | System Quality & Maintainability | US-19 | Should Have |
 
 ---
 
 ## 5.2 Sprint Dependency Order
 
-**Sprint 1 → Sprint 2 → Sprint 3 & Sprint 4 → Sprint 5 → Sprint 6 & Sprint 7**
+**Sprint 1 → Sprint 2 → Sprint 3 & Sprint 4 → Sprint 5 → Sprint 6 → Sprint 7**
 
-- **Sprint 1** must be completed first because users need to authenticate and the system needs to accept and process resumes.
-- **Sprint 2** depends on the processed resume data from Sprint 1.
-- **Sprint 3** and **Sprint 4** depend on Sprint 2 and can be developed in parallel.
-- **Sprint 5** depends on the data generated by Sprints 2–4.
-- **Sprint 6** applies security, privacy, governance, role-based access, and fairness requirements across the whole system.
-- **Sprint 7** focuses on maintainability and code quality.
-- Security and maintainability activities should also be followed throughout all previous Sprints rather than being postponed completely until the end.
+- **Sprint 1** provides the basic resume upload and processing functionality required by the rest of the system.
+
+- **Sprint 2** depends on the processed resume information from Sprint 1. It extracts skills, performs the main resume analysis, and generates the overall score.
+
+- **Sprint 3** uses the analysis results from Sprint 2 to provide improvement areas, suggestions, and explanations to the student.
+
+- **Sprint 4** also depends on the analysed resume and extracted skills from Sprint 2. It can be developed alongside Sprint 3 once the required analysis data is available.
+
+- **Sprint 5** uses the information generated by the analysis and matching features to provide placement staff with student analysis and summary reports.
+
+- **Sprint 6** covers role-based access, privacy, responsible use of automated results, and fairness requirements across the system.
+
+- **Sprint 7** focuses on keeping the system components organised and maintainable as new features are added.
+
+Security, privacy, and maintainability should not be considered only at the end of development. They should be taken into account throughout the Sprints wherever they are relevant.
