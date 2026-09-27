@@ -2,15 +2,15 @@
 
 | Name & ID | Work Done |
 |---|---|
-| **Nakum Tanvi Dhiren**<br>202401262 | • Identified stakeholders and end users<br>• Contributed to EPIC generalization |
 | **Sujal Balva**<br>202401216 | • Identified stakeholders and end users |
-| **Krish Hitendrakumar Paghadar**<br>202401429 | • Identified stakeholders and end users |
 | **Tanishk Dhawan**<br>202401224 | • Identified requirement-elicitation techniques<br>• Identified and documented requirement conflicts |
-| **Trivedi Atharv**<br>202401230 | • Identified requirement-elicitation techniques<br>• Identified and documented requirement conflicts |
 | **Topaliya Shlok Ashokbhai**<br>202401229 | • Identified requirement-elicitation techniques<br>• Developed user stories |
-| **Tejot Harshil Rajendrabhai**<br>202401265 | • Applied elicitation techniques to gather requirements<br>• Contributed to EPIC generalization |
+| **Trivedi Atharv**<br>202401230 | • Identified requirement-elicitation techniques<br>• Identified and documented requirement conflicts |
 | **Vamja Krish Pravinbhai**<br>202401239 | • Applied elicitation techniques to gather requirements |
+| **Nakum Tanvi Dhiren**<br>202401262 | • Identified stakeholders and end users<br>• Contributed to EPIC generalization |
 | **Solanki Taniskumar Mehulbhai**<br>202401264 | • Applied elicitation techniques to gather requirements<br>• Developed user stories |
+| **Tejot Harshil Rajendrabhai**<br>202401265 | • Applied elicitation techniques to gather requirements<br>• Contributed to EPIC generalization |
+| **Krish Hitendrakumar Paghadar**<br>202401429 | • Identified stakeholders and end users |
 | **Prerak Patel**<br>202401452 | • Applied elicitation techniques to gather requirements<br>• Identified and documented requirement conflicts |
 
 ## Project Tasks Covered
