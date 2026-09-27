@@ -36,7 +36,7 @@ These stories form the starting point of the system. The student first uploads a
 - **US-05:** Analyse Resume for Placement Preparation
 - **US-06:** Get an Overall Resume Score
 
-**Requirement IDs Covered:** FR-03, FR-04, FR-05, DR-01, NFR-04, NFR-08
+**Requirement IDs Covered:** FR-03, FR-04, FR-05, DR-01, NFR-02, NFR-04, NFR-08
 
 **Why grouped together:**
 
@@ -76,7 +76,7 @@ An overall score alone does not tell a student what needs to be changed. These s
 - **US-11:** Find Relevant Job or Internship Opportunities
 - **US-12:** View Matching and Missing Skills
 
-**Requirement IDs Covered:** FR-08, FR-09, FR-10, DR-02, DR-03, DR-04
+**Requirement IDs Covered:** FR-08, FR-09, FR-10, DR-02, DR-03, DR-04, DR-10, NFR-11
 
 **Why grouped together:**
 
@@ -95,7 +95,7 @@ These stories use the skills and information obtained during resume analysis. To
 - **US-13:** View Student Resume Analysis
 - **US-14:** View Placement Dashboard and Reports
 
-**Requirement IDs Covered:** FR-12, FR-13, DR-05
+**Requirement IDs Covered:** FR-12, FR-13, DR-05, DR-07
 
 **Why grouped together:**
 
