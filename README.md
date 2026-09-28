@@ -19,4 +19,4 @@
 | Krish Hitendrakumar Paghadar | 202401429 |
 | Prerak Patel | 202401452 |
 
-### A tool that check student resumes to score formatting, skills relevance, and matches them with job/internship clusters based on profile similarity. Gives feedback and improvement tips for student.
+### A tool that analyses student resumes, evaluates formatting and skill relevance, matches profiles with suitable job and internship opportunities, and provides feedback and improvement suggestions.
