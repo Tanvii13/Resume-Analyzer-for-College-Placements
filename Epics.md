@@ -8,9 +8,7 @@ The user stories are grouped into EPICs based on the functionality they provide 
 
 ### EPIC 1: User Access & Resume Upload
 
-**Goal:** Allow students to upload their resumes, process the resume content, and handle invalid or unreadable files.
-
-**User Stories:**
+**Goal:** Allow students to securely access the system, upload their resumes, process the resume content, and handle invalid or unreadable files.
 
 **User Stories:**
 
@@ -23,7 +21,7 @@ The user stories are grouped into EPICs based on the functionality they provide 
 
 **Why grouped together:**
 
-These stories form the starting point of the system. The student first uploads a resume, after which the system reads and organises its content for further analysis. If the resume cannot be processed, the system should clearly explain the problem and allow the student to try again.
+These stories form the starting point of the system. The student first logs in to access the system, then uploads a resume, after which the system reads and organises its content for further analysis. If the resume cannot be processed, the system should clearly explain the problem and allow the student to try again.
 
 ---
 
