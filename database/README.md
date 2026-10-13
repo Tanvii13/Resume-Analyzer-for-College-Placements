@@ -31,17 +31,3 @@ If your PostgreSQL username is not `postgres`, replace it with yours.
 - The schema uses `CREATE TABLE IF NOT EXISTS` and inserts default roles safely on rerun. Note: if tables already exist, rerunning this file does not automatically modify their existing columns or constraints; use a migration for changes to an existing database.
 - Resume file size must be greater than 0 and at most
   5 MiB (5,242,880 bytes), enforced by database constraints.
-
-## Sprint 2
-
-Add new tables in a separate migration/script, for example `skills`, `resume_skills`, `analyses`, and `score_components`. Do not put them into this Sprint 1 file yet. Link those tables to `resumes.id` so the existing schema remains compatible.
-
-## Before backend integration
-
-Agree with the backend team on:
-1. `storage_key` format and allowed file types/size limits.
-2. The exact list of roles they will use.
-3. The section names the parser will produce.
-4. Who updates `status`, `error_message`, and `processed_at`.
-
-This folder contains database code only; it does not implement backend APIs or file parsing.
