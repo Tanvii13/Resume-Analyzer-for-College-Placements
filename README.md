@@ -138,7 +138,7 @@ Any library or service adopted should be evaluated for accuracy, compatibility, 
 
 ## 9. Team Contributions
 
-See [documents/contributions.md](documents/contributions.md) for details of individual team contributions.
+See [documents/contributions.md](Documents/Contributions.md) for details of individual team contributions.
 
 ## 10. Future Scope
 
