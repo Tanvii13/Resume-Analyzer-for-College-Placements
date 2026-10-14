@@ -1,10 +1,9 @@
 # Resume Analyser for College Placements
+**Upload it, understand it, improve it, get placed!**
 
 **Subject:** IT314 – Software Engineering  
 **Instructor:** Prof. Saurabh Tiwari  
 **Mentor:** Dhruvil Mehta
-
-**Upload it, understand it, improve it, get placed!**
 
 ## Team Members
 
@@ -122,7 +121,7 @@ The technology stack is tentative and may change as the project develops. The fi
 
 | Layer | Proposed Technology | Purpose |
 |---|---|---|
-| Frontend | React / Next.js (Planned) | User interface for resume upload, feedback, and job matching. |
+| Frontend | Python, Javascript, CSS, HTML | User interface for resume upload, feedback, and job matching. |
 | Backend | FastAPI, Python 3.10+, Uvicorn | REST API, authentication, validation, and resume management. |
 | Resume Processing | `pypdf`, `python-docx` | Structured text extraction, document validation, and metadata processing. |
 | NLP and Profile Matching | Python NLP tooling | Parsing, skill extraction, and scoring in subsequent sprints. |
