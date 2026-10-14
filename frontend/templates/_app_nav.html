@@ -1,0 +1,22 @@
+<header class="app-nav">
+  <div class="container nav-inner">
+    {% include "_brand.html" %}
+
+    <nav class="nav-links" id="nav-links">
+      <a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}">Dashboard</a>
+      <a href="{{ url_for('dashboard') }}#resumes">My Resumes</a>
+      <a href="{{ url_for('dashboard') }}#upload">Upload New</a>
+      <a href="#">Help</a>
+      <a href="{{ url_for('logout') }}" class="mobile-only">Log out</a>
+    </nav>
+
+    <div class="nav-user">
+      <span class="avatar" title="{{ user.name }}">{{ user.name[:1] }}</span>
+      <span class="role-pill">{{ roles[user.role] }}</span>
+      <a href="{{ url_for('logout') }}" class="nav-logout">Log out</a>
+      <button class="nav-toggle" aria-label="Open menu" data-toggle="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>

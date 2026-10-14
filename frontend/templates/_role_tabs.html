@@ -1,0 +1,10 @@
+{# Role selector: Student / Placement Officer / Admin.
+   It's a set of radio buttons styled as a pill, so it works even without JavaScript. #}
+<div class="role-tabs" role="radiogroup" aria-label="Select your role">
+  {% for key, label in roles.items() %}
+    <label class="role-tab">
+      <input type="radio" name="role" value="{{ key }}" {% if (role or 'student') == key %}checked{% endif %}>
+      <span>{{ label }}</span>
+    </label>
+  {% endfor %}
+</div>
