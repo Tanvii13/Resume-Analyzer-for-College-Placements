@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Resume Analyzer{% endblock %} · Resume Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  {% block nav %}{% endblock %}
+
+  <!-- Flash messages (toasts) -->
+  {% with messages = get_flashed_messages(with_categories=true, category_filter=['success', 'error']) %}
+    {% if messages %}
+      <div class="toast-stack">
+        {% for category, message in messages %}
+          <div class="toast toast-{{ category }}" role="status">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main>{% block content %}{% endblock %}</main>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

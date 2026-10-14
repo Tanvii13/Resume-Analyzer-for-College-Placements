@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Parsed resume{% endblock %}
+{% block nav %}{% include "_app_nav.html" %}{% endblock %}
+
+{% block content %}
+<div class="container page">
+  <a href="{{ url_for('dashboard') }}" class="back-link">← Back to dashboard</a>
+
+  <section class="page-head">
+    <span class="eyebrow">Parsed resume</span>
+    <h1>{{ resume.filename }}</h1>
+    <p class="muted">Uploaded {{ resume.uploaded }} · {{ resume.size }}</p>
+  </section>
+
+  <!-- Summary of what the parser found (US-03) -->
+  <div class="stat-row">
+    <div class="card stat"><b>{{ p.sections|length }}</b><span>Sections found</span></div>
+    <div class="card stat"><b>{{ p.word_count }}</b><span>Words</span></div>
+    <div class="card stat"><b>{{ p.pages or '—' }}</b><span>Pages</span></div>
+    <div class="card stat"><b>{{ 4 - p.missing|length }}/4</b><span>Key sections</span></div>
+  </div>
+
+  {% if p.missing %}
+    <div class="alert alert-warn" role="status">
+      <span><strong>Not found:</strong> {{ p.missing|join(', ') }}. If your resume has these, give them a clear heading (e.g. "Projects") and upload again.</span>
+    </div>
+  {% endif %}
+
+  <div class="report-grid">
+    <!-- Contact details -->
+    <section class="card contact-card">
+      <h3 class="card-title">Contact details</h3>
+      <dl class="contact-list">
+        <dt>Name</dt><dd>{{ p.contact.name or 'Not found' }}</dd>
+        <dt>Email</dt><dd>{{ p.contact.email or 'Not found' }}</dd>
+        <dt>Phone</dt><dd>{{ p.contact.phone or 'Not found' }}</dd>
+        <dt>Links</dt>
+        <dd>
+          {% for link in p.contact.links %}<div class="truncate">{{ link }}</div>{% else %}Not found{% endfor %}
+        </dd>
+      </dl>
+      <p class="muted small">Name is taken from the first line of your resume.</p>
+    </section>
+
+    <!-- Extracted sections -->
+    <section class="sections">
+      {% for s in p.sections %}
+        <article class="card section-card">
+          <h3 class="card-title">{{ s.title }}</h3>
+          <div class="section-text">{{ s.content or 'Heading found, but no content below it.' }}</div>
+        </article>
+      {% else %}
+        <div class="card empty-state">
+          <h3>No sections detected</h3>
+          <p class="muted">We read your text but couldn't find headings like Education or Skills. Add clear headings and upload again.</p>
+        </div>
+      {% endfor %}
+    </section>
+  </div>
+
+  <p class="muted small center">Scoring, feedback and job matching are planned for upcoming sprints.</p>
+</div>
+{% endblock %}
