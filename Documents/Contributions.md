@@ -21,27 +21,23 @@ Tanvi Nakum, Sujal Balva, Krish Paghadar
 ### 2. Identify Requirement-Elicitation Techniques
 Tanishk Dhawan, Atharv Trivedi, Shlok Topaliya
 
-### 3. Apply the Elicitation Techniques
+### 3. Apply the Elicitation Techniques - Harshil Tejot, Tanish Solanki
    - Functional requirements
    - Non-functional requirements
-   - Domain requirements <br>
-Harshil Tejot, Tanish Solanki
+   - Domain requirements
 
-### 4. Write User Stories
+### 4. Write User Stories - Shlok Topaliya, Tanish Solanki
    - Role
    - Goal
    - Benefit
-   - Acceptance criteria <br>
-Shlok Topaliya, Tanish Solanki
+   - Acceptance criteria 
 
-### 5. Create EPICs
+### 5. Create EPICs - Tanvi Nakum, Harshil Tejot
    - Generalization and grouping of related user stories <br>
-Tanvi Nakum, Harshil Tejot
 
-### 6. Identify and Resolve Conflicts
+### 6. Identify and Resolve Conflicts - Tanishk Dhawan, Atharv Trivedi
  - Identification of conflicting requirements
  - Discussion and resolution of conflicts <br>
-Tanishk Dhawan, Atharv Trivedi
 
 ### 7. Concept Poster 
 Tanvi Nakum
