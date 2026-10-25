@@ -79,26 +79,6 @@ flowchart TD
 
 Resume extraction may not always be completely accurate, so the system should provide a way to report or review unreadable or incorrectly extracted information.
 
-## 6. Proposed System Architecture
-
-The proposed architecture separates the user interface, backend services, resume-processing components, and data storage. This separation is intended to make the components easier to develop, test, and maintain.
-
-```mermaid
-flowchart TB
-    U[Student / Placement Staff] --> UI[Frontend Interface]
-    UI --> API[Backend API and Authentication]
-    API --> V[Resume Validation]
-    V --> P[Resume Parsing and Information Extraction]
-    P --> S[Skill Extraction and Normalisation]
-    S --> A[Resume Scoring and Feedback]
-    S --> M[Job and Internship Matching]
-    A --> R[Analysis Results and Suggestions]
-    M --> R
-    R --> API
-    API --> UI
-    API <--> DB[(Application Database)]
-    API --> SEC[Role-Based Access and Privacy Controls]
-```
 
 ### Component Responsibilities
 
