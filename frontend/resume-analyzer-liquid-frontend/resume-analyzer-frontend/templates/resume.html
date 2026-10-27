@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Parsed Resume{% endblock %}
+{% block nav %}{% include "_app_nav.html" %}{% endblock %}
+
+{% block content %}
+<div class="container page">
+  <a href="{{ url_for('dashboard') }}" class="back-link">
+    <svg width="12" height="20" viewBox="0 0 12 20" fill="none" aria-hidden="true"><path d="M10 2L2 10l8 8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Dashboard
+  </a>
+
+  <section class="page-head">
+    <h1>{{ resume.filename }}</h1>
+    <p>Uploaded {{ resume.uploaded }} · {{ resume.size }}</p>
+  </section>
+
+  <!-- Summary of what the parser found (US-03): one grouped surface -->
+  <div class="stat-row">
+    <div class="stat"><b>{{ p.sections|length }}</b><span>Sections found</span></div>
+    <div class="stat"><b>{{ p.word_count }}</b><span>Words</span></div>
+    <div class="stat"><b>{{ p.pages or '—' }}</b><span>Pages</span></div>
+    <div class="stat"><b>{{ 4 - p.missing|length }}/4</b><span>Key sections</span></div>
+  </div>
+
+  {% if p.missing %}
+    <div class="alert alert-warn" role="status">
+      <span><strong>Not found:</strong> {{ p.missing|join(', ') }}. If your resume has these, give them a clear heading (like "Projects") and upload again.</span>
+    </div>
+  {% endif %}
+
+  <div class="report-grid">
+    <!-- Contact details: label/value rows, like iOS Settings -->
+    <section class="contact-card">
+      <p class="list-head">Contact Details</p>
+      <dl class="list contact-list" style="margin: 0">
+        <div class="list-row"><dt class="k">Name</dt><dd class="v" style="margin: 0">{{ p.contact.name or 'Not found' }}</dd></div>
+        <div class="list-row"><dt class="k">Email</dt><dd class="v" style="margin: 0">{{ p.contact.email or 'Not found' }}</dd></div>
+        <div class="list-row"><dt class="k">Phone</dt><dd class="v" style="margin: 0">{{ p.contact.phone or 'Not found' }}</dd></div>
+        <div class="list-row"><dt class="k">Links</dt><dd class="v" style="margin: 0">{% for link in p.contact.links %}<div>{{ link }}</div>{% else %}Not found{% endfor %}</dd></div>
+      </dl>
+      <p class="form-note" style="margin: 10px 18px 0">Name is taken from the first line of your resume.</p>
+    </section>
+
+    <!-- Extracted sections: the highlighter marks each one -->
+    <section class="sections">
+      {% for s in p.sections %}
+        <article class="card section-card">
+          <h3 class="card-title"><span>{{ s.title }}</span></h3>
+          <div class="section-text">{{ s.content or 'Heading found, but no content below it.' }}</div>
+        </article>
+      {% else %}
+        <div class="card empty-state">
+          <h3>No sections detected</h3>
+          <p>The text was read, but no headings like Education or Skills were found. Add clear headings and upload again.</p>
+        </div>
+      {% endfor %}
+    </section>
+  </div>
+
+  <p class="muted small center">Scoring, feedback and job matching are planned for upcoming sprints.</p>
+</div>
+{% endblock %}

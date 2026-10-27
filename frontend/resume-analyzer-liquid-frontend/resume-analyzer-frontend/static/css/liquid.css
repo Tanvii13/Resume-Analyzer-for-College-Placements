@@ -1,0 +1,346 @@
+/* =========================================================
+   Resume Analyzer — Liquid Glass layer
+   Loaded LAST on every page, so it re-skins style.css and landing.css.
+
+   What makes it look like iOS Liquid Glass:
+   1. A deep night background (blue + teal glows, dot grid) for the glass to bend and blur.
+   2. Frosted surfaces: backdrop-filter blur + saturate, a faint white tint.
+   3. A specular rim: a bright edge where light hits the top-left of the glass.
+   4. A chromatic edge: a thin rainbow fringe, like light split by a prism.
+   5. Refraction: on Chromium browsers, the nav bar, tab bar, sign-in sheet and
+      notifications bend the wallpaper at their edges (SVG displacement map,
+      built in main.js). Other browsers get the same frosted look without bending.
+   6. A soft sheen that follows the pointer, and spring-based press animations.
+
+   Technique credits (MIT licence): Saviru/GlassiFy and nopde/liquid-glass,
+   found via github.com/topics/liquid-glass-effect. No code was copied verbatim;
+   the displacement-map idea is re-implemented in main.js.
+
+   Performance: the wallpaper never moves (moving it would re-blur every glass
+   surface each frame), and only transform/opacity are animated.
+   ========================================================= */
+
+/* 1. Tokens — one dark, teal appearance (like the reference wallpaper) */
+:root {
+  color-scheme: dark;
+  --bg: #03060d;
+  --card: rgba(255, 255, 255, 0.07);
+  --fill: rgba(255, 255, 255, 0.08);
+  --fill-2: rgba(255, 255, 255, 0.10);
+  --label: #ffffff;
+  --label-2: rgba(242, 253, 252, 0.9);
+  --separator: rgba(255, 255, 255, 0.14);
+  --tint: #a8f6f1;                     /* links: pale aqua */
+  --accent: #ffffff;
+  --accent-hover: #ffffff;
+  --hl: #ffd60a;
+  --hl-ink: #1d1d1f;
+  --green: #4ce08a;
+  --red: #ffb3ad;                      /* lighter red so text stays readable on dark glass */
+  --orange: #ffb35c;
+  --danger: #ffb3ad;
+
+  --ink: #04282b;                      /* dark text on the bright white button */
+  --aqua: #5ee6dd;
+  --progress: linear-gradient(90deg, #ffffff, #8ff0ea 55%, #33c9c0);
+
+  --glass-tint: rgba(255, 255, 255, 0.075);
+  --glass-tint-2: rgba(255, 255, 255, 0.02);
+  --glass-dark: rgba(3, 26, 29, 0.46);  /* keeps white text readable over bright streaks */
+  --glass-fill: rgba(10, 44, 48, 0.32);
+  --glass-fill-thick: rgba(8, 36, 40, 0.42);
+  --glass-stroke: rgba(255, 255, 255, 0.16);
+  --glass-rim: rgba(255, 255, 255, 0.95);
+  --glass-shadow: 0 24px 60px -18px rgba(0, 10, 12, 0.6), 0 2px 6px rgba(0, 10, 12, 0.25);
+  --glass-inset: inset 0 1px 0.5px rgba(255, 255, 255, 0.45), inset 0 -1px 0.5px rgba(255, 255, 255, 0.10), inset 0 0 22px rgba(255, 255, 255, 0.05);
+  --blur: blur(28px) saturate(160%);
+  --blur-thin: blur(16px) saturate(180%) brightness(1.06);
+  --lens: rgba(255, 255, 255, 0.20);
+  --lens-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(255, 255, 255, 0.15), 0 6px 18px rgba(0, 12, 14, 0.35);
+  --card-shadow: var(--glass-shadow);
+
+  --r-card: 28px;
+  --r-field: 14px;
+  /* A real spring: overshoots a little, then settles (supported by all current browsers) */
+  --spring: linear(0, 0.006, 0.025 2.8%, 0.101 6.1%, 0.539 18.9%, 0.721 25.3%, 0.849 31.5%, 0.937 38.1%, 0.968 41.8%, 0.991 45.7%, 1.006 50.1%, 1.015 55%, 1.017 63.9%, 1.001 85.9%, 1);
+  --spring-bouncy: linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 12.9%, 0.938 16.7%, 1.017 19.4%, 1.077, 1.121 24.3%, 1.149 27.2%, 1.154 29.9%, 1.129 34.2%, 1.051 41.2%, 1.017 45.7%, 0.991 51%, 0.977 57.1%, 0.997 69.8%, 1.003 76.9%, 1);
+}
+
+/* 2. Wallpaper ------------------------------------------------------------ */
+body { background: #03060d; color: var(--label); }
+.bg-glow {
+  /* Deep night background: blue glow top-left, teal glow bottom-right, faint dot grid */
+  background:
+    radial-gradient(38% 45% at 22% 4%, rgba(30, 80, 190, 0.42), transparent 72%),
+    radial-gradient(34% 40% at 92% 88%, rgba(0, 120, 150, 0.30), transparent 72%),
+    radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1.2px) 0 0 / 28px 28px,
+    #03060d;
+  transform: translateZ(0);            /* its own GPU layer: scrolling never repaints it */
+}
+.bg-glow::before { display: none; }
+.scroll-edge { background: linear-gradient(rgba(2, 18, 20, 0.75), transparent); opacity: 1; }
+::selection { background: rgba(143, 240, 234, 0.35); color: #fff; }
+:focus-visible { outline-color: var(--tint); }
+
+/* 3. The liquid glass material ------------------------------------------- */
+.glass, .card, .list, .stat-row, .stage, .toast, .step-num,
+.lp-nav-inner, .nav-inner {
+  position: relative;
+  isolation: isolate;
+  border: 0;
+  background:
+    radial-gradient(360px circle at var(--mx, -400px) var(--my, -400px), rgba(255, 255, 255, 0.11), transparent 60%),
+    linear-gradient(160deg, var(--glass-tint), var(--glass-tint-2) 55%),
+    var(--glass-dark);
+  box-shadow: var(--glass-inset), var(--glass-shadow);
+  -webkit-backdrop-filter: var(--blur);
+          backdrop-filter: var(--blur);
+}
+/* Specular rim — brightest top-left, a softer catch-light bottom-right */
+.glass::before, .card::before, .list::before, .stat-row::before, .stage::before, .toast::before,
+.lp-nav-inner::before, .nav-inner::before, .step-num::before {
+  content: ""; position: absolute; inset: 0; z-index: 2; border-radius: inherit; padding: 1.2px; pointer-events: none;
+  background: linear-gradient(135deg, var(--glass-rim) 0%, rgba(255, 255, 255, 0.35) 14%, rgba(255, 255, 255, 0.06) 38%,
+                              rgba(255, 255, 255, 0.04) 62%, rgba(255, 255, 255, 0.30) 88%, rgba(255, 255, 255, 0.6) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0.9;
+}
+/* Chromatic edge — a prism-like rainbow fringe just inside the top-left rim */
+.glass::after, .card::after, .list::after, .stat-row::after, .stage::after,
+.lp-nav-inner::after, .nav-inner::after {
+  content: ""; position: absolute; inset: 0; z-index: 2; border-radius: inherit; padding: 2.5px; pointer-events: none;
+  background: conic-gradient(from 225deg at 50% 50%,
+              rgba(255, 120, 220, 0.0) 0deg, rgba(255, 120, 220, 0.55) 30deg, rgba(255, 214, 110, 0.55) 52deg,
+              rgba(120, 255, 200, 0.55) 74deg, rgba(110, 200, 255, 0.6) 96deg, rgba(150, 120, 255, 0.0) 130deg,
+              transparent 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0.55; mix-blend-mode: screen;
+}
+/* Content sits above the rim layers */
+.card > *, .glass > *, .stage > * { position: relative; z-index: 3; }
+
+/* Thicker material for sheets (sign-in, register, error) */
+.glass-thick {
+  background:
+    radial-gradient(420px circle at var(--mx, -400px) var(--my, -400px), rgba(255, 255, 255, 0.10), transparent 60%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.025) 60%),
+    rgba(4, 30, 33, 0.40);
+  -webkit-backdrop-filter: blur(30px) saturate(170%) brightness(1.04);
+          backdrop-filter: blur(30px) saturate(170%) brightness(1.04);
+}
+
+/* Refraction (Chromium): main.js builds a displacement map per element and sets --lg-filter.
+   The edges of the glass then bend the wallpaper, like a real lens.
+   Order matters: blur first, then bend (the other order breaks the blur in Chrome). */
+.lg-refract {
+  -webkit-backdrop-filter: var(--blur-thin) var(--lg-filter);
+          backdrop-filter: var(--blur-thin) var(--lg-filter);
+}
+.lg-refract.glass-thick {
+  -webkit-backdrop-filter: blur(24px) saturate(170%) brightness(1.04) var(--lg-filter);
+          backdrop-filter: blur(24px) saturate(170%) brightness(1.04) var(--lg-filter);
+}
+
+/* 4. Controls --------------------------------------------------------------- */
+.btn {
+  position: relative; isolation: isolate;
+  transition: transform .55s var(--spring), box-shadow .3s var(--ease), background-color .3s var(--ease), opacity .2s;
+}
+.btn:hover { transform: translateY(-1px) scale(1.02); }
+.btn:active { transform: scale(0.95); transition-duration: .12s; }
+
+/* Prominent button: a bright, milky glass pill with dark text (like iOS "Done") */
+.btn-primary {
+  color: var(--ink);
+  background:
+    radial-gradient(120% 140% at 30% 0%, #ffffff 0%, rgba(255, 255, 255, 0.92) 45%, rgba(214, 250, 247, 0.9) 100%);
+  box-shadow: inset 0 1px 0 #fff, inset 0 -2px 6px rgba(80, 200, 195, 0.35), 0 10px 30px -8px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255, 255, 255, 0.7);
+}
+.btn-primary:hover { background: radial-gradient(120% 140% at 30% 0%, #ffffff, #e6fffc 100%); box-shadow: inset 0 1px 0 #fff, inset 0 -2px 6px rgba(80, 200, 195, 0.35), 0 14px 36px -8px rgba(0, 0, 0, 0.55), 0 0 26px rgba(143, 240, 234, 0.35); }
+.btn-primary:disabled { opacity: 0.45; }
+
+/* Secondary: clear glass */
+.btn-ghost, .btn-gray, .btn-light {
+  color: #fff;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.20), rgba(255, 255, 255, 0.06));
+  box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.55), inset 0 -1px 1px rgba(255, 255, 255, 0.12), inset 0 0 0 0.5px rgba(255, 255, 255, 0.18), 0 8px 24px -10px rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(12px) saturate(170%);
+          backdrop-filter: blur(12px) saturate(170%);
+}
+.btn-ghost:hover, .btn-gray:hover, .btn-light:hover { opacity: 1; background: linear-gradient(160deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.10)); }
+
+/* Text fields: recessed glass wells */
+.input-wrap {
+  background: rgba(0, 18, 20, 0.30);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: border-color .25s var(--ease), box-shadow .3s var(--ease), background-color .25s;
+}
+.input-wrap:focus-within { background: rgba(0, 18, 20, 0.42); border-color: rgba(143, 240, 234, 0.8); box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25), 0 0 0 4px rgba(143, 240, 234, 0.18); }
+.input-wrap input::placeholder { color: rgba(240, 252, 251, 0.7); opacity: 1; }
+.checkbox input { accent-color: var(--aqua); }
+
+/* Segmented control: a liquid lens that stretches as it slides */
+.role-tabs { background: rgba(0, 18, 20, 0.30); box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
+.role-indicator {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.30), rgba(255, 255, 255, 0.10));
+  box-shadow: var(--lens-shadow);
+  transition: transform .6s var(--spring);
+}
+.role-indicator::after {           /* the stretch: scales only while the lens is moving */
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+.role-tabs.is-moving .role-indicator { animation: lens-stretch .6s var(--ease-out); }
+@keyframes lens-stretch { 35% { scale: 1.12 1.18; } }
+.role-tab span { color: var(--label-2); }
+.role-tab input:checked + span { color: #fff; }
+
+/* Strength bars and progress: white → aqua, like the reference */
+.strength-bars i { background: rgba(255, 255, 255, 0.14); }
+.strength[data-level="3"] i:nth-child(-n+3) { background: var(--progress); }
+
+/* Notifications */
+.toast { border-radius: 22px; color: #fff; background: linear-gradient(160deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03)), rgba(3, 26, 29, 0.62); }
+.toast-close { background: rgba(255, 255, 255, 0.14); color: #fff; }
+.alert-error, .upload-error, .err-visual { background: rgba(255, 69, 58, 0.14); box-shadow: inset 0 0 0 1px rgba(255, 120, 110, 0.25); }
+
+/* 5. Content ---------------------------------------------------------------- */
+.card { border-radius: var(--r-card); }
+.list { border-radius: var(--r-card); }
+a.list-row:hover { background: rgba(255, 255, 255, 0.07); }
+.list-row .sub.err, .upload-error-head, .eyebrow-error, .badge-failed { color: var(--red); }
+
+/* Glass icon tiles (app-icon style) */
+.brand-mark, .icon-chip, .sym, .step-num {
+  color: #fff;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.08) 60%, rgba(143, 240, 234, 0.18));
+  box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.7), inset 0 -1px 1px rgba(255, 255, 255, 0.15), inset 0 0 0 0.5px rgba(255, 255, 255, 0.25), 0 8px 20px -8px rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(8px) saturate(180%);
+          backdrop-filter: blur(8px) saturate(180%);
+}
+.sym-blue   { background: linear-gradient(150deg, rgba(120, 190, 255, 0.55), rgba(40, 110, 220, 0.25)); }
+.sym-orange { background: linear-gradient(150deg, rgba(255, 180, 110, 0.55), rgba(230, 100, 30, 0.25)); }
+.sym-indigo { background: linear-gradient(150deg, rgba(170, 160, 255, 0.55), rgba(90, 80, 230, 0.25)); }
+.sym-green  { background: linear-gradient(150deg, rgba(130, 240, 180, 0.55), rgba(30, 160, 90, 0.25)); }
+.file-icon { background: linear-gradient(160deg, #0e6f75, #084c51); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35); }
+.file-icon.is-error { background: linear-gradient(160deg, #e0162a, #b8000f); }
+.step-num { box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.7), 0 8px 20px -8px rgba(0, 0, 0, 0.5); background: linear-gradient(150deg, rgba(255, 255, 255, 0.30), rgba(5, 40, 44, 0.75)); }
+
+.checklist li::before { background-color: rgba(76, 224, 138, 0.9); }
+.checklist li.miss::before { background-color: rgba(255, 255, 255, 0.12); }
+.dropzone { background: rgba(0, 18, 20, 0.22); border-color: rgba(255, 255, 255, 0.22); }
+.dropzone:hover, .dropzone.is-dragover { background: rgba(143, 240, 234, 0.08); border-color: var(--tint); }
+.dropzone.has-file { border-color: var(--green); }
+.count-pill { background: rgba(255, 255, 255, 0.12); color: #fff; }
+.avatar { background: linear-gradient(150deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.08)); box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.6); }
+
+/* Navigation */
+.nav-links { background: rgba(0, 18, 20, 0.25); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
+.nav-links a { color: #fff; }
+.nav-links a:hover { background: rgba(255, 255, 255, 0.10); }
+.nav-links a.active { background: linear-gradient(160deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.10)); box-shadow: var(--lens-shadow); }
+.nav-links a.active svg { color: var(--tint); }
+.lp-links a { color: #fff; }
+.lp-links a:hover { background: rgba(255, 255, 255, 0.10); }
+
+/* 6. Landing page ----------------------------------------------------------- */
+.hero-meta svg { color: var(--aqua); }
+.hero-meta { color: #fff; }
+.hero-meta li {                      /* small glass chips, so the wallpaper streaks never wash them out */
+  padding: 5px 12px 5px 9px; border-radius: 980px;
+  background: rgba(3, 26, 29, 0.42); box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.3), inset 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(10px) saturate(160%); backdrop-filter: blur(10px) saturate(160%);
+}
+.back-link { color: #e6fffd; }
+.stage { border-radius: 34px; }
+.st-group { background: rgba(0, 18, 20, 0.28); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
+.st-progress { background: rgba(255, 255, 255, 0.12); }
+.st-progress i, .steps-line i, .mini-bars i { background: var(--progress); box-shadow: 0 0 12px rgba(143, 240, 234, 0.45); }
+.st-checks svg, .st-rows svg { color: var(--green); }
+.staff-visual i { background: linear-gradient(0deg, #33c9c0, #8ff0ea 50%, #ffffff); opacity: 0.9; }
+.steps-line { background: rgba(255, 255, 255, 0.14); }
+.chips span { background: rgba(255, 255, 255, 0.10); box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.3); }
+.chips .miss { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.25); }
+.mini-ring { position: relative; background: none; }
+.mini-ring::before {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(#ffffff 0, #8ff0ea 45%, #33c9c0 82%, rgba(255, 255, 255, 0.12) 0);
+  -webkit-mask: radial-gradient(closest-side, transparent 78%, #000 80%);
+          mask: radial-gradient(closest-side, transparent 78%, #000 80%);
+}
+.aud-panel li::before { background-color: rgba(143, 240, 234, 0.35); }
+.principle .pw { color: rgba(255, 255, 255, 0.6); }
+.principle .pw.lit { color: #fff; }
+.principle .pw.key.lit { color: var(--tint); }
+.lp-footer { border-top-color: rgba(255, 255, 255, 0.12); }
+.scan-beam { background: linear-gradient(180deg, transparent, rgba(51, 201, 192, 0.14) 75%, rgba(51, 201, 192, 0.42)); border-bottom-color: #18a9a0; }
+
+/* Demo stage tilt follows the pointer (values from main.js) */
+.stage { transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .8s var(--spring); }
+
+/* 7. Motion ------------------------------------------------------------------- */
+@keyframes sheet-in { from { opacity: 0; transform: translateY(26px) scale(0.94); filter: blur(6px); } }
+.auth-card { animation: sheet-in .9s var(--spring) both; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(-14px) scale(0.9); } }
+.card:not(.reveal), .list, .stat-row { transition: transform .6s var(--spring), box-shadow .4s var(--ease); }
+.card.reveal.in:hover { transition: transform .6s var(--spring); }
+@media (hover: hover) {
+  .card.tile:hover, .card.pain:hover { transform: translateY(-4px) scale(1.01); }
+}
+
+/* 8. Accessibility settings ----------------------------------------------------- */
+@media (prefers-reduced-transparency: reduce) {
+  .glass, .card, .list, .stat-row, .stage, .toast, .lp-nav-inner, .nav-inner, .nav-links, .btn-ghost, .btn-gray {
+    -webkit-backdrop-filter: none !important; backdrop-filter: none !important; background: #0d3a3e !important;
+  }
+  .glass::after, .card::after, .list::after, .stat-row::after, .stage::after { display: none; }
+}
+@media (prefers-contrast: more) {
+  :root { --glass-dark: rgba(2, 20, 22, 0.7); --label-2: #e8f8f7; --separator: rgba(255, 255, 255, 0.5); }
+  .glass::after, .card::after, .list::after, .stat-row::after, .stage::after { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage { transform: none; }
+  .btn:hover { transform: none; }
+}
+
+/* 9. Phones: the floating tab bar is liquid glass too */
+@media (max-width: 700px) {
+  .nav-links {
+    background:
+      linear-gradient(160deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.03)),
+      rgba(3, 26, 29, 0.55);
+    border: 0;
+    box-shadow: var(--glass-inset), var(--glass-shadow);
+    -webkit-backdrop-filter: var(--blur);
+            backdrop-filter: var(--blur);
+  }
+  .nav-links.lg-refract {
+    -webkit-backdrop-filter: var(--blur-thin) var(--lg-filter);
+            backdrop-filter: var(--blur-thin) var(--lg-filter);
+  }
+  .card.tile:hover, .card.pain:hover { transform: none; }
+}
+
+/* Chrome treats a parent with a lingering opacity animation (fill-mode "both") as the
+   edge of the backdrop, so the glass inside it would blur nothing. "backwards" ends cleanly. */
+.lp-nav { animation-fill-mode: backwards; }
+.page > *, .hero-inner > *, .stage, .auth-card { animation-fill-mode: backwards; }
+
+/* Floating bars sit over moving content (including white headings), so they get a deeper tint */
+.lp-nav-inner, .nav-inner {
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02) 55%),
+    rgba(3, 24, 27, 0.55);
+}
+.toast.lg-refract {
+  -webkit-backdrop-filter: blur(28px) saturate(170%) var(--lg-filter);
+          backdrop-filter: blur(28px) saturate(170%) var(--lg-filter);
+}
+/* Text that sits straight on the wallpaper gets a soft shadow, so bright streaks never wash it out */
+.hero-kicker, .hero-sub, .hero-meta, .sec-head, .page-head, .principle, .list-head, .section-head, .auth-header, .lp-footer {
+  text-shadow: 0 1px 12px rgba(0, 20, 22, 0.55);
+}

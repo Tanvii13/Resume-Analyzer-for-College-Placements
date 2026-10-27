@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+{% block title %}Know What Your Resume Says{% endblock %}
+{% block body_class %}landing{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">{% endblock %}
+
+{# Where the main buttons go: dashboard if logged in, otherwise sign-up #}
+{% set start_url = url_for('dashboard') if user else url_for('register') %}
+
+{% block nav %}
+<div class="scroll-edge" aria-hidden="true"></div>
+<header class="lp-nav" id="lp-nav">
+  <div class="lp-nav-inner glass">
+    {% include "_brand.html" %}
+    <nav class="lp-links" aria-label="Page sections">
+      <a href="#how">How It Works</a>
+      <a href="#features">Features</a>
+      <a href="#for">Who It's For</a>
+    </nav>
+    <div class="lp-actions">
+      {% if user %}
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-sm">Dashboard</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="lp-login">Log In</a>
+        <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">Get Started</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+{% set check_icon %}<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="M5.8 10.4l2.8 2.8 5.6-6.2" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>{% endset %}
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="container hero-inner">
+    <p class="hero-kicker">Built for campus placements</p>
+
+    <h1 class="hero-title">
+      Upload it. Understand it.<br class="br-desktop">
+      Improve it. <mark class="hl">Get&nbsp;placed.</mark>
+    </h1>
+
+    <p class="hero-sub">
+      Resume Analyzer reads your resume the way a recruiter would. It pulls out your education,
+      skills, projects and experience, so you can see exactly what's there and what's missing.
+    </p>
+
+    <div class="hero-ctas">
+      <a href="{{ start_url }}" class="btn btn-primary">Analyze My Resume</a>
+      <a href="#how" class="btn btn-gray">See How It Works</a>
+    </div>
+
+    <ul class="hero-meta">
+      <li>{{ check_icon }} PDF &amp; DOCX</li>
+      <li>{{ check_icon }} Private by default</li>
+      <li>{{ check_icon }} Results in seconds</li>
+    </ul>
+  </div>
+
+  <!-- Product demo (content layer). main.js switches elements "on" in order by their data-at step. -->
+  <div class="container">
+    <div class="stage" id="stage" aria-label="Animation: a resume is uploaded, checked, read and split into sections">
+
+      <div class="st-col">
+        <p class="st-label">Upload</p>
+        <div class="st-group">
+          <div class="st-row">
+            <span class="file-icon">PDF</span>
+            <span class="grow"><b>alex_rivera_resume.pdf</b><small>248 KB</small></span>
+          </div>
+          <div class="st-progress"><i data-at="1"></i></div>
+        </div>
+        <ul class="st-checks">
+          <li data-at="2">{{ check_icon }} Real PDF file</li>
+          <li data-at="2">{{ check_icon }} Under 5 MB</li>
+          <li data-at="2">{{ check_icon }} Text found</li>
+        </ul>
+      </div>
+
+      <div class="st-col">
+        <p class="st-label">Read</p>
+        <div class="paper">
+          <div class="scan-beam" data-at="3"></div>
+          <div class="paper-head">
+            <b>Alex Rivera</b>
+            <span>alex.rivera@dau.ac.in · +91 98765 43210</span>
+          </div>
+          <div class="paper-sec"><h4><span class="mark" data-at="4"></span>Education</h4><i style="width:88%"></i><i style="width:64%"></i></div>
+          <div class="paper-sec"><h4><span class="mark" data-at="5"></span>Skills</h4><i style="width:92%"></i><i style="width:70%"></i></div>
+          <div class="paper-sec"><h4><span class="mark" data-at="6"></span>Projects</h4><i style="width:80%"></i><i style="width:86%"></i><i style="width:52%"></i></div>
+          <div class="paper-sec"><h4><span class="mark" data-at="7"></span>Experience</h4><i style="width:90%"></i><i style="width:60%"></i></div>
+        </div>
+      </div>
+
+      <div class="st-col">
+        <p class="st-label">Organise</p>
+        <ul class="st-group st-rows">
+          <li data-at="4">{{ check_icon }}<span class="grow"><b>Education</b><small>B.Tech ICT · 2027</small></span></li>
+          <li data-at="5">{{ check_icon }}<span class="grow"><b>Skills</b><small>Python, SQL, React +11</small></span></li>
+          <li data-at="6">{{ check_icon }}<span class="grow"><b>Projects</b><small>2 found</small></span></li>
+          <li data-at="7">{{ check_icon }}<span class="grow"><b>Experience</b><small>1 internship</small></span></li>
+        </ul>
+        <p class="st-done" data-at="8"><b>4 of 4</b> key sections found</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROBLEM ============ -->
+<section class="lp-section" id="why">
+  <div class="container">
+    <div class="sec-head reveal">
+      <h2>Most resumes go out<br><span class="dim">without a real second look.</span></h2>
+      <p>Templates only fix formatting. They don't tell you whether your resume actually works.</p>
+    </div>
+    <div class="pain-grid">
+      <article class="card pain reveal" style="--d:0">
+        <span class="sym sym-blue" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4.5 16a7.5 7.5 0 1115 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 16l3.5-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+        <h3>How strong is it?</h3>
+        <p>Students can't tell how their resume reads to a recruiter, or whether it gets past the first screen.</p>
+      </article>
+      <article class="card pain reveal" style="--d:1">
+        <span class="sym sym-orange" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6" stroke="currentColor" stroke-width="2"/><path d="M15 15l5 5M8 10.5h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+        <h3>What's missing?</h3>
+        <p>Skills a job asks for go unnoticed until after the rejection email arrives.</p>
+      </article>
+      <article class="card pain reveal" style="--d:2">
+        <span class="sym sym-indigo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+        <h3>No time to review</h3>
+        <p>Placement staff can't read hundreds of resumes one by one before every drive.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="lp-section" id="how">
+  <div class="container">
+    <div class="sec-head reveal">
+      <h2>From upload to placement-ready<br><span class="dim">in four steps.</span></h2>
+    </div>
+    <div class="steps" id="steps">
+      <div class="steps-line" aria-hidden="true"><i id="steps-fill"></i></div>
+      <article class="step reveal" style="--d:0">
+        <span class="step-num">1</span>
+        <h3>Log in &amp; upload</h3>
+        <p>Drop a PDF or DOCX. Empty, scanned, renamed or locked files get a clear reason and a one-click retry.</p>
+      </article>
+      <article class="step reveal" style="--d:1">
+        <span class="step-num">2</span>
+        <h3>Read &amp; organise</h3>
+        <p>Education, skills, projects, experience and contact details are pulled out into clean sections.</p>
+      </article>
+      <article class="step reveal" style="--d:2">
+        <span class="step-num">3</span>
+        <h3>Score with reasons</h3>
+        <p>Every part of the score explains itself, with strengths, weak spots and what to fix.</p>
+      </article>
+      <article class="step reveal" style="--d:3">
+        <span class="step-num">4</span>
+        <h3>Match &amp; improve</h3>
+        <p>Compare against a job description, see missing skills, update your resume and re-analyse.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section class="lp-section" id="features">
+  <div class="container">
+    <div class="sec-head reveal">
+      <h2>Everything you need<br><span class="dim">before placement season.</span></h2>
+    </div>
+
+    <div class="bento">
+      <article class="card tile tile-wide reveal" style="--d:0">
+        <h3>Reads your resume like a recruiter</h3>
+        <p>Finds each section even when headings differ, like "Technical Skills" or "Academic Projects".</p>
+        <div class="tile-visual chips" aria-hidden="true">
+          <span>Education</span><span>Skills</span><span>Projects</span><span>Experience</span><span>Certifications</span>
+        </div>
+      </article>
+
+      <article class="card tile reveal" style="--d:1">
+        <h3>Clear errors, instant retry</h3>
+        <p>No vague "upload failed". You're told exactly what's wrong.</p>
+        <div class="tile-visual err-visual" aria-hidden="true">
+          <b>Upload failed</b>
+          <span>Looks like a scanned image. Upload a text-based PDF.</span>
+        </div>
+      </article>
+
+      <article class="card tile reveal" style="--d:0">
+        <h3>Private by default</h3>
+        <p>Hashed passwords, private file storage and role-based access. Only you and authorised staff see your resume.</p>
+        <div class="tile-visual" aria-hidden="true">
+          <span class="sym sym-green sym-lg"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8 10V7.5a4 4 0 018 0V10" stroke="currentColor" stroke-width="2"/></svg></span>
+        </div>
+      </article>
+
+      <article class="card tile tile-wide reveal" style="--d:1">
+        <h3>A score that explains itself</h3>
+        <p>Not just a number. See how each part of your resume contributes, and why.</p>
+        <div class="tile-visual score-visual" aria-hidden="true">
+          <div class="mini-ring"><b>82</b></div>
+          <div class="mini-bars">
+            <span><em>Sections</em><i style="--w:.9"></i></span>
+            <span><em>Content</em><i style="--w:.76"></i></span>
+            <span><em>Skills</em><i style="--w:.85"></i></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="card tile tile-wide reveal" style="--d:0">
+        <h3>Match against any job description</h3>
+        <p>Paste a role and see which of its skills you have, and which you still need.</p>
+        <div class="tile-visual chips" aria-hidden="true">
+          <span class="ok">{{ check_icon }} Python</span><span class="ok">{{ check_icon }} SQL</span><span class="ok">{{ check_icon }} Git</span>
+          <span class="ok">{{ check_icon }} REST APIs</span><span class="miss">+ AWS</span><span class="miss">+ Docker</span>
+        </div>
+      </article>
+
+      <article class="card tile reveal" style="--d:1">
+        <h3>Placement staff view</h3>
+        <p>Summaries across students, so counsellors can help those who need it most.</p>
+        <div class="tile-visual staff-visual" aria-hidden="true">
+          <i style="--h:.5"></i><i style="--h:.8"></i><i style="--h:.65"></i><i style="--h:1"></i><i style="--h:.72"></i>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHO IT'S FOR (segmented control, pure CSS) ============ -->
+<section class="lp-section" id="for">
+  <div class="container">
+    <div class="sec-head reveal">
+      <h2>One tool,<br><span class="dim">three kinds of people.</span></h2>
+    </div>
+
+    <div class="audience reveal">
+      <div class="role-tabs audience-tabs" role="radiogroup" aria-label="Choose an audience">
+        <span class="role-indicator" aria-hidden="true"></span>
+        <label class="role-tab"><input type="radio" name="aud" value="students" checked><span>Students</span></label>
+        <label class="role-tab"><input type="radio" name="aud" value="staff"><span>Placement Staff</span></label>
+        <label class="role-tab"><input type="radio" name="aud" value="recruiters"><span>Recruiters</span></label>
+      </div>
+
+      <div class="aud-panels">
+        <div class="aud-panel card" data-for="students">
+          <h3>Know exactly what to fix before you apply.</h3>
+          <ul>
+            <li>See your resume broken into the sections recruiters read first</li>
+            <li>Find out which sections are missing or empty</li>
+            <li>Upload again after every edit and compare</li>
+          </ul>
+        </div>
+        <div class="aud-panel card" data-for="staff">
+          <h3>Help every student, not just the ones who ask.</h3>
+          <ul>
+            <li>Summaries instead of reading every resume line by line</li>
+            <li>Spot common skill gaps across a batch</li>
+            <li>Role-based access keeps student data protected</li>
+          </ul>
+        </div>
+        <div class="aud-panel card" data-for="recruiters">
+          <h3>Find relevant skill matches faster.</h3>
+          <ul>
+            <li>Structured sections instead of free-form PDFs</li>
+            <li>Matching and missing skills against your job description</li>
+            <li>Scores support your judgement. They never replace it.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRINCIPLE (words light up as you scroll) ============ -->
+<section class="lp-section principle-section">
+  <div class="container">
+    <p class="principle" id="principle">Scores support human decisions. They never replace them. Every number comes with a reason, so students and staff stay in control.</p>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="lp-section">
+  <div class="container">
+    <div class="cta card reveal">
+      <h2>See your resume<br>the way a <mark class="hl hl-static">recruiter</mark> does.</h2>
+      <p>Upload a PDF or DOCX and get it organised into clear sections in seconds.</p>
+      <div class="hero-ctas">
+        <a href="{{ start_url }}" class="btn btn-primary">Upload Your Resume</a>
+        {% if not user %}<a href="{{ url_for('login') }}" class="btn btn-gray">I Have an Account</a>{% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+<footer class="lp-footer">
+  <div class="container lp-footer-inner">
+    {% include "_brand.html" %}
+    <p class="muted small">IT314 Software Engineering · Group 26</p>
+    <nav class="lp-footer-links small" aria-label="Footer">
+      <a href="#how">How It Works</a><a href="#features">Features</a><a href="{{ url_for('login') }}">Log In</a>
+    </nav>
+  </div>
+</footer>
+{% endblock %}

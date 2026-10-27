@@ -1,0 +1,29 @@
+{# Floating glass bar. On phones the links become a glass tab bar at the bottom of the screen.
+   Tabs only navigate (Apple: "tabs navigate, they don't act"), so uploading lives on the page itself. #}
+<div class="scroll-edge" aria-hidden="true"></div>
+<header class="app-nav">
+  <div class="nav-inner glass">
+    {% include "_brand.html" %}
+    <div class="nav-user">
+      <span class="role-pill">{{ roles[user.role] }}</span>
+      <span class="avatar" title="{{ user.name }}" aria-hidden="true">{{ user.name[:1] }}</span>
+      <a href="{{ url_for('logout') }}" class="nav-logout">Log Out</a>
+    </div>
+  </div>
+
+  <!-- Outside the blurred bar on purpose: a blurred parent would trap the phone tab bar at the top -->
+  <nav class="nav-links" aria-label="Main">
+      <a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}" {% if request.endpoint == 'dashboard' %}aria-current="page"{% endif %}>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10.5L12 4l8 6.5V19a1 1 0 01-1 1h-4.5v-5.5h-5V20H5a1 1 0 01-1-1v-8.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        Dashboard
+      </a>
+      <a href="{{ url_for('dashboard') }}#resumes" class="{% if request.endpoint == 'view_resume' %}active{% endif %}" {% if request.endpoint == 'view_resume' %}aria-current="page"{% endif %}>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3.5h6.5L19 8v11.5a1 1 0 01-1 1H8a1 1 0 01-1-1v-15a1 1 0 011-1z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 3.5V8h5M10 12.5h6M10 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Resumes
+      </a>
+      <a href="{{ url_for('index') }}#how">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M9.6 9.6a2.5 2.5 0 114.1 1.9c-.9.7-1.7 1.2-1.7 2.4M12 16.8v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Help
+      </a>
+    </nav>
+</header>

@@ -1,0 +1,6 @@
+Flask>=3.0
+pypdf>=4.0
+python-docx>=1.1
+
+# for running tests
+pytest>=8.0

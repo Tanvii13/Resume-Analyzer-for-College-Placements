@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Resume Analyzer helps students understand and improve their resumes before placement season.">
+  <meta name="theme-color" content="#03060d">
+  <meta name="color-scheme" content="dark">
+  <title>{% block title %}Resume Analyzer{% endblock %} · Resume Analyzer</title>
+  <!-- Apple devices use San Francisco (the system font). Inter is a close match for everyone else. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block head %}{% endblock %}
+  <!-- Liquid Glass layer: loaded last so it re-skins everything above -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/liquid.css') }}">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <!-- Wallpaper: the image the liquid glass blurs and bends -->
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  {% block nav %}{% endblock %}
+
+  <!-- Notifications -->
+  {% with messages = get_flashed_messages(with_categories=true, category_filter=['success', 'error']) %}
+    {% if messages %}
+      <div class="toast-stack">
+        {% for category, message in messages %}
+          <div class="toast glass toast-{{ category }}" role="{{ 'alert' if category == 'error' else 'status' }}">
+            <span>{{ message }}</span>
+            <button type="button" class="toast-close" aria-label="Dismiss notification">✕</button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main>{% block content %}{% endblock %}</main>
+
+  {% block footer %}{% endblock %}
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
