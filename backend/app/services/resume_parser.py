@@ -14,6 +14,7 @@ from typing import Optional, Tuple
 from zipfile import BadZipFile
 
 from docx import Document
+from docx.oxml.ns import qn
 from docx.table import Table
 from docx.text.paragraph import Paragraph
 from pydantic import BaseModel
@@ -274,7 +275,7 @@ def validate_resume_structure(file_bytes: bytes, extension: str) -> None:
             raise InvalidFileError("The file does not appear to be a valid PDF.")
 
         try:
-            reader = PdfReader(io.BytesIO(file_bytes), strict=True)
+            reader = PdfReader(io.BytesIO(file_bytes), strict=False)
             if reader.is_encrypted:
                 try:
                     res = reader.decrypt("")
@@ -335,7 +336,7 @@ def extract_text_from_pdf(file_bytes: bytes) -> Tuple[str, int]:
         Tuple of (extracted_text, page_count).
     """
     try:
-        reader = PdfReader(io.BytesIO(file_bytes), strict=True)
+        reader = PdfReader(io.BytesIO(file_bytes), strict=False)
     except Exception as exc:
         raise CorruptedFileError(
             "The document is corrupted or unreadable. Please upload another file."
@@ -392,6 +393,33 @@ def extract_text_from_pdf(file_bytes: bytes) -> Tuple[str, int]:
     return full_text, page_count
 
 
+_W_TXBX_CONTENT = qn("w:txbxContent")
+_MC_FALLBACK = "{http://schemas.openxmlformats.org/markup-compatibility/2006}Fallback"
+
+
+def _top_level_text_boxes(elem) -> list:
+    """
+    Return the text-box bodies (w:txbxContent) anchored inside a paragraph.
+
+    Word stores each modern text box twice: once in mc:Choice and once as a
+    legacy VML copy in mc:Fallback. Fallback copies are skipped to avoid
+    duplicated text. Nested text boxes are skipped here because they are
+    reached when their parent text box is processed.
+    """
+    boxes = []
+    for box in elem.iter(_W_TXBX_CONTENT):
+        ancestor = box.getparent()
+        skip = False
+        while ancestor is not None and ancestor is not elem:
+            if ancestor.tag in (_MC_FALLBACK, _W_TXBX_CONTENT):
+                skip = True
+                break
+            ancestor = ancestor.getparent()
+        if not skip:
+            boxes.append(box)
+    return boxes
+
+
 def _extract_from_docx_element(elem, doc: Document, parts: list[str]) -> None:
     """Helper to recursively extract text from DOCX elements preserving document order."""
     tag = elem.tag
@@ -400,6 +428,11 @@ def _extract_from_docx_element(elem, doc: Document, parts: list[str]) -> None:
         p_text = normalize_whitespace(para.text)
         if p_text:
             parts.append(p_text)
+        # Text boxes are common in resume templates (sidebars, contact blocks)
+        # and are not included in Paragraph.text.
+        for box in _top_level_text_boxes(elem):
+            for inner in box.iterchildren():
+                _extract_from_docx_element(inner, doc, parts)
     elif tag.endswith("tbl"):
         table = Table(elem, doc)
         for row in table.rows:
@@ -423,6 +456,30 @@ def _extract_from_docx_element(elem, doc: Document, parts: list[str]) -> None:
                 _extract_from_docx_element(child, doc, parts)
 
 
+def _extract_header_footer_text(doc: Document, kind: str) -> list[str]:
+    """
+    Extract text from every section's header or footer ("header" / "footer").
+
+    Includes paragraphs, tables, and text boxes. Lines repeated across
+    sections are kept once. Failures here never block body extraction.
+    """
+    lines: list[str] = []
+    try:
+        for section in doc.sections:
+            part = getattr(section, kind)
+            if part is None or part.is_linked_to_previous:
+                continue
+            found: list[str] = []
+            for child in part._element.iterchildren():
+                _extract_from_docx_element(child, doc, found)
+            for line in found:
+                if line not in lines:
+                    lines.append(line)
+    except Exception:
+        pass
+    return lines
+
+
 def extract_text_from_docx(file_bytes: bytes) -> Tuple[str, None]:
     """
     Extract readable text from a DOCX document.
@@ -440,17 +497,8 @@ def extract_text_from_docx(file_bytes: bytes) -> Tuple[str, None]:
 
     parts: list[str] = []
 
-    # Extract header paragraphs (where contact info and name often reside)
-    try:
-        for section in doc.sections:
-            header = section.header
-            if header and not header.is_linked_to_previous:
-                for p in header.paragraphs:
-                    p_text = normalize_whitespace(p.text)
-                    if p_text and p_text not in parts:
-                        parts.append(p_text)
-    except Exception:
-        pass
+    # Extract headers first (contact info and name often reside there)
+    parts.extend(_extract_header_footer_text(doc, "header"))
 
     try:
         # Preserve document reading order by iterating through body elements
@@ -481,6 +529,11 @@ def extract_text_from_docx(file_bytes: bytes) -> Tuple[str, None]:
             raise ExtractionFailureError(
                 "An unexpected error occurred while parsing the DOCX document."
             ) from exc
+
+    # Footers go last; some templates place links or contact details there
+    for line in _extract_header_footer_text(doc, "footer"):
+        if line not in parts:
+            parts.append(line)
 
     full_text = "\n\n".join(parts).strip()
     if not has_readable_text(full_text):
