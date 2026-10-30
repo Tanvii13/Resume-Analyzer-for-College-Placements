@@ -3,6 +3,9 @@ erDiagram
     ROLES ||--o{ USER_ROLES : assigned
     USERS ||--o{ RESUMES : uploads
     RESUMES ||--o{ RESUME_SECTIONS : contains
+    RESUMES ||--o{ RESUME_SKILLS : has
+    RESUMES ||--o{ RESUME_ANALYSES : analyzed_by
+    SKILLS ||--o{ RESUME_SKILLS : tagged_in
 
     USERS {
         uuid id PK
@@ -39,4 +42,34 @@ erDiagram
         varchar section_name
         text content
         timestamptz created_at
+    }
+    SKILLS {
+        uuid id PK
+        varchar name UK
+        timestamptz created_at
+    }
+    RESUME_SKILLS {
+        uuid resume_id PK, FK
+        uuid skill_id PK, FK
+        varchar source
+        numeric confidence
+        timestamptz created_at
+    }
+    RESUME_ANALYSES {
+        uuid id PK
+        uuid resume_id FK
+        varchar status
+        numeric overall_score
+        numeric skills_score
+        numeric projects_score
+        numeric education_score
+        numeric experience_score
+        numeric formatting_score
+        numeric placement_readiness_score
+        text strengths
+        text weaknesses
+        text recommendations
+        text error_message
+        timestamptz started_at
+        timestamptz completed_at
     }
