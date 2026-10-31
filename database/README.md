@@ -61,17 +61,21 @@ Applies all tables in one shot:
 psql -U postgres -d resume_analyzer -f database/schema.sql
 ```
 
-### Incremental migration (Sprint 2 only)
+### Incremental migrations (sprint by sprint)
 
-If Sprint 1 is already applied, run only the Sprint 2 migration:
+Run migration files in order on an existing database:
 
 ```bash
+# Sprint 1 — run first
+psql -U postgres -d resume_analyzer -f database/migration/sprint1_schema.sql
+
+# Sprint 2 — run after Sprint 1
 psql -U postgres -d resume_analyzer -f database/migration/sprint2_schema.sql
 ```
 
 Replace `postgres` with your PostgreSQL username if different.
 
-> **Note:** Both files use `CREATE TABLE IF NOT EXISTS` and `ON CONFLICT DO NOTHING`, so they are safe to re-run.
+> **Note:** All files use `CREATE TABLE IF NOT EXISTS` and `ON CONFLICT DO NOTHING`, so they are safe to re-run in any order without causing errors.
 
 ---
 
