@@ -5,6 +5,7 @@ Provides modular text preprocessing, section classification, entity extraction,
 skill normalization, and candidate profile aggregation.
 """
 
+from app.nlp.extractors import BaseExtractor, ContactExtractor, ContactInfo
 from app.nlp.preprocessing import (
     BlockType,
     LineType,
@@ -45,4 +46,8 @@ __all__ = [
     "ClassifiedSection",
     "SectionMap",
     "CANONICAL_SECTIONS",
+    # Entity Extractors (Module C)
+    "BaseExtractor",
+    "ContactExtractor",
+    "ContactInfo",
 ]
