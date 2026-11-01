@@ -12,16 +12,9 @@ class ExtractionData(BaseModel):
     projects: list[Any] = Field(...)
     experience: list[Any] = Field(...)
 
-
-from typing import Any
-
-from pydantic import BaseModel, ConfigDict, Field
-
-
-class ExtractionData(BaseModel):
+class SkillExtractionResult(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    skills: list[Any] = Field(...)
-    education: list[Any] = Field(...)
-    projects: list[Any] = Field(...)
-    experience: list[Any] = Field(...)
+    technical_skills: list[str] = Field(default_factory=list)
+    soft_skills: list[str] = Field(default_factory=list)
+    total_count: int = Field(ge=0)
