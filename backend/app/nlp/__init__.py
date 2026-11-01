@@ -18,8 +18,16 @@ from app.nlp.preprocessing import (
     segment_text,
     split_bullet,
 )
+from app.nlp.sections import (
+    CANONICAL_SECTIONS,
+    ClassifiedSection,
+    SectionMap,
+    classify_heading,
+    classify_sections,
+)
 
 __all__ = [
+    # Preprocessing (Module A)
     "normalize_text",
     "normalize_line",
     "is_bullet",
@@ -31,4 +39,10 @@ __all__ = [
     "TextLine",
     "LineType",
     "BlockType",
+    # Section Classification (Module B)
+    "classify_sections",
+    "classify_heading",
+    "ClassifiedSection",
+    "SectionMap",
+    "CANONICAL_SECTIONS",
 ]
