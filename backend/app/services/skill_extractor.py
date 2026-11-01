@@ -2,7 +2,7 @@
 import json
 import re
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 
 class SkillExtractor:
@@ -68,7 +68,7 @@ class SkillExtractor:
 
         return []
 
-    def extract_skills(self, text: str) -> Dict[str, List[str]]:
+        def extract_skills(self, text: str) -> Dict[str, Union[List[str], int]]:
         """Extract technical and soft skills from resume text."""
 
         if not isinstance(text, str):
