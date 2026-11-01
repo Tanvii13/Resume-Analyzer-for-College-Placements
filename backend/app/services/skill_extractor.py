@@ -22,8 +22,16 @@ class SkillExtractor:
 
         self.taxonomy = self._load_taxonomy(taxonomy_path)
 
+        # Map alternative skill names to canonical skill names.
+        self.skill_aliases = {
+            "javascript": ["js"],
+            "postgresql": ["postgres", "postgre"],
+            "kubernetes": ["k8s"],
+            "react": ["reactjs"]
+        }
+
     def _load_taxonomy(self, path) -> dict:
-        """Load skills from the JSON taxonomy."""
+        """Load and validate the skills taxonomy."""
 
         with open(path, "r", encoding="utf-8") as file:
             taxonomy = json.load(file)
@@ -31,10 +39,33 @@ class SkillExtractor:
         if not isinstance(taxonomy, dict):
             raise ValueError("Invalid skills taxonomy format.")
 
+        if not isinstance(taxonomy.get("technical_skills"), (dict, list)):
+            raise ValueError("Invalid technical skills taxonomy.")
+
+        if not isinstance(taxonomy.get("soft_skills"), list):
+            raise ValueError("Invalid soft skills taxonomy.")
+
         return taxonomy
 
+    def _get_technical_skills(self) -> List[str]:
+        """Get technical skills from the taxonomy."""
+
+        technical = self.taxonomy.get("technical_skills", [])
+
+        if isinstance(technical, list):
+            return technical
+
+        skills = []
+
+        if isinstance(technical, dict):
+            for skill_list in technical.values():
+                if isinstance(skill_list, list):
+                    skills.extend(skill_list)
+
+        return skills
+
     def _is_skill_present(self, skill: str, text: str) -> bool:
-        """Match complete skill names."""
+        """Match complete skill names using word boundaries."""
 
         escaped_skill = re.escape(skill)
         escaped_skill = escaped_skill.replace(r"\ ", r"\s+")
@@ -45,31 +76,28 @@ class SkillExtractor:
             + r"(?![A-Za-z0-9#+])"
         )
 
-        return bool(
-            re.search(pattern, text, re.IGNORECASE)
+        return bool(re.search(pattern, text, re.IGNORECASE))
+
+    def _is_skill_or_alias_present(self, skill: str, text: str) -> bool:
+        """Check both canonical skill names and their aliases."""
+
+        aliases = self.skill_aliases.get(skill.lower(), [])
+
+        if self._is_skill_present(skill, text):
+            return True
+
+        return any(
+            self._is_skill_present(alias, text)
+            for alias in aliases
         )
 
-    def _get_technical_skills(self) -> List[str]:
-        """Get technical skills from the taxonomy."""
-
-        technical = self.taxonomy.get("technical_skills", [])
-
-        if isinstance(technical, list):
-            return technical
-
-        if isinstance(technical, dict):
-            skills = []
-
-            for skill_list in technical.values():
-                if isinstance(skill_list, list):
-                    skills.extend(skill_list)
-
-            return skills
-
-        return []
-
-        def extract_skills(self, text: str) -> Dict[str, Union[List[str], int]]:
-        """Extract technical and soft skills from resume text."""
+    def extract_skills(
+        self, text: str
+    ) -> Dict[str, Union[List[str], int]]:
+        """
+        Extract technical and soft skills from resume text.
+        Aliases are returned using their canonical skill names.
+        """
 
         if not isinstance(text, str):
             raise TypeError("Resume text must be a string.")
@@ -87,14 +115,17 @@ class SkillExtractor:
         found_technical = []
         found_soft = []
 
+        # Extract technical skills and normalize aliases.
         for skill in technical_skills:
-            if self._is_skill_present(skill, text):
+            if self._is_skill_or_alias_present(skill, text):
                 found_technical.append(skill)
 
+        # Extract soft skills.
         for skill in soft_skills:
-            if self._is_skill_present(skill, text):
+            if self._is_skill_or_alias_present(skill, text):
                 found_soft.append(skill)
 
+        # Remove duplicate skills while preserving order.
         found_technical = list(dict.fromkeys(found_technical))
         found_soft = list(dict.fromkeys(found_soft))
 
