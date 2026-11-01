@@ -1,114 +1,45 @@
 # Resume Analyzer for College Placements — Backend
 
-## 1. Project Overview
+## Overview
+The backend powers resume processing and analysis for college placement preparation. It handles secure resume access, text extraction, and structured resume information processing.
 
-The backend of the **Resume Analyzer for College Placements** project handles user authentication, resume uploads, file validation, and resume text extraction.
+## Sprint Progress
 
-It provides the foundation for analyzing resumes and supporting students during the college placement process.
+- **Sprint 1 — Foundation:** Authentication, resume upload, file validation, and text extraction.
+- **Sprint 2 — Information Extraction:** NLP integration, skill extraction and normalization, structured output validation, and API integration.
+- **Upcoming Sprints:** Resume scoring, feedback, job matching, and other planned features.
 
-## 2. Sprint 1 Scope
+*Features are implemented incrementally; see the current code and sprint tasks for implementation status.*
 
-The backend focuses on the following user stories:
+## Technology Stack
+- Python
+- FastAPI
+- PostgreSQL
+- Pydantic
+- pytest
+- Git and GitHub
 
-- **US-01 — Account Access:** Handle user authentication and account-related operations.
-- **US-02 — Resume Upload:** Accept resume files and validate uploaded documents.
-- **US-03 — Resume Parsing:** Extract readable text from supported resume files.
-- **US-04 — Error Handling:** Handle invalid or unreadable files and return appropriate error messages.
+## Key API
+- `POST /resumes/{resume_id}/extract` — Extract structured information from a resume.
 
-Advanced resume scoring, skill-gap analysis, and job-description matching are planned for later development stages.
+*The endpoint and its behavior depend on the current backend implementation.*
 
-## 3. Technology Stack
+## Setup
+1. Install Python and the project dependencies.
+2. Configure the required environment variables and database.
+3. Run the backend using the project's configured entry point.
+4. Open `/docs` on the local server to explore the API.
 
-- **Language:** Python
-- **Backend Framework:** FastAPI
-- **Database:** PostgreSQL
-- **Testing:** pytest
-- **Version Control:** Git and GitHub
+Refer to the project configuration and dependency files for the exact setup and run commands.
 
-## 4. Project Structure
+## Testing
+Run the project's configured test suite with pytest.
 
-```text
-backend/
-├── app/
-│   ├── routers/
-│   ├── services/
-│   └── database.py
-├── tests/
-├── main.py
-├── requirements.txt
-└── README.md
-```
+## Security
+- Verify user authentication and resume ownership.
+- Validate uploaded files and extracted data.
+- Keep credentials and personal resume information secure.
+- Never commit secrets or private resumes.
 
-The routers handle API requests, services contain application logic, and the tests help verify backend functionality.
-
-## 5. Setup and Installation
-
-### Prerequisites
-
-- Python installed
-- PostgreSQL configured if required by the application
-- Git installed
-
-### Install Dependencies
-
-From the repository root, run:
-
-```bash
-python -m pip install -r backend/requirements.txt
-```
-
-### Run the Backend
-
-From the repository root, run:
-
-```bash
-python -m uvicorn backend.main:app --reload
-```
-
-Once the server starts, open the following URL to access the FastAPI documentation:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-If the project uses a different entry point or configuration, adjust the command accordingly.
-
-## 6. Resume Upload and Validation
-
-The resume-processing workflow is designed to:
-
-- Accept supported resume formats, such as PDF and DOCX.
-- Validate uploaded files before processing.
-- Extract readable text from supported documents.
-- Handle unsupported, empty, or unreadable files with appropriate errors.
-
-File-size limits, accepted formats, and error responses should follow the actual backend implementation.
-
-## 7. Testing
-
-Run the backend tests from the repository root:
-
-```bash
-python -m pytest backend/tests -v
-```
-
-Review the test results to confirm which authentication, upload, parsing, and error-handling cases pass.
-
-## 8. Security and Data Privacy
-
-- Never store plain-text passwords; use secure password hashing.
-- Validate uploaded files before processing them.
-- Do not commit passwords, API keys, database credentials, or other secrets to GitHub.
-- Store uploaded resumes securely and restrict access to authorized users.
-- Avoid exposing sensitive resume information in application logs or error messages.
-
-## 9. Future Enhancements
-
-Planned enhancements may include:
-
-- Resume scoring with explainable feedback
-- Skill extraction and missing-skill identification
-- Resume comparison with job descriptions
-- Additional placement-support features
-
-
+## Development
+Work on the appropriate feature branch, test changes, and open a pull request into the intended target branch.
