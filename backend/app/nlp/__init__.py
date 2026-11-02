@@ -26,6 +26,18 @@ from app.nlp.sections import (
     classify_heading,
     classify_sections,
 )
+from app.nlp.taxonomy import (
+    get_all_canonical_skills,
+    get_all_categories,
+    get_canonical_skill,
+    get_skill_category,
+    get_skills_by_category,
+    is_valid_skill,
+    load_degrees,
+    load_skill_aliases,
+    load_skills_taxonomy,
+    resolve_degree,
+)
 
 __all__ = [
     # Preprocessing (Module A)
@@ -50,4 +62,15 @@ __all__ = [
     "BaseExtractor",
     "ContactExtractor",
     "ContactInfo",
+    # Skill & Degree Taxonomy (Module E1)
+    "load_skills_taxonomy",
+    "load_skill_aliases",
+    "load_degrees",
+    "get_canonical_skill",
+    "is_valid_skill",
+    "get_skill_category",
+    "get_skills_by_category",
+    "get_all_canonical_skills",
+    "get_all_categories",
+    "resolve_degree",
 ]
