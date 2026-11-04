@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Create Account{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block nav %}
+<header class="auth-header">
+  {% include "_brand.html" %}
+  <span class="tagline">Upload it, understand it, improve it, get placed.</span>
+  <a href="{{ url_for('index') }}" class="auth-back">Home</a>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="auth-wrap">
+  <form class="auth-card glass glass-thick" method="POST" action="{{ url_for('register') }}" id="register-form" novalidate>
+    <div class="auth-heading center">
+      <h1 class="display-title">Create your account</h1>
+      <p>Build your verified campus resume profile.</p>
+    </div>
+
+    {% if error %}
+      <div class="alert alert-error" role="alert">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2.5a9.5 9.5 0 100 19 9.5 9.5 0 000-19zm1 14h-2v-2h2v2zm0-4h-2v-6h2v6z"/></svg>
+        <span>{{ error }}</span>
+      </div>
+    {% endif %}
+
+    <div class="field">
+      <label for="name">Full Name</label>
+      <div class="input-wrap"><input id="name" name="name" type="text" placeholder="Alex Rivera" value="{{ name or '' }}" autocomplete="name" required></div>
+    </div>
+
+    <div class="field">
+      <div class="label-row"><label for="email">University Email</label><span class="hint-accent">Your college address</span></div>
+      <div class="input-wrap"><input id="email" name="email" type="email" placeholder="name@dau.ac.in" value="{{ email or '' }}" autocomplete="email" required></div>
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <div class="input-wrap">
+        <input id="password" name="password" type="password" placeholder="At least 8 characters" autocomplete="new-password" minlength="8" required>
+        <button type="button" class="toggle-password" aria-label="Show password" data-target="password">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
+        </button>
+      </div>
+      <div class="strength">
+        <small id="strength-text" class="muted">At least 8 characters</small>
+        <div class="strength-bars" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="confirm">Confirm Password</label>
+      <div class="input-wrap">
+        <input id="confirm" name="confirm" type="password" placeholder="Re-enter password" autocomplete="new-password" required>
+        <button type="button" class="toggle-password" aria-label="Show password" data-target="confirm">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
+        </button>
+      </div>
+      <small id="match-hint" class="match-hint" aria-live="polite"></small>
+    </div>
+
+    <p class="form-note">Sign-up creates a <strong>Student</strong> account. Placement officer and admin accounts are created by the placement cell.</p>
+
+    <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+    <p class="auth-switch">Already have an account? <a href="{{ url_for('login') }}">Log In</a></p>
+  </form>
+</section>
+{% endblock %}

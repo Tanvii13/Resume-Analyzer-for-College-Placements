@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block nav %}{% include "_app_nav.html" %}{% endblock %}
+
+{% block content %}
+{% set check_icon %}<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="M5.8 10.4l2.8 2.8 5.6-6.2" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>{% endset %}
+{% set fail_icon %}<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="M7 7l6 6M13 7l-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>{% endset %}
+{% set chevron %}<svg class="chevron" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M5 2.5L9.5 7 5 11.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>{% endset %}
+
+<div class="container page">
+
+  <section class="page-head">
+    <h1>Welcome, {{ user.name.split()[0] }}</h1>
+    <p>
+      {% if user.role == 'student' %}Upload your resume to extract structured sections and prepare for placement rounds.
+      {% else %}Placement staff tools are planned for a later sprint.{% endif %}
+    </p>
+  </section>
+
+  {% if user.role != 'student' %}
+    <!-- Officer/Admin: not part of Sprint 1 -->
+    <section class="card empty-state">
+      <div class="icon-chip" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 20h16M7 16V10M12 16V5M17 16v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <h3>Staff dashboard coming soon</h3>
+      <p>Student summaries and skill-gap reports for placement staff are planned for Sprints 4–5.</p>
+    </section>
+  {% else %}
+
+  <div class="split">
+    <!-- US-02: upload (content layer: a solid card) -->
+    <section class="card" id="upload">
+      <form class="upload-left" method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data" id="upload-form">
+        <h2>Upload a resume</h2>
+        <p>PDF or DOCX. It's read and organised into education, skills, projects and experience.</p>
+
+        <!-- US-04: clear reason + retry when a file can't be processed -->
+        {% with errors = get_flashed_messages(category_filter=['upload-error']) %}
+          {% if errors %}
+            {% set code, message = errors[-1].split('|', 1) %}
+            <div class="upload-error" role="alert">
+              <div class="upload-error-head">{{ fail_icon }} Upload failed <code class="err-code">{{ code }}</code></div>
+              <p>{{ message }}</p>
+              <p class="muted">Fix the file, then choose it again below to retry.</p>
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <label class="dropzone" id="dropzone">
+          <input type="file" name="resume" id="resume-input" accept=".pdf,.docx" class="sr-only">
+          <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3.5h6.5L19 8v11.5a1 1 0 01-1 1H8a1 1 0 01-1-1v-15a1 1 0 011-1z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3.5V8h5M13 17.5v-6M10.5 14L13 11.5l2.5 2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="dropzone-text" id="dropzone-text">Choose a file or drag it here</span>
+          <small>PDF or DOCX · up to {{ max_mb }} MB · text-based, not scanned</small>
+        </label>
+
+        <div class="upload-actions">
+          <button type="submit" class="btn btn-primary" id="upload-btn" disabled>Upload &amp; Parse</button>
+          <span class="status-dot">Parser ready</span>
+        </div>
+        <p class="privacy-note">Your resume is stored privately and visible only to you and authorised placement staff.</p>
+      </form>
+    </section>
+
+    <!-- Side panel: an inset grouped list -->
+    <aside>
+      {% if latest %}
+        <p class="list-head">Latest Resume</p>
+        <div class="list">
+          <a class="list-row has-icon" href="{{ url_for('view_resume', resume_id=latest.id) }}">
+            <span class="file-icon">{{ latest.filename.rsplit('.', 1)[1]|upper }}</span>
+            <span class="grow"><span class="title truncate">{{ latest.filename }}</span><span class="sub">{{ latest.parsed.word_count }} words{% if latest.parsed.pages %} · {{ latest.parsed.pages }} page{{ 's' if latest.parsed.pages > 1 }}{% endif %}</span></span>
+            {{ chevron }}
+          </a>
+        </div>
+        {% set found = latest.parsed.sections|map(attribute='title')|list %}
+        <p class="list-head" style="margin-top: 20px">Key Sections</p>
+        <div class="list" style="padding: 4px 18px">
+          <ul class="checklist">
+            {% for title in ['Education', 'Skills', 'Projects', 'Experience'] %}
+              <li class="{{ 'ok' if title in found else 'miss' }}">{{ title }}{% if title not in found %} — not found{% endif %}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% else %}
+        <p class="list-head">Before You Upload</p>
+        <div class="list" style="padding: 4px 18px">
+          <ul class="checklist">
+            <li>PDF or DOCX file</li>
+            <li>Smaller than {{ max_mb }} MB</li>
+            <li>Text-based (exported, not scanned)</li>
+            <li>No password protection</li>
+          </ul>
+        </div>
+        <p class="form-note" style="margin: 10px 18px 0">Clear headings like Education, Skills and Projects make each section easy to find.</p>
+      {% endif %}
+    </aside>
+  </div>
+
+  <!-- Upload history: inset grouped list rows -->
+  <section id="resumes">
+    <div class="section-head">
+      <h2>Resumes <span class="count-pill">{{ resumes|length }}</span></h2>
+      <span class="muted small">Most recent first</span>
+    </div>
+
+    {% if resumes %}
+      <div class="list">
+        {% for r in resumes %}
+          <div class="list-row has-icon">
+            <span class="file-icon {% if r.status == 'Failed' %}is-error{% endif %}">{{ r.filename.rsplit('.', 1)[1][:4]|upper if '.' in r.filename else '?' }}</span>
+            <span class="grow">
+              <span class="title">{{ r.filename }}</span>
+              {% if r.status == 'Failed' %}
+                <span class="sub err">{{ r.error_message }}</span>
+              {% else %}
+                <span class="sub">{{ r.size }} · {{ r.parsed.sections|length }} sections · {{ r.uploaded }}</span>
+              {% endif %}
+            </span>
+            {% if r.status == 'Parsed' %}
+              <span class="badge badge-parsed">{{ check_icon }} Parsed</span>
+              <a class="btn btn-gray btn-sm" href="{{ url_for('view_resume', resume_id=r.id) }}">View</a>
+            {% else %}
+              <span class="badge badge-failed">{{ fail_icon }} Failed</span>
+              <a class="btn btn-gray btn-sm" href="#upload" data-retry>Retry</a>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="card empty-state">
+        <div class="icon-chip" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M8 3.5h6.5L19 8v11.5a1 1 0 01-1 1H8a1 1 0 01-1-1v-15a1 1 0 011-1z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 3.5V8h5M10 12.5h6M10 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <h3>No resumes yet</h3>
+        <p>Upload your first resume to see it organised into sections you can review.</p>
+        <a href="#upload" class="btn btn-primary btn-sm" data-retry>Upload a Resume</a>
+      </div>
+    {% endif %}
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

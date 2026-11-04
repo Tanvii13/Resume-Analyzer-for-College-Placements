@@ -1,0 +1,11 @@
+{# Role picker as an Apple segmented control. Radio buttons underneath, so it works
+   without JavaScript; the lens slides with pure CSS (:has). #}
+<div class="role-tabs" role="radiogroup" aria-label="Select your role">
+  <span class="role-indicator" aria-hidden="true"></span>
+  {% for key, label in roles.items() %}
+    <label class="role-tab">
+      <input type="radio" name="role" value="{{ key }}" {% if (role or 'student') == key %}checked{% endif %}>
+      <span>{{ label }}</span>
+    </label>
+  {% endfor %}
+</div>

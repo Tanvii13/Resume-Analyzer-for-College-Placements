@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Log In{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block nav %}
+<header class="auth-header">
+  {% include "_brand.html" %}
+  <span class="tagline">Upload it, understand it, improve it, get placed.</span>
+  <a href="{{ url_for('index') }}" class="auth-back">Home</a>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="auth-wrap">
+  <!-- A sheet floats above the wallpaper, so it uses the thicker glass Apple recommends for text-heavy surfaces -->
+  <form class="auth-card glass glass-thick" method="POST" action="{{ url_for('login') }}" novalidate>
+    <h1 class="display-title">Welcome back</h1>
+
+    {% include "_role_tabs.html" %}
+
+    <div class="auth-heading">
+      <h2>Log in to your account</h2>
+      <p>Access your placement resume workspace.</p>
+    </div>
+
+    {% if error %}
+      <div class="alert alert-error" role="alert">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2.5a9.5 9.5 0 100 19 9.5 9.5 0 000-19zm1 14h-2v-2h2v2zm0-4h-2v-6h2v6z"/></svg>
+        <span>{{ error }}</span>
+        {% if error_code %}<code class="err-code">{{ error_code }}</code>{% endif %}
+      </div>
+    {% endif %}
+
+    <div class="field">
+      <label for="email">Institutional Email</label>
+      <div class="input-wrap {% if error %}is-invalid{% endif %}">
+        <svg class="input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <input id="email" name="email" type="email" placeholder="name@dau.ac.in" value="{{ email or '' }}" autocomplete="email" required>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <div class="input-wrap {% if error %}is-invalid{% endif %}">
+        <svg class="input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V7.5a4 4 0 018 0V10" stroke="currentColor" stroke-width="1.8"/></svg>
+        <input id="password" name="password" type="password" placeholder="Required" autocomplete="current-password" required>
+        <button type="button" class="toggle-password" aria-label="Show password" data-target="password">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="row-between">
+      <label class="checkbox"><input type="checkbox" name="remember"> <span>Remember this device</span></label>
+      <details class="forgot">
+        <summary class="link">Forgot Password?</summary>
+        <p class="form-note">Password reset isn't available yet. Ask the placement cell to reset it for you.</p>
+      </details>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block">Log In</button>
+
+    <p class="auth-switch">Don't have an account? <a href="{{ url_for('register') }}">Sign Up</a></p>
+    <p class="demo-hint">Demo student: alex.rivera@dau.ac.in · Password@123</p>
+  </form>
+</section>
+{% endblock %}
