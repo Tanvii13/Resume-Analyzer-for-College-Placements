@@ -1,6 +1,6 @@
 # Resume Analyzer — Database
 
-PostgreSQL database schema covering Sprint 1 and Sprint 2.
+PostgreSQL 18 database schema covering Sprint 1, Sprint 2, and Sprint 3.
 
 ---
 
@@ -29,7 +29,7 @@ Covers user stories **US-01 to US-04**.
 
 ## Sprint 2 — Resume Analysis & Scoring
 
-Covers user stories **US-05 to US-08**.
+Covers user stories **US-05 to US-07** and analysis-related functionality of US-08.
 
 | User Story | Description |
 |---|---|
@@ -44,24 +44,67 @@ Covers user stories **US-05 to US-08**.
 |---|---|
 | `skills` | Master catalog of placement-relevant skills (25 pre-seeded) |
 | `resume_skills` | Links resumes to extracted/manual skills with confidence scores |
-| `resume_analyses` | Full AI analysis result with sub-scores and feedback text |
+| `resume_analyses` | Full analysis result with sub-scores, strengths, weaknesses, and recommendations |
+
+---
+
+## Sprint 3 — Feedback & Explainability
+
+Covers user stories **US-08 to US-10**.
+
+| User Story | Description |
+|---|---|
+| US-08 | Identify areas that need improvement |
+| US-09 | Get resume improvement suggestions |
+| US-10 | Understand the score and recommendations |
+
+### Requirements
+
+- FR-06: Identify important areas for improvement.
+- FR-07: Provide improvement suggestions.
+- FR-11: Provide explanations for important results.
+- NFR-05: Recommendations and important results should be understandable.
+- NFR-08: Interface should be readable and accessible.
+
+### Tables
+
+| Table | Purpose |
+|---|---|
+| `analysis_feedback` | Stores resume analysis feedback, improvement areas, category, and severity |
+| `improvement_suggestions` | Stores actionable improvement suggestions linked to feedback |
+| `score_explanations` | Stores explanations for overall and category-wise scores |
+
+### Feedback Categories
+
+`skills`, `projects`, `education`, `experience`, `formatting`, `general`
+
+### Feedback Severity & Suggestion Priority
+
+`low`, `medium`, `high`
+
+### Score Categories
+
+`overall`, `skills`, `projects`, `education`, `experience`, `formatting`, `placement_readiness`
+
+Scores are constrained to the range 0–100.
 
 ---
 
 ## Database Setup
 
-1. Make sure PostgreSQL 18 is running and the `resume_analyzer` database exists.
-2. Open the pgAdmin Query Tool for `resume_analyzer`, or use `psql`.
+Make sure PostgreSQL 18 is running and the `resume_analyzer` database exists.
 
-### Fresh setup (both sprints)
+Open the pgAdmin Query Tool for `resume_analyzer`, or use `psql`.
 
-Applies all tables in one shot:
+### Fresh Setup (All Sprints)
+
+Applies all tables and seed data in one shot:
 
 ```bash
 psql -U postgres -d resume_analyzer -f database/schema.sql
 ```
 
-### Incremental migrations (sprint by sprint)
+### Incremental Migrations (Sprint by Sprint)
 
 Run migration files in order on an existing database:
 
@@ -71,11 +114,14 @@ psql -U postgres -d resume_analyzer -f database/migration/sprint1_schema.sql
 
 # Sprint 2 — run after Sprint 1
 psql -U postgres -d resume_analyzer -f database/migration/sprint2_schema.sql
+
+# Sprint 3 — run after Sprint 2
+psql -U postgres -d resume_analyzer -f database/migration/sprint3_feedback.sql
 ```
 
 Replace `postgres` with your PostgreSQL username if different.
 
-> **Note:** All files use `CREATE TABLE IF NOT EXISTS` and `ON CONFLICT DO NOTHING`, so they are safe to re-run in any order without causing errors.
+**Note:** Schema and migration files use `CREATE TABLE IF NOT EXISTS` and conflict-safe inserts where applicable. However, migrations must be executed in dependency order because foreign keys reference tables created in earlier sprints. `CREATE TABLE IF NOT EXISTS` does not modify existing tables.
 
 ---
 
@@ -90,6 +136,9 @@ erDiagram
     RESUMES ||--o{ RESUME_SKILLS : has
     RESUMES ||--o{ RESUME_ANALYSES : analyzed_by
     SKILLS ||--o{ RESUME_SKILLS : tagged_in
+    RESUME_ANALYSES ||--o{ ANALYSIS_FEEDBACK : produces
+    ANALYSIS_FEEDBACK ||--o{ IMPROVEMENT_SUGGESTIONS : contains
+    RESUME_ANALYSES ||--o{ SCORE_EXPLANATIONS : explains
 
     USERS {
         uuid id PK
@@ -164,6 +213,33 @@ erDiagram
         timestamptz started_at
         timestamptz completed_at
     }
+
+    ANALYSIS_FEEDBACK {
+        uuid id PK
+        uuid analysis_id FK
+        varchar category
+        varchar severity
+        varchar title
+        text description
+        timestamptz created_at
+    }
+
+    IMPROVEMENT_SUGGESTIONS {
+        uuid id PK
+        uuid feedback_id FK
+        text suggestion_text
+        varchar priority
+        timestamptz created_at
+    }
+
+    SCORE_EXPLANATIONS {
+        uuid id PK
+        uuid analysis_id FK
+        varchar score_category
+        numeric score
+        text explanation
+        timestamptz created_at
+    }
 ```
 
 The editable Mermaid source is also available in [`erd.mmd`](erd.mmd).
@@ -178,8 +254,11 @@ The editable Mermaid source is also available in [`erd.mmd`](erd.mmd).
 - **Processing errors:** `resumes.status` and `error_message` allow the application to track processing outcomes and report invalid or unreadable files.
 - **Skill confidence:** `resume_skills.confidence` (0.0–1.0) reflects how certain the AI is that a skill was found. `source` distinguishes AI-extracted skills from manually added ones.
 - **Analysis scores:** All score columns in `resume_analyses` are `NUMERIC(5,2)` constrained to 0–100. A `NULL` score means the analysis has not yet completed.
+- **Feedback:** `analysis_feedback` records improvement areas by category and severity. Each feedback entry belongs to an analysis.
+- **Improvement suggestions:** `improvement_suggestions` stores actionable suggestions linked to feedback entries.
+- **Score explanations:** `score_explanations` stores explanations for individual score categories. Each analysis can have only one explanation per score category.
 - **Data integrity:** UUID identifiers, foreign keys, constraints, indexes, and timezone-aware `TIMESTAMPTZ` columns are used throughout.
-- **Safe reruns:** `CREATE TABLE IF NOT EXISTS` and conflict-safe inserts support rerunning any schema file without errors.
+- **Safe reruns:** `CREATE TABLE IF NOT EXISTS` and conflict-safe inserts support rerunning compatible schema scripts. They do not update existing table definitions.
 - **File size:** Resume files must be greater than 0 bytes and no larger than 5 MiB (5,242,880 bytes), enforced by a database constraint.
 
 ---
@@ -190,5 +269,8 @@ The editable Mermaid source is also available in [`erd.mmd`](erd.mmd).
 - Use `resume_sections` for parsed resume content.
 - Update `resumes.status` and `error_message` when processing succeeds or fails.
 - Populate `resume_skills` with extracted skills and their confidence scores after parsing.
-- Insert a row into `resume_analyses` with `status = 'processing'` when analysis starts; update all score and feedback columns and set `status = 'completed'` (or `'failed'`) when done.
+- Insert a row into `resume_analyses` with `status = 'processing'` when analysis starts; update scores and analysis feedback fields and set `status = 'completed'` (or `'failed'`) when done.
+- Store individual improvement areas in `analysis_feedback`.
+- Store actionable suggestions in `improvement_suggestions`, linked to their feedback entry.
+- Store score explanations in `score_explanations`, linked to the corresponding analysis and score category.
 - Keep authentication and role assignment consistent with `users`, `roles`, and `user_roles`.
