@@ -1,3 +1,4 @@
+
 import logging
 from pathlib import Path
 from uuid import UUID, uuid4
@@ -18,6 +19,7 @@ from app.services.upload_service import (
 )
 
 from app.services.skill_extractor import SkillExtractor
+from app.services.resume_section_extractor import extract_resume_sections
 
 from app.services.persistence_service import (
     save_extraction,
@@ -69,14 +71,12 @@ async def upload_resume(
     stored_path = STORAGE_DIR / storage_key
 
     try:
-
         # Store uploaded resume.
         with stored_path.open("xb") as stored_file:
             stored_file.write(validated_file["content"])
 
         # Save resume information in database.
         with get_connection() as conn:
-
             with conn.transaction():
 
                 user = conn.execute(
@@ -159,7 +159,7 @@ async def upload_resume(
 
 
 # ==================================================
-# 2. EXTRACT RESUME SKILLS API
+# 2. EXTRACT RESUME INFORMATION API
 # ==================================================
 
 @router.post(
@@ -171,17 +171,15 @@ async def extract_resume(
     current_user: UserResponse = Depends(get_current_user),
 ):
     """
-    Extract technical and soft skills from an uploaded resume.
-    Save extracted information in PostgreSQL.
+    Extract skills, education, projects, and experience
+    from an uploaded resume and save them in PostgreSQL.
     """
 
     # Validate resume UUID.
     try:
-
         resume_id = UUID(resume_id)
 
     except ValueError:
-
         raise HTTPException(
             status_code=400,
             detail="Invalid resume ID format.",
@@ -190,10 +188,8 @@ async def extract_resume(
     user_id = None
 
     try:
-
         # Verify user and resume ownership.
         with get_connection() as conn:
-
             with conn.transaction():
 
                 user = conn.execute(
@@ -207,7 +203,6 @@ async def extract_resume(
                 ).fetchone()
 
                 if user is None:
-
                     raise HTTPException(
                         status_code=401,
                         detail="User account not found or inactive.",
@@ -226,7 +221,6 @@ async def extract_resume(
                 ).fetchone()
 
                 if resume is None:
-
                     raise HTTPException(
                         status_code=404,
                         detail="Resume not found.",
@@ -248,7 +242,6 @@ async def extract_resume(
 
         # Validate storage filename.
         if Path(storage_key).name != storage_key:
-
             raise ValueError(
                 "Invalid resume storage path."
             )
@@ -256,7 +249,6 @@ async def extract_resume(
         stored_path = STORAGE_DIR / storage_key
 
         if not stored_path.is_file():
-
             raise HTTPException(
                 status_code=404,
                 detail="Uploaded resume file not found.",
@@ -287,22 +279,27 @@ async def extract_resume(
             )
         )
 
-        # Prepare extraction data for persistence.
+        # Extract education, projects, and experience.
+        section_result = extract_resume_sections(
+            resume_text
+        )
+
+        # Prepare complete extraction data for persistence.
         extracted_data = {
             "skills": all_skills,
-            "education": [],
-            "projects": [],
-            "experience": [],
+            "education": section_result["education"],
+            "projects": section_result["projects"],
+            "experience": section_result["experience"],
         }
 
-        # Save extraction data.
+        # Save all extracted information.
         save_extraction(
             resume_id,
             user_id,
             extracted_data,
         )
 
-        # Return validated response.
+        # Return skill extraction response.
         return SkillExtractionResult(
             technical_skills=skill_result["technical_skills"],
             soft_skills=skill_result["soft_skills"],
@@ -313,11 +310,8 @@ async def extract_resume(
 
         # Update failed status only for the owner's resume.
         if user_id is not None:
-
             try:
-
                 with get_connection() as conn:
-
                     conn.execute(
                         """
                         UPDATE resumes
@@ -334,7 +328,6 @@ async def extract_resume(
                     )
 
             except Exception:
-
                 logger.exception(
                     "Could not update failed resume status."
                 )
@@ -348,11 +341,8 @@ async def extract_resume(
         )
 
         if user_id is not None:
-
             try:
-
                 with get_connection() as conn:
-
                     conn.execute(
                         """
                         UPDATE resumes
@@ -369,7 +359,6 @@ async def extract_resume(
                     )
 
             except Exception:
-
                 logger.exception(
                     "Could not update failed resume status."
                 )
@@ -399,21 +388,17 @@ async def retrieve_extraction(
 
     # Validate UUID.
     try:
-
         resume_id = UUID(resume_id)
 
     except ValueError:
-
         raise HTTPException(
             status_code=400,
             detail="Invalid resume ID format.",
         )
 
     try:
-
         # Find authenticated user.
         with get_connection() as conn:
-
             user = conn.execute(
                 """
                 SELECT id
@@ -425,7 +410,6 @@ async def retrieve_extraction(
             ).fetchone()
 
         if user is None:
-
             raise HTTPException(
                 status_code=401,
                 detail="User account not found or inactive.",
@@ -442,25 +426,21 @@ async def retrieve_extraction(
         return extracted_data
 
     except ResumeNotFoundError:
-
         raise HTTPException(
             status_code=404,
             detail="Resume not found.",
         )
 
     except ExtractionNotFoundError:
-
         raise HTTPException(
             status_code=404,
             detail="Extraction data not found for this resume.",
         )
 
     except HTTPException:
-
         raise
 
     except Exception as exc:
-
         logger.exception(
             "Unable to retrieve extraction data."
         )
