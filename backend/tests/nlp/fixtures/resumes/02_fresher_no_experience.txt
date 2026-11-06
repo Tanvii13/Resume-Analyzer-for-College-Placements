@@ -1,0 +1,16 @@
+Priya Patel
+Email: priya.patel2027@gmail.com
+Phone: 9876543210
+
+EDUCATION
+Nirma University, Ahmedabad
+B.Tech in Computer Science and Engineering, 2023 - Present, CGPA: 8.45/10
+Class XII (GSEB), Navrachana School, 2023, 91.2%
+
+SKILLS
+C, C++, Python, HTML, CSS
+Communication, Teamwork
+
+PROJECTS
+- Tic Tac Toe: Console game written in C++ with a simple AI opponent.
+- Personal Blog: Static website using HTML and CSS hosted on GitHub Pages.

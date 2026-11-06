@@ -1,0 +1,62 @@
+{
+  "contact": {
+    "full_name": "Priya Patel",
+    "email": "priya.patel2027@gmail.com",
+    "phone": "+91 98765 43210",
+    "linkedin_url": null,
+    "github_url": null
+  },
+  "education": [
+    {
+      "degree": "B.Tech",
+      "institution": "Nirma University",
+      "field_of_study": "Computer Science and Engineering",
+      "start_year": 2023,
+      "graduation_year": null,
+      "is_expected": true,
+      "cgpa": 8.45
+    },
+    {
+      "degree": "12th (HSC)",
+      "institution": "Navrachana School",
+      "board": "GSEB",
+      "graduation_year": 2023,
+      "percentage": 91.2
+    }
+  ],
+  "experience": [],
+  "internships": [],
+  "projects": [
+    {
+      "title": "Tic Tac Toe",
+      "technologies_include": [
+        "C++"
+      ]
+    },
+    {
+      "title": "Personal Blog",
+      "technologies_include": [
+        "HTML",
+        "CSS"
+      ]
+    }
+  ],
+  "technical_skills_include": [
+    "C",
+    "C++",
+    "Python",
+    "HTML",
+    "CSS"
+  ],
+  "soft_skills_include": [
+    "Communication",
+    "Teamwork"
+  ],
+  "skills_exclude": [
+    "Go",
+    "R"
+  ],
+  "achievements": [],
+  "certifications": [],
+  "missing_critical_sections": []
+}
