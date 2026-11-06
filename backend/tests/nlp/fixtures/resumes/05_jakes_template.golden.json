@@ -1,0 +1,54 @@
+{
+  "contact": {
+    "full_name": "Arjun Nair",
+    "email": "arjun.nair@iitgn.ac.in",
+    "phone": "+91 70123 45678",
+    "linkedin_url": "https://linkedin.com/in/arjunnair",
+    "github_url": "https://github.com/arjun-nair"
+  },
+  "education": [
+    {
+      "degree": "M.Tech",
+      "institution": "Indian Institute of Technology Gandhinagar",
+      "field_of_study": "Computer Science and Engineering",
+      "graduation_year": 2026,
+      "is_expected": true,
+      "cgpa": 9.1
+    }
+  ],
+  "experience": [],
+  "internships": [
+    {
+      "job_title": "Summer Research Intern",
+      "company_name": "IIT Gandhinagar",
+      "start_date": "2025-05",
+      "end_date": "2025-07",
+      "is_current": false
+    }
+  ],
+  "projects": [
+    {
+      "title": "Expense Tracker",
+      "technologies_include": [
+        "React",
+        "Node.js",
+        "MongoDB"
+      ]
+    }
+  ],
+  "technical_skills_include": [
+    "Python",
+    "PyTorch",
+    "React",
+    "Node.js",
+    "MongoDB"
+  ],
+  "skills_exclude": [
+    "C",
+    "Go",
+    "R"
+  ],
+  "achievements": [],
+  "certifications": [],
+  "missing_critical_sections": []
+}

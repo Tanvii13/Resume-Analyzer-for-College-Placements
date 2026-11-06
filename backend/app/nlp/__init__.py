@@ -7,9 +7,14 @@ skill normalization, and candidate profile aggregation.
 
 from app.nlp.extractors import (
     BaseExtractor,
+    CertificationsExtractor,
     ContactExtractor,
     ContactInfo,
+    EducationExtractor,
+    ExperienceExtractor,
     ExtractedSkill,
+    ListSections,
+    ProjectExtractor,
     SkillExtractor,
     SkillProfile,
 )
@@ -45,6 +50,19 @@ from app.nlp.taxonomy import (
     load_skills_taxonomy,
     resolve_degree,
 )
+from app.nlp.schemas import (
+    CandidateProfile,
+    ConfidenceLevel,
+    ContactSchema,
+    EducationEntry,
+    ExperienceEntry,
+    NLPProcessingRequest,
+    PipelineMetadata,
+    ProjectEntry,
+    SectionSummary,
+    SkillItem,
+)
+from app.nlp.pipeline import ResumeNLPPipeline, analyze_resume
 
 __all__ = [
     # Preprocessing (Module A)
@@ -72,6 +90,25 @@ __all__ = [
     "SkillExtractor",
     "ExtractedSkill",
     "SkillProfile",
+    # Entity Extractors (Module D)
+    "EducationExtractor",
+    "ExperienceExtractor",
+    "ProjectExtractor",
+    "CertificationsExtractor",
+    "ListSections",
+    # Profile Aggregation (Module F)
+    "ResumeNLPPipeline",
+    "analyze_resume",
+    "CandidateProfile",
+    "ConfidenceLevel",
+    "ContactSchema",
+    "EducationEntry",
+    "ExperienceEntry",
+    "NLPProcessingRequest",
+    "PipelineMetadata",
+    "ProjectEntry",
+    "SectionSummary",
+    "SkillItem",
     # Skill & Degree Taxonomy (Module E1)
     "load_skills_taxonomy",
     "load_skill_aliases",
