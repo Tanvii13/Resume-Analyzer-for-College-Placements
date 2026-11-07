@@ -17,7 +17,7 @@ REQUIRED_FIELDS = ("skills", "education", "projects", "experience")
 
 
 def _validate_extracted_data(extracted_data):
-    """Check that extracted data contains the required lists."""
+    """Validate extracted resume data before saving."""
 
     if not isinstance(extracted_data, dict):
         raise ValueError("Extracted data must be a dictionary.")
@@ -36,13 +36,22 @@ def _validate_extracted_data(extracted_data):
 
 def save_extraction(resume_id, user_id, extracted_data):
     """
-    Save extracted resume information using the Sprint 1 and Sprint 2 schema.
+    Save extracted resume information using the project database schema.
+    Preserve manually added skills and replace previous extracted skills.
     """
 
     _validate_extracted_data(extracted_data)
 
     resume_id = UUID(str(resume_id))
     user_id = UUID(str(user_id))
+
+    # Remove duplicate skills while preserving their original order.
+    unique_skills = list(
+        dict.fromkeys(
+            skill.strip()
+            for skill in extracted_data["skills"]
+        )
+    )
 
     with get_connection() as connection:
         with connection.transaction():
@@ -85,7 +94,8 @@ def save_extraction(resume_id, user_id, extracted_data):
                     (resume_id, section_name, section_content),
                 )
 
-            # Remove old AI-extracted skills but preserve manual skills.
+            # Delete previous extracted skills.
+            # Manually added skills remain untouched.
             connection.execute(
                 """
                 DELETE FROM resume_skills
@@ -95,9 +105,8 @@ def save_extraction(resume_id, user_id, extracted_data):
                 (resume_id,),
             )
 
-            # Save normalized skills and link them to the resume.
-            for skill in extracted_data["skills"]:
-                skill_name = skill.strip()
+            # Save unique skills and link them to the resume.
+            for skill_name in unique_skills:
 
                 connection.execute(
                     """
@@ -122,6 +131,7 @@ def save_extraction(resume_id, user_id, extracted_data):
                         f"Unable to find skill: {skill_name}"
                     )
 
+                # Do not overwrite an existing manual skill link.
                 connection.execute(
                     """
                     INSERT INTO resume_skills (
@@ -132,9 +142,7 @@ def save_extraction(resume_id, user_id, extracted_data):
                     )
                     VALUES (%s, %s, 'extracted', NULL)
                     ON CONFLICT (resume_id, skill_id)
-                    DO UPDATE SET
-                        source = 'extracted',
-                        confidence = NULL
+                    DO NOTHING
                     """,
                     (resume_id, skill_row[0]),
                 )
@@ -146,9 +154,9 @@ def save_extraction(resume_id, user_id, extracted_data):
                 SET status = 'processed',
                     error_message = NULL,
                     processed_at = NOW()
-                WHERE id = %s
+                WHERE id = %s AND user_id = %s
                 """,
-                (resume_id,),
+                (resume_id, user_id),
             )
 
     return {
@@ -158,13 +166,14 @@ def save_extraction(resume_id, user_id, extracted_data):
 
 
 def get_extraction(resume_id, user_id):
-    """Retrieve extracted resume information for its owner."""
+    """Retrieve saved extraction data for the resume owner."""
 
     resume_id = UUID(str(resume_id))
     user_id = UUID(str(user_id))
 
     with get_connection() as connection:
 
+        # Verify resume ownership.
         resume = connection.execute(
             """
             SELECT id
@@ -179,6 +188,7 @@ def get_extraction(resume_id, user_id):
                 "Resume not found or access denied."
             )
 
+        # Retrieve extracted and manually added skills.
         skills = connection.execute(
             """
             SELECT s.name
@@ -191,6 +201,7 @@ def get_extraction(resume_id, user_id):
             (resume_id,),
         ).fetchall()
 
+        # Retrieve saved resume sections.
         sections = connection.execute(
             """
             SELECT section_name, content
