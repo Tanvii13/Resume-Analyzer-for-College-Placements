@@ -1,4 +1,3 @@
-
 erDiagram
     USERS ||--o{ USER_ROLES : has
     ROLES ||--o{ USER_ROLES : assigned
@@ -7,9 +6,17 @@ erDiagram
     RESUMES ||--o{ RESUME_SKILLS : has
     RESUMES ||--o{ RESUME_ANALYSES : analyzed_by
     SKILLS ||--o{ RESUME_SKILLS : tagged_in
-    RESUME_ANALYSES ||--o{ ANALYSIS_FEEDBACK : produces
-    ANALYSIS_FEEDBACK ||--o{ IMPROVEMENT_SUGGESTIONS : contains
-    RESUME_ANALYSES ||--o{ SCORE_EXPLANATIONS : explains
+    RESUME_ANALYSES ||--o{ ANALYSIS_FEEDBACK : generates
+    RESUME_ANALYSES ||--o{ SCORE_EXPLANATIONS : explained_by
+    ANALYSIS_FEEDBACK ||--o{ IMPROVEMENT_SUGGESTIONS : suggests
+    RESUMES ||--o{ RESUME_JD_COMPARISONS : compared_in
+    RESUMES ||--o{ RESUME_JOB_RECOMMENDATIONS : recommended
+    JOB_OPPORTUNITIES ||--o{ JOB_DESCRIPTION_SKILLS : requires
+    JOB_OPPORTUNITIES ||--o{ RESUME_JD_COMPARISONS : compared_against
+    JOB_OPPORTUNITIES ||--o{ RESUME_JOB_RECOMMENDATIONS : recommended_as
+    SKILLS ||--o{ JOB_DESCRIPTION_SKILLS : listed_in
+    RESUME_JD_COMPARISONS ||--o{ JD_SKILL_MATCHES : breaks_down_to
+    SKILLS ||--o{ JD_SKILL_MATCHES : matched_as
 
     USERS {
         uuid id PK
@@ -20,17 +27,14 @@ erDiagram
         timestamptz created_at
         timestamptz updated_at
     }
-
     ROLES {
         smallint id PK
         varchar name UK
     }
-
     USER_ROLES {
         uuid user_id PK, FK
         smallint role_id PK, FK
     }
-
     RESUMES {
         uuid id PK
         uuid user_id FK
@@ -43,7 +47,6 @@ erDiagram
         timestamptz uploaded_at
         timestamptz processed_at
     }
-
     RESUME_SECTIONS {
         uuid id PK
         uuid resume_id FK
@@ -51,13 +54,11 @@ erDiagram
         text content
         timestamptz created_at
     }
-
     SKILLS {
         uuid id PK
         varchar name UK
         timestamptz created_at
     }
-
     RESUME_SKILLS {
         uuid resume_id PK, FK
         uuid skill_id PK, FK
@@ -65,7 +66,6 @@ erDiagram
         numeric confidence
         timestamptz created_at
     }
-
     RESUME_ANALYSES {
         uuid id PK
         uuid resume_id FK
@@ -84,7 +84,6 @@ erDiagram
         timestamptz started_at
         timestamptz completed_at
     }
-
     ANALYSIS_FEEDBACK {
         uuid id PK
         uuid analysis_id FK
@@ -94,7 +93,6 @@ erDiagram
         text description
         timestamptz created_at
     }
-
     IMPROVEMENT_SUGGESTIONS {
         uuid id PK
         uuid feedback_id FK
@@ -102,7 +100,6 @@ erDiagram
         varchar priority
         timestamptz created_at
     }
-
     SCORE_EXPLANATIONS {
         uuid id PK
         uuid analysis_id FK
@@ -110,4 +107,52 @@ erDiagram
         numeric score
         text explanation
         timestamptz created_at
+    }
+    JOB_OPPORTUNITIES {
+        uuid id PK
+        varchar title
+        varchar company
+        varchar type
+        text description_text
+        varchar location
+        varchar experience_level
+        boolean is_active
+        timestamptz posted_at
+        timestamptz expires_at
+    }
+    JOB_DESCRIPTION_SKILLS {
+        uuid id PK
+        uuid job_id FK
+        uuid skill_id FK
+        varchar importance
+        timestamptz created_at
+    }
+    RESUME_JD_COMPARISONS {
+        uuid id PK
+        uuid resume_id FK
+        uuid job_id FK
+        numeric overall_match_score
+        numeric required_skills_match_score
+        varchar status
+        text error_message
+        timestamptz compared_at
+        timestamptz completed_at
+    }
+    JD_SKILL_MATCHES {
+        uuid id PK
+        uuid comparison_id FK
+        uuid skill_id FK
+        boolean is_matched
+        varchar importance
+        numeric match_confidence
+        varchar match_note
+        timestamptz created_at
+    }
+    RESUME_JOB_RECOMMENDATIONS {
+        uuid id PK
+        uuid resume_id FK
+        uuid job_id FK
+        smallint rank
+        numeric relevance_score
+        timestamptz generated_at
     }

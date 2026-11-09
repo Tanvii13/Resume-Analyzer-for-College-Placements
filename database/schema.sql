@@ -303,3 +303,181 @@ CREATE TABLE IF NOT EXISTS score_explanations (
 
 CREATE INDEX IF NOT EXISTS idx_score_explanations_analysis
     ON score_explanations(analysis_id);
+
+
+-- ============================================================
+-- Sprint 4: Job / Internship Matching
+-- US-11: Compare Resume with a Job Description
+-- US-12: Find Relevant Job or Internship Opportunities
+-- US-13: View Matching and Missing Skills
+-- ============================================================
+
+-- 11. JOB_OPPORTUNITIES
+
+CREATE TABLE IF NOT EXISTS job_opportunities (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    title VARCHAR(200) NOT NULL,
+
+    company VARCHAR(200),
+
+    type VARCHAR(20) NOT NULL DEFAULT 'job'
+        CHECK (type IN ('job', 'internship')),
+
+    description_text TEXT NOT NULL,
+
+    location VARCHAR(200),
+
+    experience_level VARCHAR(20)
+        CHECK (
+            experience_level IS NULL OR
+            experience_level IN ('entry', 'mid', 'senior')
+        ),
+
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+
+    posted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    expires_at TIMESTAMPTZ
+);
+
+CREATE INDEX IF NOT EXISTS idx_job_opportunities_active_posted
+    ON job_opportunities(is_active, posted_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_job_opportunities_type
+    ON job_opportunities(type);
+
+
+-- 12. JOB_DESCRIPTION_SKILLS
+
+CREATE TABLE IF NOT EXISTS job_description_skills (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    job_id UUID NOT NULL
+        REFERENCES job_opportunities(id)
+        ON DELETE CASCADE,
+
+    skill_id UUID NOT NULL
+        REFERENCES skills(id)
+        ON DELETE RESTRICT,
+
+    importance VARCHAR(10) NOT NULL DEFAULT 'required'
+        CHECK (importance IN ('required', 'preferred')),
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    UNIQUE (job_id, skill_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_jd_skills_job
+    ON job_description_skills(job_id);
+
+CREATE INDEX IF NOT EXISTS idx_jd_skills_skill
+    ON job_description_skills(skill_id);
+
+
+-- 13. RESUME_JD_COMPARISONS
+
+CREATE TABLE IF NOT EXISTS resume_jd_comparisons (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    resume_id UUID NOT NULL
+        REFERENCES resumes(id)
+        ON DELETE CASCADE,
+
+    job_id UUID NOT NULL
+        REFERENCES job_opportunities(id)
+        ON DELETE CASCADE,
+
+    overall_match_score NUMERIC(5,2)
+        CHECK (
+            overall_match_score IS NULL OR
+            (overall_match_score >= 0 AND overall_match_score <= 100)
+        ),
+
+    required_skills_match_score NUMERIC(5,2)
+        CHECK (
+            required_skills_match_score IS NULL OR
+            (required_skills_match_score >= 0 AND required_skills_match_score <= 100)
+        ),
+
+    status VARCHAR(20) NOT NULL DEFAULT 'processing'
+        CHECK (status IN ('processing', 'completed', 'failed')),
+
+    error_message TEXT,
+
+    compared_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    completed_at TIMESTAMPTZ
+);
+
+CREATE INDEX IF NOT EXISTS idx_resume_jd_comparisons_resume
+    ON resume_jd_comparisons(resume_id, compared_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_resume_jd_comparisons_job
+    ON resume_jd_comparisons(job_id);
+
+
+-- 14. JD_SKILL_MATCHES
+
+CREATE TABLE IF NOT EXISTS jd_skill_matches (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    comparison_id UUID NOT NULL
+        REFERENCES resume_jd_comparisons(id)
+        ON DELETE CASCADE,
+
+    skill_id UUID NOT NULL
+        REFERENCES skills(id)
+        ON DELETE RESTRICT,
+
+    is_matched BOOLEAN NOT NULL,
+
+    importance VARCHAR(10) NOT NULL DEFAULT 'required'
+        CHECK (importance IN ('required', 'preferred')),
+
+    match_confidence NUMERIC(5,4)
+        CHECK (
+            match_confidence IS NULL OR
+            (match_confidence >= 0 AND match_confidence <= 1)
+        ),
+
+    match_note VARCHAR(300),
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    UNIQUE (comparison_id, skill_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_jd_skill_matches_comparison
+    ON jd_skill_matches(comparison_id);
+
+CREATE INDEX IF NOT EXISTS idx_jd_skill_matches_matched
+    ON jd_skill_matches(comparison_id, is_matched);
+
+
+-- 15. RESUME_JOB_RECOMMENDATIONS
+
+CREATE TABLE IF NOT EXISTS resume_job_recommendations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    resume_id UUID NOT NULL
+        REFERENCES resumes(id)
+        ON DELETE CASCADE,
+
+    job_id UUID NOT NULL
+        REFERENCES job_opportunities(id)
+        ON DELETE CASCADE,
+
+    rank SMALLINT NOT NULL
+        CHECK (rank >= 1),
+
+    relevance_score NUMERIC(5,2) NOT NULL
+        CHECK (relevance_score >= 0 AND relevance_score <= 100),
+
+    generated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    UNIQUE (resume_id, job_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_resume_job_recommendations_resume
+    ON resume_job_recommendations(resume_id, rank ASC);
