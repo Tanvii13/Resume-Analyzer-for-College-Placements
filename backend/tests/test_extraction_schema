@@ -1,0 +1,44 @@
+
+import pytest
+from pydantic import ValidationError
+
+from app.schemas.extraction import SkillExtractionResult
+
+
+def test_valid_skill_extraction():
+    result = SkillExtractionResult(
+        technical_skills=["Python", "Java"],
+        soft_skills=["Leadership"],
+        total_count=3
+    )
+
+    assert result.technical_skills == ["Python", "Java"]
+    assert result.soft_skills == ["Leadership"]
+    assert result.total_count == 3
+
+
+def test_empty_skill_extraction():
+    result = SkillExtractionResult()
+
+    assert result.technical_skills == []
+    assert result.soft_skills == []
+    assert result.total_count == 0
+
+
+def test_negative_total_count():
+    with pytest.raises(ValidationError):
+        SkillExtractionResult(total_count=-1)
+
+
+def test_invalid_skill_type():
+    with pytest.raises(ValidationError):
+        SkillExtractionResult(
+            technical_skills=[123]
+        )
+
+
+def test_extra_field_rejected():
+    with pytest.raises(ValidationError):
+        SkillExtractionResult(
+            unknown_field="invalid"
+        )
