@@ -1,0 +1,17 @@
+Rohan Mehta
+rohan.mehta@outlook.com | +91-99090-11223 | github.com/rohanm
+
+SKILLS
+Languages: Java, Python, TypeScript
+Tools: Docker, Git, AWS, Jenkins
+
+PROJECTS
+Inventory Tracker | Spring Boot, MySQL | Aug 2024 - Nov 2024
+- Built CRUD inventory service with role-based access.
+
+INTERNSHIPS
+Backend Developer Intern at Razorpay | Jan 2025 - Mar 2025
+- Designed REST APIs in Node.js and MongoDB.
+
+EDUCATION
+B.E. in Information Technology, L.D. College of Engineering, 2021 - 2025, CPI 8.2

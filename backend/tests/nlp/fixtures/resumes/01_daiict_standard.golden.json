@@ -1,0 +1,70 @@
+{
+  "contact": {
+    "full_name": "Aarav Sharma",
+    "email": "aarav.sharma@dau.ac.in",
+    "phone": "+91 98250 12345",
+    "linkedin_url": "https://linkedin.com/in/aarav-sharma-cs",
+    "github_url": "https://github.com/aaravsharma"
+  },
+  "education": [
+    {
+      "degree": "B.Tech",
+      "institution": "DA-IICT",
+      "field_of_study": "ICT",
+      "start_year": 2021,
+      "graduation_year": 2025,
+      "cgpa": 8.74
+    },
+    {
+      "degree": "12th (HSC)",
+      "institution": "Delhi Public School",
+      "board": "CBSE",
+      "graduation_year": 2021,
+      "percentage": 94.6
+    }
+  ],
+  "experience": [],
+  "internships": [
+    {
+      "job_title": "Software Engineering Intern",
+      "company_name": "Credence Analytics",
+      "start_date": "2024-05",
+      "end_date": "2024-07",
+      "is_current": false
+    }
+  ],
+  "projects": [
+    {
+      "title": "College Placement Portal & Resume Analyzer",
+      "github_url": "https://github.com/Tanvii13/Resume-Analyzer-for-College-Placements",
+      "technologies_include": [
+        "FastAPI",
+        "PostgreSQL"
+      ]
+    }
+  ],
+  "technical_skills_include": [
+    "Python",
+    "C++",
+    "Java",
+    "JavaScript",
+    "SQL",
+    "FastAPI",
+    "React",
+    "Node.js",
+    "Docker",
+    "Kubernetes",
+    "Git",
+    "Linux"
+  ],
+  "skills_exclude": [
+    "C",
+    "Go",
+    "R"
+  ],
+  "achievements": [
+    "Finalist, Smart India Hackathon 2024"
+  ],
+  "certifications": [],
+  "missing_critical_sections": []
+}

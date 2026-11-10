@@ -1,0 +1,33 @@
+{
+  "contact": {
+    "full_name": "Neha Joshi",
+    "email": null,
+    "phone": null,
+    "linkedin_url": null,
+    "github_url": null
+  },
+  "education": [
+    {
+      "degree": "B.Sc",
+      "institution": null,
+      "field_of_study": "Physics",
+      "graduation_year": null,
+      "cgpa": null,
+      "percentage": null
+    }
+  ],
+  "experience": [],
+  "internships": [],
+  "projects": [],
+  "technical_skills_include": [],
+  "soft_skills_include": [
+    "Leadership",
+    "Time Management"
+  ],
+  "skills_exclude": [],
+  "achievements": [],
+  "certifications": [],
+  "missing_critical_sections": [
+    "projects"
+  ]
+}

@@ -1,0 +1,20 @@
+Kavya Iyer
+kavya.iyer@yahoo.com
++91 90123 45678
+linkedin.com/in/kavya-iyer
+
+PROFESSIONAL EXPERIENCE
+Infosys Ltd. | Pune | Jun 2023 - Present
+Systems Engineer
+- Maintained Java Spring Boot microservices deployed on AWS.
+- Automated regression tests with Selenium.
+
+EDUCATION
+B.E. in Computer Engineering, Government Engineering College, Gandhinagar, 2020-23, CGPA 8.1
+Diploma in Computer Engineering, Government Polytechnic, 2017 - 2020, 85.6%
+
+TECHNICAL SKILLS
+Java, Spring Boot, Selenium, AWS, SQL
+
+CERTIFICATIONS
+- AWS Certified Cloud Practitioner (2024)
