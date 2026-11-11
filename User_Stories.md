@@ -1,335 +1,430 @@
 # User Stories – Resume Analyser for College Placements
 
-The following user stories are prepared from the requirements collected during the elicitation process. Each story describes what a user expects from the system and why the feature is useful. The acceptance criteria define the expected behaviour of the system.
-
----
-
 ## 3. User Story Cards
 
-### US-01 — Upload Resume
+### US-01 – User Login and Account Access
 
-**Requirement ID(s):** FR-01 (NFR-01 as AC) | **Type:** Functional | **Role:** Student / Job Seeker | **Priority:** Must Have | **Source:** Survey, Observation
+**Requirement ID(s):** FR-16  
+**Type:** Functional Requirement  
+**Role:** Student / Job Seeker  
+**Priority:** Must Have  
+**Source:** System Access Requirements  
 
-**Front of Card**
+#### Front of Card
 
-> As a student, I want to upload my resume to the system, so that I can have it analysed and get useful feedback.
+> As a student/job seeker, I want to log in to the system, so that I can securely access my resume analysis and related features.
 
-**Back of Card — Acceptance Criteria**
+#### Back of Card — Acceptance Criteria
 
-1. **Given** the student is on the resume upload page, **when** a supported resume file is selected, **then** the system should accept the file and confirm the upload.
-2. **Given** the resume is being uploaded, **when** the upload is in progress, **then** the system should show the current upload status.
-3. **Given** the upload is successful, **when** processing begins, **then** the student should be able to continue to the analysis stage.
-
----
-
-### US-02 — Parse Uploaded Resume
-
-**Requirement ID(s):** FR-02 | **Type:** Functional | **Role:** Student / Job Seeker | **Priority:** Must Have | **Source:** Interview, Brainstorming
-
-**Front of Card**
-
-> As a student, I want the system to read and organise the information in my uploaded resume, so that it can be used for further analysis.
-
-**Back of Card — Acceptance Criteria**
-
-1. **Given** a supported resume has been uploaded, **when** processing starts, **then** the system should identify important sections such as education, skills, projects and experience.
-2. **Given** the resume has been processed, **when** the extracted information is displayed, **then** the student should be able to review the main details.
-3. **Given** some information cannot be read properly, **when** processing is completed, **then** the system should indicate the unclear information where possible.
+1. Given valid login credentials, when the user logs in, then access should be granted.
+2. Given invalid credentials, when the user tries to log in, then an appropriate error message should be shown.
+3. The system should show features according to the user's role.
+4. The user should be able to log out securely.
 
 ---
 
-### US-03 — Handle Invalid Resume
+### US-02 – Upload Resume
 
-**Requirement ID(s):** FR-14 (NFR-06 as AC) | **Type:** Functional | **Role:** Student / Job Seeker | **Priority:** Must Have | **Source:** Observation, Prototype
+**Requirement ID(s):** FR-01, NFR-01  
+**Type:** Functional Requirement  
+**Role:** Student / Job Seeker  
+**Priority:** Must Have  
+**Source:** Survey, Observation  
 
-**Front of Card**
+#### Front of Card
 
-> As a student, I want to know when my resume cannot be processed, so that I can fix the problem and try again.
+> As a student/job seeker, I want to upload my resume, so that the system can analyse it.
 
-**Back of Card — Acceptance Criteria**
+#### Back of Card — Acceptance Criteria
 
-1. **Given** the uploaded file is not supported, **when** the system validates it, **then** the upload should be rejected with a clear message.
-2. **Given** the uploaded file is empty, corrupted or unreadable, **when** processing fails, **then** the system should explain the problem.
-3. **Given** an invalid file was rejected, **when** the student selects a valid file, **then** the system should allow the upload process to continue.
-
----
-
-### US-04 — Extract Skills from Resume
-
-**Requirement ID(s):** FR-03 | **Type:** Functional | **Role:** Student / Job Seeker | **Priority:** Must Have | **Source:** Survey, Recruiter Interview
-
-**Front of Card**
-
-> As a student, I want the system to identify the skills mentioned in my resume, so that I can understand which skills are considered during the analysis.
-
-**Back of Card — Acceptance Criteria**
-
-1. **Given** the resume has been processed, **when** skill extraction is performed, **then** relevant skills mentioned in the resume should be identified.
-2. **Given** skills are mentioned in different sections, **when** the system extracts skills, **then** relevant skills from those sections should also be considered.
-3. **Given** skill extraction is complete, **when** the student views the result, **then** the identified skills should be displayed clearly.
+1. Given a supported resume file, when the user uploads it, then the system should accept the file.
+2. The system should show the upload status clearly.
+3. After a successful upload, the user should be able to continue to resume analysis.
 
 ---
 
-### US-05 — Analyse Resume for Placement Preparation
+### US-03 – Parse Uploaded Resume
 
-**Requirement ID(s):** FR-04, DR-01 | **Type:** Functional + Domain | **Role:** Student / Job Seeker | **Priority:** Must Have | **Source:** Survey, Interview, Placement Discussion
+**Requirement ID(s):** FR-02  
+**Type:** Functional Requirement  
+**Role:** Student / Job Seeker  
+**Priority:** Must Have  
+**Source:** Interview, Brainstorming  
 
-**Front of Card**
+#### Front of Card
 
-> As a student, I want my resume to be analysed using placement-related criteria, so that I can understand how well it is prepared for college placement opportunities.
+> As a student/job seeker, I want the system to extract information from my resume, so that I do not have to enter the information manually.
 
-**Back of Card — Acceptance Criteria**
+#### Back of Card — Acceptance Criteria
 
-1. **Given** the resume has been uploaded and processed, **when** analysis starts, **then** the system should evaluate it using the defined placement criteria.
-2. **Given** the analysis is running, **when** the student waits for the result, **then** the system should complete the analysis within the expected response time.
-3. **Given** the same resume and analysis criteria are used again, **then** the system should produce consistent results.
-
----
-
-### US-06 — Get an Overall Resume Score
-
-**Requirement ID(s):** FR-05 (NFR-04, NFR-08 as AC) | **Type:** Functional | **Role:** Student / Job Seeker | **Priority:** Must Have | **Source:** Survey, Interview
-
-**Front of Card**
-
-> As a student, I want to see an overall score for my resume, so that I can quickly understand its current performance.
-
-**Back of Card — Acceptance Criteria**
-
-1. **Given** resume analysis is complete, **when** the student opens the results, **then** an overall resume score should be displayed.
-2. **Given** the same resume and analysis criteria are used, **when** the score is calculated again, **then** the result should remain consistent.
-3. **Given** a score is displayed, **when** the student reviews it, **then** supporting feedback should also be available.
+1. The system should identify information such as education, skills, projects, and experience where available.
+2. Extracted information should be organized into understandable sections.
+3. The system should indicate information that could not be read or extracted properly.
 
 ---
 
-### US-07 — Identify Areas That Need Improvement
+### US-04 – Handle Invalid Resume
 
-**Requirement ID(s):** FR-06 (NFR-08 as AC) | **Type:** Functional | **Role:** Student / Job Seeker | **Priority:** Must Have | **Source:** Survey, Observation
+**Requirement ID(s):** FR-14, NFR-06  
+**Type:** Functional Requirement  
+**Role:** Student / Job Seeker  
+**Priority:** Must Have  
+**Source:** Observation, Prototype  
 
-**Front of Card**
+#### Front of Card
 
-> As a student, I want the system to highlight weak or missing areas in my resume, so that I know where I should focus my improvements.
+> As a student/job seeker, I want to know when my resume cannot be processed, so that I can correct the problem and try again.
 
-**Back of Card — Acceptance Criteria**
+#### Back of Card — Acceptance Criteria
 
-1. **Given** the resume has been analysed, **when** the results are displayed, **then** important weak or missing areas should be highlighted.
-2. **Given** multiple issues are found, **when** the results are shown, **then** the main areas requiring attention should be easy to identify.
-3. **Given** an area does not have a significant issue, **then** it should not be unnecessarily presented as a weakness.
-
----
-
-### US-08 — Get Resume Improvement Suggestions
-
-**Requirement ID(s):** FR-07 (NFR-05 as AC) | **Type:** Functional | **Role:** Student / Job Seeker | **Priority:** Must Have | **Source:** Survey, Faculty Interview
-
-**Front of Card**
-
-> As a student, I want to receive useful suggestions for improving my resume, so that I can make specific changes based on the analysis.
-
-**Back of Card — Acceptance Criteria**
-
-1. **Given** improvement areas have been identified, **when** the analysis results are shown, **then** relevant suggestions should be provided.
-2. **Given** a suggestion is displayed, **when** the student reads it, **then** it should be clear and easy to understand.
-3. **Given** a particular section or skill needs improvement, **when** a suggestion is generated, **then** it should be related to that issue.
+1. The system should reject unsupported, empty, corrupted, or unreadable files.
+2. A clear error message should be displayed.
+3. The user should be given an option to upload another file.
 
 ---
 
-### US-09 — Understand the Score and Recommendations
+### US-05 – Extract Skills from Resume
 
-**Requirement ID(s):** FR-11 (NFR-05 as AC) | **Type:** Functional | **Role:** Student / Job Seeker | **Priority:** Must Have | **Source:** Faculty Interview, Prototype
+**Requirement ID(s):** FR-03  
+**Type:** Functional Requirement  
+**Role:** Student / Job Seeker  
+**Priority:** Must Have  
+**Source:** Survey, Recruiter Discussion  
 
-**Front of Card**
+#### Front of Card
 
-> As a student, I want to understand why I received a particular score or recommendation, so that I know what led to the result and what I can improve.
+> As a student/job seeker, I want the system to identify skills from my resume, so that I can understand which skills are visible in my resume.
 
-**Back of Card — Acceptance Criteria**
+#### Back of Card — Acceptance Criteria
 
-1. **Given** a score or recommendation is displayed, **when** the student views its details, **then** the main reasons behind it should be shown.
-2. **Given** an explanation is provided, **when** the student reads it, **then** it should be understandable without technical knowledge.
-3. **Given** the system cannot properly explain a result, **then** it should provide suitable context instead of presenting it as an unexplained conclusion.
-
----
-
-### US-10 — Compare Resume with a Job Description
-
-**Requirement ID(s):** FR-08, DR-02, DR-04 | **Type:** Functional + Domain | **Role:** Student / Job Seeker | **Priority:** Must Have | **Source:** Recruiter Interview, Document Analysis
-
-**Front of Card**
-
-> As a student, I want to compare my resume with a specific job description, so that I can understand how well my profile matches the role.
-
-**Back of Card — Acceptance Criteria**
-
-1. **Given** the student provides a job description, **when** the comparison starts, **then** the system should compare the resume with the stated job requirements.
-2. **Given** a resume skill is closely related to a job requirement, **when** the comparison is performed, **then** the relationship should be considered appropriately.
-3. **Given** the comparison is complete, **when** the results are displayed, **then** the main matching and missing areas should be clearly shown.
+1. The system should identify relevant technical and non-technical skills where possible.
+2. Skills should be identified from relevant resume sections.
+3. Extracted skills should be displayed clearly to the user.
 
 ---
 
-### US-11 — Find Relevant Job or Internship Opportunities
+### US-06 – Analyse Resume for Placement Preparation
 
-**Requirement ID(s):** FR-09, DR-02 | **Type:** Functional + Domain | **Role:** Student / Job Seeker | **Priority:** Must Have | **Source:** Survey, Recruiter Interview
+**Requirement ID(s):** FR-04, DR-01  
+**Type:** Functional Requirement  
+**Role:** Student / Job Seeker  
+**Priority:** Must Have  
+**Source:** Survey, Interview, Placement Discussion  
 
-**Front of Card**
+#### Front of Card
 
-> As a student, I want to find job or internship opportunities that match my profile, so that I can focus on opportunities relevant to my skills.
+> As a student/job seeker, I want my resume to be analysed against placement-related criteria, so that I can understand its strengths and weaknesses.
 
-**Back of Card — Acceptance Criteria**
+#### Back of Card — Acceptance Criteria
 
-1. **Given** the student's resume has been analysed, **when** job matching is requested, **then** relevant job or internship opportunities should be displayed.
-2. **Given** several opportunities are available, **when** the results are shown, **then** they should be organised according to their relevance.
-3. **Given** no suitable opportunity is found, **when** the student views the results, **then** the system should clearly inform them.
-
----
-
-### US-12 — View Matching and Missing Skills
-
-**Requirement ID(s):** FR-10, DR-03, DR-04 | **Type:** Functional + Domain | **Role:** Student / Job Seeker | **Priority:** Must Have | **Source:** Recruiter Interview, Document Analysis
-
-**Front of Card**
-
-> As a student, I want to see which skills match a selected job and which skills are missing, so that I can decide what to improve before applying.
-
-**Back of Card — Acceptance Criteria**
-
-1. **Given** a student selects a job, **when** skill comparison is completed, **then** matching and missing skills should be shown separately.
-2. **Given** the job description contains required and preferred skills, **when** the comparison results are displayed, **then** they should be distinguished where possible.
-3. **Given** a related skill is already present in the resume, **when** the comparison is performed, **then** it should be shown as a related skill rather than simply being marked as missing.
+1. The system should evaluate the resume using defined analysis criteria.
+2. The analysis result should be shown clearly.
+3. The system should provide consistent results when the same resume and criteria are used.
 
 ---
 
-### US-13 — View Student Resume Analysis
+### US-07 – Get an Overall Resume Score
 
-**Requirement ID(s):** FR-12 | **Type:** Functional | **Role:** Placement Cell / Placement Officers, Faculty / Career Counselors | **Priority:** Should Have | **Source:** Placement Officer Interview, Faculty Interview
+**Requirement ID(s):** FR-05, NFR-04, NFR-08  
+**Type:** Functional Requirement  
+**Role:** Student / Job Seeker  
+**Priority:** Must Have  
+**Source:** Survey, Interview  
 
-**Front of Card**
+#### Front of Card
 
-> As a placement officer or career counselor, I want to view a student's resume analysis when I am authorized to do so, so that I can provide more useful guidance.
+> As a student/job seeker, I want an overall resume score, so that I can quickly understand how well my resume meets the defined criteria.
 
-**Back of Card — Acceptance Criteria**
+#### Back of Card — Acceptance Criteria
 
-1. **Given** the staff member has the required permission, **when** they open a student's record, **then** the relevant resume analysis should be available.
-2. **Given** the staff member is not authorized, **when** they try to access the student's information, **then** access should be denied.
-3. **Given** the analysis is available to an authorized counselor, **when** it is reviewed, **then** the score, identified issues and suggestions should be understandable.
-
----
-
-### US-14 — View Placement Dashboard and Reports
-
-**Requirement ID(s):** FR-13, DR-05 | **Type:** Functional + Domain | **Role:** Placement Cell / Placement Officers | **Priority:** Should Have | **Source:** Placement Interview, Workshop, Placement Documents
-
-**Front of Card**
-
-> As a placement officer, I want to view summary information from student resume analyses, so that I can identify common problems and plan placement support.
-
-**Back of Card — Acceptance Criteria**
-
-1. **Given** multiple students have completed resume analysis, **when** the placement officer opens the dashboard, **then** useful summary information should be available.
-2. **Given** the dashboard contains student-related information, **when** it is displayed, **then** sensitive personal information should be protected.
-3. **Given** placement information is presented, **then** it should follow the rules defined by the institution.
+1. The system should display an overall resume score.
+2. The score should be calculated using defined evaluation criteria.
+3. Recalculating the same resume using the same criteria should produce consistent results.
+4. The score should be supported by useful information rather than being shown alone.
 
 ---
 
-### US-15 — Manage Role-Based Access
+### US-08 – Identify Areas That Need Improvement
 
-**Requirement ID(s):** FR-15, NFR-07, DR-07 | **Type:** Functional + Non-Functional + Domain | **Role:** System Administrator | **Priority:** Must Have | **Source:** Privacy / System Admin Discussion
+**Requirement ID(s):** FR-06, NFR-08  
+**Type:** Functional Requirement  
+**Role:** Student / Job Seeker  
+**Priority:** Must Have  
+**Source:** Survey, Observation  
 
-**Front of Card**
+#### Front of Card
 
-> As a system administrator, I want access to system features and student information to depend on the user's role, so that users can access only what they are permitted to use.
+> As a student/job seeker, I want to know which areas of my resume need improvement, so that I can focus on the most important changes.
 
-**Back of Card — Acceptance Criteria**
+#### Back of Card — Acceptance Criteria
 
-1. **Given** different user roles are defined, **when** a user logs in, **then** the system should provide access according to that role.
-2. **Given** a user does not have permission to view a student's resume, **when** they try to access it, **then** access should be denied.
-3. **Given** an administrator updates a user's role or permissions, **when** the user accesses the system again, **then** the updated permissions should be applied.
-
----
-
-### US-16 — Protect Student Resume Data
-
-**Requirement ID(s):** NFR-03, NFR-09, DR-08 | **Type:** Non-Functional + Domain | **Role:** Data Privacy Reviewer | **Priority:** Must Have | **Source:** Privacy Discussion, Policy Analysis
-
-**Front of Card**
-
-> As a data privacy reviewer, I want student resumes and personal information to be protected, so that sensitive information is not unnecessarily exposed.
-
-**Back of Card — Acceptance Criteria**
-
-1. **Given** resume data is stored, **when** an access request is made, **then** only authorized users should be able to access it.
-2. **Given** student information is displayed in a screen or report, **when** it is shown, **then** only the information required for that purpose should be visible.
-3. **Given** the institution has defined rules for data handling and retention, **when** resume data is processed, **then** those rules should be followed.
+1. The system should highlight weak or missing areas where applicable.
+2. Important improvement areas should be clearly distinguishable.
+3. The system should not incorrectly identify a properly included section as a missing or weak area.
 
 ---
 
-### US-17 — Keep Automated Results as Supporting Information
+### US-09 – Get Resume Improvement Suggestions
 
-**Requirement ID(s):** DR-06 | **Type:** Domain | **Role:** Hiring Manager / Placement Officer / Recruiter | **Priority:** Must Have | **Source:** Placement / Recruiter Discussion
+**Requirement ID(s):** FR-07, NFR-05  
+**Type:** Functional Requirement  
+**Role:** Student / Job Seeker  
+**Priority:** Must Have  
+**Source:** Survey, Faculty Interview  
 
-**Front of Card**
+#### Front of Card
 
-> As a hiring manager, I want the system's scores and recommendations to support my decision, so that the final placement or hiring decision remains with a human.
+> As a student/job seeker, I want suggestions for improving my resume, so that I can make relevant changes before applying for placements.
 
-**Back of Card — Acceptance Criteria**
+#### Back of Card — Acceptance Criteria
 
-1. **Given** a student receives a low score or poor job match, **when** the result is displayed, **then** the system should not automatically reject the student.
-2. **Given** a recruiter or placement officer reviews a recommendation, **when** they view the result, **then** it should be presented as supporting information rather than a final decision.
-3. **Given** an automated result needs further review, **when** an authorized person evaluates it, **then** the final decision can be made by that person.
-
----
-
-### US-18 — Check Scoring and Matching for Fairness
-
-**Requirement ID(s):** DR-09 | **Type:** Domain | **Role:** Bias / Fairness Reviewer | **Priority:** Must Have | **Source:** Fairness Discussion
-
-**Front of Card**
-
-> As a fairness reviewer, I want the scoring and matching process to be checked for unfair factors, so that irrelevant personal characteristics do not unnecessarily affect the results.
-
-**Back of Card — Acceptance Criteria**
-
-1. **Given** the scoring and matching rules are defined, **when** they are reviewed, **then** the factors used by the system should be identifiable.
-2. **Given** two test resumes differ only in an irrelevant characteristic, **when** they are analysed, **then** there should not be an unjustified difference in their results.
-3. **Given** a possible fairness issue is found, **when** it is reported, **then** it should be recorded for further review.
+1. The system should provide suggestions related to identified issues.
+2. Suggestions should be clear and understandable.
+3. Suggestions should be relevant to the resume content and identified improvement areas.
 
 ---
 
-### US-19 — Keep Core Components Maintainable
+### US-10 – Understand the Score and Recommendations
 
-**Requirement ID(s):** NFR-10 | **Type:** Non-Functional | **Role:** Development Team | **Priority:** Should Have | **Source:** Brainstorming
+**Requirement ID(s):** FR-11, NFR-05  
+**Type:** Functional Requirement  
+**Role:** Student / Job Seeker  
+**Priority:** Must Have  
+**Source:** Faculty Interview, Prototype  
 
-**Front of Card**
+#### Front of Card
 
-> As a member of the development team, I want the main components of the system to be easy to maintain, so that changes or fixes can be made without unnecessarily affecting other parts.
+> As a student/job seeker, I want to understand why a score or recommendation was given, so that I can decide what changes to make.
 
-**Back of Card — Acceptance Criteria**
+#### Back of Card — Acceptance Criteria
 
-1. **Given** parsing, scoring and matching are separate components, **when** one component is changed, **then** the other components should continue to work normally.
-2. **Given** a component has been modified, **when** the system is tested, **then** unrelated features should continue to work as expected.
-3. **Given** a new team member joins the project, **when** they review the code and documentation, **then** the purpose of the main components should be clear.
+1. The system should show the main reasons behind the score or recommendation.
+2. Explanations should use simple and understandable language.
+3. The system should provide suitable context when an explanation may not be reliable.
+
+---
+
+### US-11 – Compare Resume with a Job Description
+
+**Requirement ID(s):** FR-08, DR-02, DR-04  
+**Type:** Functional Requirement  
+**Role:** Student / Job Seeker  
+**Priority:** Must Have  
+**Source:** Recruiter Discussion, Document Analysis  
+
+#### Front of Card
+
+> As a student/job seeker, I want to compare my resume with a job description, so that I can understand how well my profile matches the opportunity.
+
+#### Back of Card — Acceptance Criteria
+
+1. The system should compare resume information with the requirements stated in the job description.
+2. Related or equivalent skills should be considered where appropriate.
+3. The system should show matching and missing requirements clearly.
+
+---
+
+### US-12 – Find Relevant Job or Internship Opportunities
+
+**Requirement ID(s):** FR-09, DR-02  
+**Type:** Functional Requirement  
+**Role:** Student / Job Seeker  
+**Priority:** Must Have  
+**Source:** Survey, Recruiter Discussion  
+
+#### Front of Card
+
+> As a student/job seeker, I want to see relevant job or internship opportunities, so that I can identify opportunities that match my profile.
+
+#### Back of Card — Acceptance Criteria
+
+1. The system should display opportunities relevant to the user's profile where data is available.
+2. Opportunities should be organized based on their relevance.
+3. If no suitable opportunity is found, the system should clearly inform the user.
+
+---
+
+### US-13 – View Matching and Missing Skills
+
+**Requirement ID(s):** FR-10, DR-03, DR-04  
+**Type:** Functional Requirement  
+**Role:** Student / Job Seeker  
+**Priority:** Must Have  
+**Source:** Recruiter Discussion, Document Analysis  
+
+#### Front of Card
+
+> As a student/job seeker, I want to see matching and missing skills for a job, so that I can understand what I already have and what I need to improve.
+
+#### Back of Card — Acceptance Criteria
+
+1. Matching and missing skills should be shown separately.
+2. Required and preferred skills should be distinguished where the job description provides this information.
+3. Related skills should be handled appropriately instead of being treated as completely unrelated skills.
+
+---
+
+### US-14 – View Student Resume Analysis
+
+**Requirement ID(s):** FR-12  
+**Type:** Functional Requirement  
+**Role:** Placement Cell / Placement Officer, Faculty / Career Counselor  
+**Priority:** Should Have  
+**Source:** Placement Officer Interview, Faculty Interview  
+
+#### Front of Card
+
+> As a placement officer or career counselor, I want to view student resume analysis, so that I can support students during placement preparation.
+
+#### Back of Card — Acceptance Criteria
+
+1. Only authorized staff should be able to view student analysis.
+2. Unauthorized users should not be able to access student resume information.
+3. The analysis should be presented in an understandable format.
+
+---
+
+### US-15 – View Placement Dashboard and Reports
+
+**Requirement ID(s):** FR-13, DR-05  
+**Type:** Functional Requirement  
+**Role:** Placement Officer  
+**Priority:** Should Have  
+**Source:** Placement Interview, Workshop, Placement Documents  
+
+#### Front of Card
+
+> As a placement officer, I want to view placement-related summaries and reports, so that I can understand overall student placement preparation.
+
+#### Back of Card — Acceptance Criteria
+
+1. The dashboard should provide useful summary information.
+2. Sensitive personal information should not be unnecessarily exposed.
+3. Reports should follow applicable institutional rules for student data.
+
+---
+
+### US-16 – Manage Role-Based Access
+
+**Requirement ID(s):** FR-15, NFR-07, DR-07  
+**Type:** Functional Requirement  
+**Role:** System Administrator  
+**Priority:** Must Have  
+**Source:** Privacy / System Admin Discussion  
+
+#### Front of Card
+
+> As a system administrator, I want to manage role-based access, so that users can access only the features and data allowed for their role.
+
+#### Back of Card — Acceptance Criteria
+
+1. The system should provide different access levels for different roles.
+2. Unauthorized users should be prevented from accessing restricted student resume data.
+3. Changes to user permissions should be applied correctly.
+
+---
+
+### US-17 – Protect Student Resume Data
+
+**Requirement ID(s):** NFR-03, NFR-09, DR-08  
+**Type:** Non-Functional Requirement  
+**Role:** Data Privacy Reviewer  
+**Priority:** Must Have  
+**Source:** Privacy Discussion, Policy Analysis  
+
+#### Front of Card
+
+> As a data privacy reviewer, I want student resume data to be protected, so that personal information is handled securely and only when required.
+
+#### Back of Card — Acceptance Criteria
+
+1. Only authorized users should be able to access protected resume information.
+2. The system should display only the information necessary for a particular task.
+3. Data handling and retention should follow defined privacy rules.
+
+---
+
+### US-18 – Keep Automated Results as Supporting Information
+
+**Requirement ID(s):** DR-06  
+**Type:** Domain Requirement  
+**Role:** Hiring Manager / Placement Officer / Recruiter  
+**Priority:** Must Have  
+**Source:** Placement / Recruiter Discussion  
+
+#### Front of Card
+
+> As a placement or recruitment decision-maker, I want automated analysis to act as supporting information, so that final decisions remain under human control.
+
+#### Back of Card — Acceptance Criteria
+
+1. The system should not automatically reject a candidate only because of an automated score.
+2. Automated results should be presented as supporting information.
+3. Final placement or recruitment decisions should remain with the responsible human decision-maker.
+
+---
+
+### US-19 – Check Scoring and Matching for Fairness
+
+**Requirement ID(s):** DR-09  
+**Type:** Domain Requirement  
+**Role:** Fairness Reviewer  
+**Priority:** Must Have  
+**Source:** Fairness Discussion  
+
+#### Front of Card
+
+> As a fairness reviewer, I want scoring and matching factors to be reviewable, so that the system can be checked for unfair or unjustified results.
+
+#### Back of Card — Acceptance Criteria
+
+1. The main factors used for scoring and matching should be identifiable.
+2. The system should avoid unjustified differences based on characteristics that are not relevant to the job requirements.
+3. Potential fairness issues should be recorded for review.
+
+---
+
+### US-20 – Keep Core Components Maintainable
+
+**Requirement ID(s):** NFR-10  
+**Type:** Non-Functional Requirement  
+**Role:** Development Team  
+**Priority:** Should Have  
+**Source:** Brainstorming  
+
+#### Front of Card
+
+> As a developer, I want the main system components to be organized separately, so that the system can be updated and maintained more easily.
+
+#### Back of Card — Acceptance Criteria
+
+1. Resume parsing, scoring, and job matching should be organized as separate components.
+2. Changes to one component should not unnecessarily affect unrelated features.
+3. The code and basic documentation should be understandable for future development.
 
 ---
 
 ## 4. User Story Summary
 
-| ID | User Story | Role | Priority |
+| User Story | Main Requirement | Role | Priority |
 |---|---|---|---|
-| US-01 | Upload Resume | Student / Job Seeker | Must Have |
-| US-02 | Parse Uploaded Resume | Student / Job Seeker | Must Have |
-| US-03 | Handle Invalid Resume | Student / Job Seeker | Must Have |
-| US-04 | Extract Skills from Resume | Student / Job Seeker | Must Have |
-| US-05 | Analyse Resume for Placement Preparation | Student / Job Seeker | Must Have |
-| US-06 | Get an Overall Resume Score | Student / Job Seeker | Must Have |
-| US-07 | Identify Areas That Need Improvement | Student / Job Seeker | Must Have |
-| US-08 | Get Resume Improvement Suggestions | Student / Job Seeker | Must Have |
-| US-09 | Understand the Score and Recommendations | Student / Job Seeker | Must Have |
-| US-10 | Compare Resume with a Job Description | Student / Job Seeker | Must Have |
-| US-11 | Find Relevant Job or Internship Opportunities | Student / Job Seeker | Must Have |
-| US-12 | View Matching and Missing Skills | Student / Job Seeker | Must Have |
-| US-13 | View Student Resume Analysis | Placement Staff / Counselor | Should Have |
-| US-14 | View Placement Dashboard and Reports | Placement Officer | Should Have |
-| US-15 | Manage Role-Based Access | System Administrator | Must Have |
-| US-16 | Protect Student Resume Data | Data Privacy Reviewer | Must Have |
-| US-17 | Keep Automated Results as Supporting Information | Recruiter / Placement Officer | Must Have |
-| US-18 | Check Scoring and Matching for Fairness | Fairness Reviewer | Must Have |
-| US-19 | Keep Core Components Maintainable | Development Team | Should Have |
+| US-01 | User Login and Account Access | Student / Job Seeker | Must Have |
+| US-02 | Upload Resume | Student / Job Seeker | Must Have |
+| US-03 | Parse Uploaded Resume | Student / Job Seeker | Must Have |
+| US-04 | Handle Invalid Resume | Student / Job Seeker | Must Have |
+| US-05 | Extract Skills from Resume | Student / Job Seeker | Must Have |
+| US-06 | Analyse Resume for Placement Preparation | Student / Job Seeker | Must Have |
+| US-07 | Get an Overall Resume Score | Student / Job Seeker | Must Have |
+| US-08 | Identify Areas That Need Improvement | Student / Job Seeker | Must Have |
+| US-09 | Get Resume Improvement Suggestions | Student / Job Seeker | Must Have |
+| US-10 | Understand the Score and Recommendations | Student / Job Seeker | Must Have |
+| US-11 | Compare Resume with a Job Description | Student / Job Seeker | Must Have |
+| US-12 | Find Relevant Job or Internship Opportunities | Student / Job Seeker | Must Have |
+| US-13 | View Matching and Missing Skills | Student / Job Seeker | Must Have |
+| US-14 | View Student Resume Analysis | Placement Cell / Career Counselor | Should Have |
+| US-15 | View Placement Dashboard and Reports | Placement Officer | Should Have |
+| US-16 | Manage Role-Based Access | System Administrator | Must Have |
+| US-17 | Protect Student Resume Data | Data Privacy Reviewer | Must Have |
+| US-18 | Keep Automated Results as Supporting Information | Hiring Manager / Placement Officer / Recruiter | Must Have |
+| US-19 | Check Scoring and Matching for Fairness | Fairness Reviewer | Must Have |
+| US-20 | Keep Core Components Maintainable | Development Team | Should Have |

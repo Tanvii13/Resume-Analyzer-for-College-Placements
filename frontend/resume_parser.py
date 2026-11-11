@@ -11,35 +11,78 @@ plain-English MESSAGE, so the UI can tell the student exactly what to fix.
 """
 
 import re
-from pypdf import PdfReader
+
 from docx import Document
+from pypdf import PdfReader
 
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
-MIN_TEXT_LENGTH = 50             # less text than this = probably a scanned image
+MIN_TEXT_LENGTH = 50  # less text than this = probably a scanned image
 
 # First bytes of each file type ("magic numbers"). We check these because
 # a user could simply rename virus.exe to resume.pdf.
 FILE_SIGNATURES = {
     "pdf": b"%PDF-",
-    "docx": b"PK\x03\x04",   # DOCX files are ZIP archives internally
+    "docx": b"PK\x03\x04",  # DOCX files are ZIP archives internally
 }
 
 # Words that usually appear as section headings in a resume
 SECTION_HEADINGS = {
-    "summary":        ["summary", "objective", "career objective", "profile", "about me", "professional summary"],
-    "education":      ["education", "academic details", "academics", "academic qualifications", "qualifications"],
-    "skills":         ["skills", "technical skills", "key skills", "core skills", "skills and tools", "technologies"],
-    "experience":     ["experience", "work experience", "professional experience", "internship", "internships", "employment"],
-    "projects":       ["projects", "academic projects", "personal projects", "key projects"],
-    "certifications": ["certifications", "certificates", "courses", "licenses and certifications"],
-    "achievements":   ["achievements", "awards", "honors", "honours", "accomplishments"],
-    "activities":     ["extracurricular activities", "activities", "positions of responsibility", "leadership"],
+    "summary": [
+        "summary",
+        "objective",
+        "career objective",
+        "profile",
+        "about me",
+        "professional summary",
+    ],
+    "education": [
+        "education",
+        "academic details",
+        "academics",
+        "academic qualifications",
+        "qualifications",
+    ],
+    "skills": [
+        "skills",
+        "technical skills",
+        "key skills",
+        "core skills",
+        "skills and tools",
+        "technologies",
+    ],
+    "experience": [
+        "experience",
+        "work experience",
+        "professional experience",
+        "internship",
+        "internships",
+        "employment",
+    ],
+    "projects": ["projects", "academic projects", "personal projects", "key projects"],
+    "certifications": [
+        "certifications",
+        "certificates",
+        "courses",
+        "licenses and certifications",
+    ],
+    "achievements": ["achievements", "awards", "honors", "honours", "accomplishments"],
+    "activities": [
+        "extracurricular activities",
+        "activities",
+        "positions of responsibility",
+        "leadership",
+    ],
 }
 
 SECTION_TITLES = {
-    "summary": "Summary", "education": "Education", "skills": "Skills",
-    "experience": "Experience", "projects": "Projects", "certifications": "Certifications",
-    "achievements": "Achievements", "activities": "Activities",
+    "summary": "Summary",
+    "education": "Education",
+    "skills": "Skills",
+    "experience": "Experience",
+    "projects": "Projects",
+    "certifications": "Certifications",
+    "achievements": "Achievements",
+    "activities": "Activities",
 }
 
 # Sections a placement resume is expected to have
@@ -47,7 +90,9 @@ EXPECTED_SECTIONS = ["education", "skills", "projects", "experience"]
 
 EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
 PHONE_RE = re.compile(r"(?:\+?\d{1,3}[\s-]?)?\d{5}[\s-]?\d{5}|\+?\d[\d\s-]{8,14}\d")
-LINK_RE = re.compile(r"(?:https?://)?(?:www\.)?(?:linkedin\.com|github\.com)/[\w\-/]+", re.I)
+LINK_RE = re.compile(
+    r"(?:https?://)?(?:www\.)?(?:linkedin\.com|github\.com)/[\w\-/]+", re.IGNORECASE
+)
 
 
 class ResumeParseError(Exception):
@@ -69,16 +114,25 @@ def validate_file(filename, data):
 
     ext = filename.rsplit(".", 1)[1].lower()
     if ext not in FILE_SIGNATURES:
-        raise ResumeParseError("ERR_FILE_TYPE",
-                               f"'.{ext}' files are not supported. Please upload a PDF or DOCX file.")
+        raise ResumeParseError(
+            "ERR_FILE_TYPE",
+            f"'.{ext}' files are not supported. Please upload a PDF or DOCX file.",
+        )
     if len(data) == 0:
-        raise ResumeParseError("ERR_EMPTY_FILE", "This file is empty. Please upload your actual resume.")
+        raise ResumeParseError(
+            "ERR_EMPTY_FILE", "This file is empty. Please upload your actual resume."
+        )
     if len(data) > MAX_FILE_SIZE:
-        raise ResumeParseError("ERR_FILE_TOO_LARGE", "This file is larger than 5 MB. Please compress it and try again.")
+        raise ResumeParseError(
+            "ERR_FILE_TOO_LARGE",
+            "This file is larger than 5 MB. Please compress it and try again.",
+        )
     if not data.startswith(FILE_SIGNATURES[ext]):
-        raise ResumeParseError("ERR_FILE_CORRUPT",
-                               f"This file is named .{ext} but its content is not a valid {ext.upper()}. "
-                               "It may be corrupted or renamed.")
+        raise ResumeParseError(
+            "ERR_FILE_CORRUPT",
+            f"This file is named .{ext} but its content is not a valid {ext.upper()}. "
+            "It may be corrupted or renamed.",
+        )
     return ext
 
 
@@ -91,28 +145,34 @@ def extract_text(path, ext):
         if ext == "pdf":
             reader = PdfReader(path)
             if reader.is_encrypted:
-                raise ResumeParseError("ERR_PASSWORD_PROTECTED",
-                                       "This PDF is password-protected. Please remove the password and upload again.")
+                raise ResumeParseError(
+                    "ERR_PASSWORD_PROTECTED",
+                    "This PDF is password-protected. Please remove the password and upload again.",
+                )
             pages = [page.extract_text() or "" for page in reader.pages]
             text, page_count = "\n".join(pages), len(pages)
         else:
             doc = Document(path)
             lines = [p.text for p in doc.paragraphs]
-            for table in doc.tables:              # many resumes use tables for layout
+            for table in doc.tables:  # many resumes use tables for layout
                 for row in table.rows:
                     lines.extend(cell.text for cell in row.cells)
             text, page_count = "\n".join(lines), None
     except ResumeParseError:
         raise
     except Exception:  # any error from pypdf or python-docx means the file is damaged
-        raise ResumeParseError("ERR_UNREADABLE",
-                               "We couldn't read this file. It may be damaged. "
-                               "Try exporting your resume again as PDF from Word or Google Docs.")
+        raise ResumeParseError(
+            "ERR_UNREADABLE",
+            "We couldn't read this file. It may be damaged. "
+            "Try exporting your resume again as PDF from Word or Google Docs.",
+        )
 
     if len(text.strip()) < MIN_TEXT_LENGTH:
-        raise ResumeParseError("ERR_NO_TEXT",
-                               "No readable text was found. This usually means the resume is a scanned image. "
-                               "Please upload a text-based PDF or DOCX.")
+        raise ResumeParseError(
+            "ERR_NO_TEXT",
+            "No readable text was found. This usually means the resume is a scanned image. "
+            "Please upload a text-based PDF or DOCX.",
+        )
     return text, page_count
 
 
