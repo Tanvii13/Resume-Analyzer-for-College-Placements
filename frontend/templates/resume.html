@@ -28,6 +28,43 @@
     </div>
   {% endif %}
 
+  <section class="analysis-panel" aria-labelledby="analysis-title">
+    <div class="analysis-heading">
+      <div>
+        <p class="eyebrow">Sprint 2 · Resume analysis</p>
+        <h2 id="analysis-title">Placement readiness</h2>
+        <p class="muted">{{ analysis.summary }} · Based on the text we could read in this resume.</p>
+      </div>
+      <div class="score-wrap" role="img" aria-label="Preliminary resume score: {{ analysis.score }} out of 100">
+        <strong>{{ analysis.score }}</strong><span>/ 100</span>
+        <div class="score-track" aria-hidden="true"><span style="width: {{ analysis.score }}%"></span></div>
+      </div>
+    </div>
+
+    <div class="analysis-columns">
+      <section class="analysis-subpanel" aria-labelledby="skills-title">
+        <h3 id="skills-title">Skills found <span class="count-pill">{{ analysis.skill_count }}</span></h3>
+        {% if analysis.skills %}
+          {% for group in analysis.skills %}
+            <div class="skill-group"><h4>{{ group.name }}</h4><ul class="skill-chips">{% for skill in group.skills %}<li>{{ skill }}</li>{% endfor %}</ul></div>
+          {% endfor %}
+        {% else %}
+          <p class="analysis-empty">No recognizable skills found yet. Add a clearly labeled Skills section with specific tools and technologies.</p>
+        {% endif %}
+      </section>
+
+      <section class="analysis-subpanel" aria-labelledby="criteria-title">
+        <h3 id="criteria-title">Assessment checklist</h3>
+        <ul class="criteria-list">
+          {% for item in analysis.criteria %}
+            <li><span class="criteria-mark {{ 'is-ready' if item.passed else 'needs-work' }}" aria-hidden="true">{{ '✓' if item.passed else '!' }}</span><span><strong>{{ item.title }}</strong><small>{{ item.detail }}</small></span></li>
+          {% endfor %}
+        </ul>
+      </section>
+    </div>
+    <p class="analysis-note">{{ analysis.method_note }}</p>
+  </section>
+
   <div class="report-grid">
     <!-- Contact details: label/value rows, like iOS Settings -->
     <section class="contact-card">
