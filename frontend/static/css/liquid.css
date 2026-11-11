@@ -84,7 +84,7 @@ body { background: #03060d; color: var(--label); }
 
 /* 3. The liquid glass material ------------------------------------------- */
 .glass, .card, .list, .stat-row, .stage, .toast, .step-num,
-.lp-nav-inner, .nav-inner {
+.nav-inner {
   position: relative;
   isolation: isolate;
   border: 0;
@@ -98,7 +98,7 @@ body { background: #03060d; color: var(--label); }
 }
 /* Specular rim — brightest top-left, a softer catch-light bottom-right */
 .glass::before, .card::before, .list::before, .stat-row::before, .stage::before, .toast::before,
-.lp-nav-inner::before, .nav-inner::before, .step-num::before {
+.nav-inner::before, .step-num::before {
   content: ""; position: absolute; inset: 0; z-index: 2; border-radius: inherit; padding: 1.2px; pointer-events: none;
   background: linear-gradient(135deg, var(--glass-rim) 0%, rgba(255, 255, 255, 0.35) 14%, rgba(255, 255, 255, 0.06) 38%,
                               rgba(255, 255, 255, 0.04) 62%, rgba(255, 255, 255, 0.30) 88%, rgba(255, 255, 255, 0.6) 100%);
@@ -108,7 +108,7 @@ body { background: #03060d; color: var(--label); }
 }
 /* Chromatic edge — a prism-like rainbow fringe just inside the top-left rim */
 .glass::after, .card::after, .list::after, .stat-row::after, .stage::after,
-.lp-nav-inner::after, .nav-inner::after {
+.nav-inner::after {
   content: ""; position: absolute; inset: 0; z-index: 2; border-radius: inherit; padding: 2.5px; pointer-events: none;
   background: conic-gradient(from 225deg at 50% 50%,
               rgba(255, 120, 220, 0.0) 0deg, rgba(255, 120, 220, 0.55) 30deg, rgba(255, 214, 110, 0.55) 52deg,
@@ -247,13 +247,6 @@ a.list-row:hover { background: rgba(255, 255, 255, 0.07); }
 .lp-links a:hover { background: rgba(255, 255, 255, 0.10); }
 
 /* 6. Landing page ----------------------------------------------------------- */
-.hero-meta svg { color: var(--aqua); }
-.hero-meta { color: #fff; }
-.hero-meta li {                      /* small glass chips, so the wallpaper streaks never wash them out */
-  padding: 5px 12px 5px 9px; border-radius: 980px;
-  background: rgba(3, 26, 29, 0.42); box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.3), inset 0 0 0 0.5px rgba(255, 255, 255, 0.12);
-  -webkit-backdrop-filter: blur(10px) saturate(160%); backdrop-filter: blur(10px) saturate(160%);
-}
 .back-link { color: #e6fffd; }
 .stage { border-radius: 34px; }
 .st-group { background: rgba(0, 18, 20, 0.28); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
@@ -278,8 +271,6 @@ a.list-row:hover { background: rgba(255, 255, 255, 0.07); }
 .lp-footer { border-top-color: rgba(255, 255, 255, 0.12); }
 .scan-beam { background: linear-gradient(180deg, transparent, rgba(51, 201, 192, 0.14) 75%, rgba(51, 201, 192, 0.42)); border-bottom-color: #18a9a0; }
 
-/* Demo stage tilt follows the pointer (values from main.js) */
-.stage { transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .8s var(--spring); }
 
 /* 7. Motion ------------------------------------------------------------------- */
 @keyframes sheet-in { from { opacity: 0; transform: translateY(26px) scale(0.94); filter: blur(6px); } }
@@ -293,7 +284,7 @@ a.list-row:hover { background: rgba(255, 255, 255, 0.07); }
 
 /* 8. Accessibility settings ----------------------------------------------------- */
 @media (prefers-reduced-transparency: reduce) {
-  .glass, .card, .list, .stat-row, .stage, .toast, .lp-nav-inner, .nav-inner, .nav-links, .btn-ghost, .btn-gray {
+  .glass, .card, .list, .stat-row, .stage, .toast, .nav-inner, .nav-links, .btn-ghost, .btn-gray {
     -webkit-backdrop-filter: none !important; backdrop-filter: none !important; background: #0d3a3e !important;
   }
   .glass::after, .card::after, .list::after, .stat-row::after, .stage::after { display: none; }
@@ -331,7 +322,7 @@ a.list-row:hover { background: rgba(255, 255, 255, 0.07); }
 .page > *, .hero-inner > *, .stage, .auth-card { animation-fill-mode: backwards; }
 
 /* Floating bars sit over moving content (including white headings), so they get a deeper tint */
-.lp-nav-inner, .nav-inner {
+.nav-inner {
   background:
     linear-gradient(160deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02) 55%),
     rgba(3, 24, 27, 0.55);
@@ -343,4 +334,173 @@ a.list-row:hover { background: rgba(255, 255, 255, 0.07); }
 /* Text that sits straight on the wallpaper gets a soft shadow, so bright streaks never wash it out */
 .hero-kicker, .hero-sub, .hero-meta, .sec-head, .page-head, .principle, .list-head, .section-head, .auth-header, .lp-footer {
   text-shadow: 0 1px 12px rgba(0, 20, 22, 0.55);
+}
+
+/* =========================================================
+   10. iOS-style Liquid Glass components (reusable on any page)
+   .lg       a clear glass surface: almost no tint, light blur, a bright
+             specular rim on the top-left and bottom-right, and a soft inner glow
+   .lg-btn   a clear glass pill button that GROWS and glows when pressed (like iOS)
+   .lg-tile  a small glass icon tile
+   ========================================================= */
+.lg {
+  position: relative; isolation: isolate;
+  border-radius: var(--lg-r, 24px);
+  background:
+    radial-gradient(320px circle at var(--mx, -400px) var(--my, -400px), rgba(255, 255, 255, 0.10), transparent 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.025) 45%, rgba(255, 255, 255, 0.05)),
+    rgba(10, 16, 30, 0.30);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.45),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.10),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    inset 0 -22px 34px -30px rgba(255, 255, 255, 0.35),
+    0 24px 60px -24px rgba(0, 0, 0, 0.75);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+          backdrop-filter: blur(16px) saturate(180%);
+}
+.lg::before {                    /* specular rim: light catches two opposite corners */
+  content: ""; position: absolute; inset: 0; z-index: 2; border-radius: inherit; padding: 1.2px; pointer-events: none;
+  background:
+    radial-gradient(90% 70% at 0% 0%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.25) 35%, transparent 60%),
+    radial-gradient(90% 70% at 100% 100%, rgba(255, 255, 255, 0.55), transparent 55%),
+    rgba(255, 255, 255, 0.08);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+}
+.lg > * { position: relative; z-index: 3; }
+.lg.lg-refract { -webkit-backdrop-filter: blur(10px) saturate(180%) var(--lg-filter); backdrop-filter: blur(10px) saturate(180%) var(--lg-filter); }
+
+.lg-btn {
+  color: #fff;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(255, 255, 255, 0.15),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 10px 30px -12px rgba(0, 0, 0, 0.7);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+          backdrop-filter: blur(12px) saturate(180%);
+}
+.lg-btn:hover { background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.07)); }
+/* iOS glass controls swell and light up under your finger instead of shrinking */
+.btn.lg-btn:active, .btn-primary:active { transform: scale(1.06); filter: brightness(1.12); transition: transform .5s var(--spring-bouncy), filter .2s; }
+
+.lg-tile {
+  width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; color: #fff;
+  background: linear-gradient(150deg, var(--tile-a, rgba(90, 150, 255, 0.55)), var(--tile-b, rgba(20, 60, 160, 0.25)));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.7), inset 0 -1px 1px rgba(255, 255, 255, 0.18),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 12px 28px -10px rgba(0, 0, 0, 0.6);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+          backdrop-filter: blur(10px) saturate(180%);
+}
+.lg-tile svg { width: 28px; height: 28px; filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35)); }
+.tile-teal   { --tile-a: rgba(80, 230, 215, 0.55); --tile-b: rgba(10, 120, 130, 0.25); }
+.tile-violet { --tile-a: rgba(170, 150, 255, 0.55); --tile-b: rgba(80, 60, 200, 0.25); }
+
+@media (prefers-reduced-transparency: reduce) {
+  .lg, .lg-btn, .lg-tile { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; background: #111a2b !important; }
+}
+
+/* =========================================================
+   11. Lock-screen glass (matches the iOS music-widget reference)
+   The glass is LIGHTER than what's behind it: a milky, heavily blurred pane
+   with a thin bright rim (strongest along the top), a soft glow just inside
+   every edge, and no rainbow fringe. Round controls are clear lenses.
+   This section comes last, so it overrides the earlier, darker glass.
+   ========================================================= */
+:root {
+  --milk: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.055) 100%);
+  --milk-strong: linear-gradient(180deg, rgba(255, 255, 255, 0.17) 0%, rgba(255, 255, 255, 0.08) 100%);
+  --edge:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 0 26px rgba(255, 255, 255, 0.09),
+    0 12px 40px -12px rgba(0, 0, 0, 0.6);
+  --frost: blur(24px) saturate(160%) brightness(1.04);
+}
+
+.glass, .card, .list, .stat-row, .stage, .toast, .nav-inner, .glass-thick, .lg {
+  background:
+    radial-gradient(360px circle at var(--mx, -400px) var(--my, -400px), rgba(255, 255, 255, 0.10), transparent 60%),
+    var(--milk);
+  box-shadow: var(--edge);
+  -webkit-backdrop-filter: var(--frost);
+          backdrop-filter: var(--frost);
+}
+/* Rim: brightest along the top edge, a softer catch-light at the bottom */
+.glass::before, .card::before, .list::before, .stat-row::before, .stage::before, .toast::before,
+.nav-inner::before, .lg::before {
+  padding: 1px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.22) 28%,
+                              rgba(255, 255, 255, 0.08) 60%, rgba(255, 255, 255, 0.32));
+  opacity: 1;
+}
+/* No rainbow fringe on this glass */
+.glass::after, .card::after, .list::after, .stat-row::after, .stage::after, .nav-inner::after { display: none; }
+
+.lg-refract, .lg.lg-refract, .lg-refract.glass-thick {
+  -webkit-backdrop-filter: var(--frost) var(--lg-filter);
+          backdrop-filter: var(--frost) var(--lg-filter);
+}
+
+/* Clear glass buttons and icon tiles */
+.lg-btn, .btn-ghost, .btn-gray, .btn-light {
+  background: var(--milk-strong);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18), inset 0 1.5px 0 rgba(255, 255, 255, 0.6),
+              inset 0 -1px 0 rgba(255, 255, 255, 0.2), inset 0 0 16px rgba(255, 255, 255, 0.10), 0 8px 26px -10px rgba(0, 0, 0, 0.6);
+  -webkit-backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
+          backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
+}
+.lg-btn:hover, .btn-ghost:hover, .btn-gray:hover, .btn-light:hover { background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.11)); }
+.lg-tile {
+  background: linear-gradient(160deg, var(--tile-a, rgba(110, 160, 255, 0.38)), rgba(255, 255, 255, 0.08));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), inset 0 1.5px 0 rgba(255, 255, 255, 0.65),
+              inset 0 -1px 0 rgba(255, 255, 255, 0.2), inset 0 0 16px rgba(255, 255, 255, 0.12), 0 10px 26px -10px rgba(0, 0, 0, 0.6);
+}
+.tile-teal   { --tile-a: rgba(90, 230, 215, 0.36); }
+.tile-violet { --tile-a: rgba(170, 150, 255, 0.38); }
+
+/* Round lens control: clear in the middle, brighter towards the rim, lit top-left and bottom-right */
+.lens-btn {
+  border-radius: 50%; color: #fff; display: grid; place-items: center;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 52%, rgba(255, 255, 255, 0.20) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+    inset 3px 4px 8px -2px rgba(255, 255, 255, 0.5),
+    inset -4px -5px 10px -3px rgba(255, 255, 255, 0.38),
+    0 14px 34px -10px rgba(0, 0, 0, 0.6);
+  -webkit-backdrop-filter: blur(3px) saturate(180%) brightness(1.2);
+          backdrop-filter: blur(3px) saturate(180%) brightness(1.2);
+}
+.lens-btn.lg-refract { -webkit-backdrop-filter: blur(3px) saturate(180%) brightness(1.2) var(--lg-filter); backdrop-filter: blur(3px) saturate(180%) brightness(1.2) var(--lg-filter); }
+
+/* Progress: solid white on a see-through white track */
+.st-progress, .strength-bars i { background: rgba(255, 255, 255, 0.22); }
+.st-progress i, .steps-line i, .mini-bars i, .strength[data-level="3"] i:nth-child(-n+3) { background: #ffffff; box-shadow: 0 0 10px rgba(255, 255, 255, 0.35); }
+
+/* Phone tab bar uses the same milky glass */
+/* App nav bar is wide too: lighter blur for the same reason as the landing nav */
+.nav-inner { -webkit-backdrop-filter: blur(14px) saturate(160%) brightness(1.04); backdrop-filter: blur(14px) saturate(160%) brightness(1.04); }
+.nav-inner.lg-refract { -webkit-backdrop-filter: blur(14px) saturate(160%) brightness(1.04) var(--lg-filter); backdrop-filter: blur(14px) saturate(160%) brightness(1.04) var(--lg-filter); }
+@media (max-width: 700px) {
+  .nav-links { background: var(--milk); box-shadow: var(--edge); -webkit-backdrop-filter: var(--frost); backdrop-filter: var(--frost); }
+  .nav-links.lg-refract { -webkit-backdrop-filter: var(--frost) var(--lg-filter); backdrop-filter: var(--frost) var(--lg-filter); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass, .card, .list, .stat-row, .stage, .toast, .nav-inner, .glass-thick, .lg, .lg-btn, .lens-btn, .nav-links {
+    -webkit-backdrop-filter: none !important; backdrop-filter: none !important; background: #1b2232 !important;
+  }
+}
+
+/* Readability on the lighter glass: secondary text a touch brighter, active tab a touch darker */
+:root { --label-2: rgba(246, 250, 255, 0.94); }
+.nav-links a.active { background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.07)); }
+/* Floating bars sit over text. A darker base under the milky layer keeps that text from
+   showing through, even on computers where the browser can't render a strong blur. */
+.nav-inner, .lp-nav-inner, .toast {
+  background:
+    radial-gradient(360px circle at var(--mx, -400px) var(--my, -400px), rgba(255, 255, 255, 0.08), transparent 60%),
+    var(--milk), rgba(6, 10, 20, 0.62);
+}
+@media (max-width: 700px) {
+  .nav-links { background: var(--milk), rgba(6, 10, 20, 0.62); }
 }
