@@ -3,11 +3,11 @@
 {% block body_class %}auth-page{% endblock %}
 {% block content %}
 <section class="auth-wrap">
-  <div class="card auth-card center">
+  <div class="auth-card glass glass-thick center">
     <span class="eyebrow eyebrow-error">Error {{ code }}</span>
-    <h2>{{ title }}</h2>
+    <h1 class="display-title">{{ title }}</h1>
     <p class="muted">{{ message }}</p>
-    <a href="{{ url_for('index') }}" class="btn btn-primary btn-block">Go home</a>
+    <a href="{{ url_for('index') }}" class="btn btn-primary btn-block">Go Home</a>
   </div>
 </section>
 {% endblock %}
