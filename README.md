@@ -144,9 +144,9 @@ The parser provides a reusable, pure-Python interface callable independently of 
 from app.services.resume_parser import parse_resume, ResumeParseResult
 
 result: ResumeParseResult = parse_resume(file_bytes=content, filename="resume.pdf")
-print(result.filename)  # "resume.pdf"
-print(result.file_type)  # ".pdf"
-print(result.text)  # Extracted and normalized text
+print(result.filename)    # "resume.pdf"
+print(result.file_type)   # ".pdf"
+print(result.text)        # Extracted and normalized text
 print(result.page_count)  # 2 (for PDF) or None (for DOCX)
 print(result.word_count)  # Total word count
 print(result.char_count)  # Total character count
