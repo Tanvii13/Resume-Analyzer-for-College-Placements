@@ -431,6 +431,35 @@ a.list-row:hover { background: var(--fill-2); text-decoration: none; }
 .section-card .card-title span { color: var(--hl-ink); background: var(--hl); padding: 2px 7px; border-radius: 4px; transform: rotate(-0.8deg); display: inline-block; }
 .section-text { white-space: pre-line; color: var(--label); line-height: 1.6; font-size: 1rem; }
 
+/* Sprint 2: resume analysis and scoring */
+.analysis-panel { margin: 22px 0; padding: 24px; border-radius: var(--r-card); background: var(--card); box-shadow: var(--card-shadow); }
+.analysis-heading { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+.analysis-heading h2 { margin: 2px 0 5px; font-size: 1.35rem; }
+.analysis-heading p { margin: 0; }
+.eyebrow { color: var(--label-2); font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.score-wrap { min-width: 150px; text-align: right; }
+.score-wrap strong { font-size: 2.4rem; line-height: 1; }
+.score-wrap > span { color: var(--label-2); }
+.score-track { height: 7px; margin-top: 9px; overflow: hidden; border-radius: 8px; background: var(--separator); }
+.score-track span { display: block; height: 100%; border-radius: inherit; background: var(--green); }
+.analysis-columns { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 18px; padding-top: 18px; }
+.analysis-subpanel { min-width: 0; padding: 18px; border: 1px solid var(--separator); border-radius: var(--r-card); }
+.analysis-subpanel h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 16px; font-size: 1rem; }
+.skill-group + .skill-group { margin-top: 16px; }
+.skill-group h4 { margin: 0 0 8px; color: var(--label-2); font-size: .8rem; font-weight: 600; }
+.skill-chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 0; padding: 0; list-style: none; }
+.skill-chips li { padding: 5px 10px; border: 1px solid var(--separator); border-radius: 999px; font-size: .8rem; }
+.criteria-list { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.criteria-list li { display: flex; gap: 10px; align-items: flex-start; }
+.criteria-list strong, .criteria-list small { display: block; }
+.criteria-list strong { font-size: .88rem; }
+.criteria-list small { margin-top: 2px; color: var(--label-2); line-height: 1.45; }
+.criteria-mark { display: grid; flex: 0 0 22px; width: 22px; height: 22px; place-items: center; border-radius: 50%; font-weight: 700; }
+.criteria-mark.is-ready { color: var(--green); background: color-mix(in srgb, var(--green) 13%, transparent); }
+.criteria-mark.needs-work { color: var(--red); background: color-mix(in srgb, var(--red) 12%, transparent); }
+.analysis-empty, .analysis-note { color: var(--label-2); font-size: .85rem; line-height: 1.5; }
+.analysis-note { margin: 16px 0 0; }
+
 /* 10. Motion ----------------------------------------------- */
 @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
 @keyframes sheet-in { from { opacity: 0; transform: translateY(18px) scale(0.98); } }
@@ -459,7 +488,7 @@ a.list-row:hover { background: var(--fill-2); text-decoration: none; }
 
 /* 12. Responsive ------------------------------------------- */
 @media (max-width: 900px) {
-  .split, .report-grid { grid-template-columns: minmax(0, 1fr); }
+  .split, .report-grid, .analysis-columns { grid-template-columns: minmax(0, 1fr); }
   .contact-card { position: static; }
   .stat-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stat:nth-child(3) { border-left: 0; }
@@ -467,6 +496,10 @@ a.list-row:hover { background: var(--fill-2); text-decoration: none; }
 }
 /* Phones: navigation moves to a floating glass tab bar at the bottom */
 @media (max-width: 700px) {
+  .analysis-panel { padding: 18px; }
+  .analysis-heading { align-items: flex-start; flex-direction: column; gap: 14px; }
+  .score-wrap { width: 100%; text-align: left; }
+  .analysis-subpanel { padding: 15px; }
   html { scroll-padding-bottom: 7rem; }   /* keep focused/scrolled-to items clear of the tab bar */
   .page { padding: 6rem 16px 8rem; }
   .container { padding: 0 16px; }
