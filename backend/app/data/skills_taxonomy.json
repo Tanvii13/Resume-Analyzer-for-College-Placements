@@ -1,3 +1,4 @@
+
 {
   "technical_skills": [
     "Python",
@@ -73,5 +74,80 @@
     "Conflict Resolution",
     "Presentation Skills",
     "Analytical Thinking"
-  ]
+  ],
+  "aliases": {
+    "js": "JavaScript",
+    "ts": "TypeScript",
+    "py": "Python",
+    "golang": "Go",
+    "postgres": "PostgreSQL",
+    "mongo": "MongoDB",
+    "k8s": "Kubernetes",
+    "reactjs": "React",
+    "react.js": "React",
+    "nodejs": "Node.js",
+    "node.js": "Node.js",
+    "express": "Express.js",
+    "vue": "Vue.js",
+    "ml": "Machine Learning",
+    "dl": "Deep Learning",
+    "nlp": "Natural Language Processing",
+    "sklearn": "Scikit-learn",
+    "tf": "TensorFlow",
+    "gcp": "Google Cloud"
+  },
+  "domain_tracks": {
+    "backend_engineering": {
+      "core": [
+        "Python",
+        "Java",
+        "FastAPI",
+        "Django",
+        "Spring Boot",
+        "Node.js"
+      ],
+      "databases": [
+        "PostgreSQL",
+        "MySQL",
+        "MongoDB",
+        "Redis"
+      ],
+      "tools": [
+        "Docker",
+        "Git",
+        "Linux",
+        "AWS"
+      ]
+    },
+    "frontend_engineering": {
+      "core": [
+        "JavaScript",
+        "TypeScript",
+        "React",
+        "Next.js",
+        "Angular",
+        "Vue.js"
+      ],
+      "tools": [
+        "Git",
+        "Docker"
+      ]
+    },
+    "data_science_ai": {
+      "core": [
+        "Python",
+        "SQL",
+        "Pandas",
+        "NumPy",
+        "Scikit-learn"
+      ],
+      "advanced": [
+        "Machine Learning",
+        "Deep Learning",
+        "Natural Language Processing",
+        "TensorFlow",
+        "PyTorch"
+      ]
+    }
+  }
 }
