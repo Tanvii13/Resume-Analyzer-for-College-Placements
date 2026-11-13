@@ -91,6 +91,16 @@ from app.nlp.content import (
     VerbCategory,
     analyze_content_quality,
 )
+from app.nlp.improvement import (
+    IMPROVEMENT_ENGINE_VERSION,
+    ImprovementAreasDetector,
+    ImprovementAreasReport,
+    ImprovementCategory,
+    ImprovementIssue,
+    ImprovementPriority,
+    ImprovementSeverity,
+    detect_improvement_areas,
+)
 
 __all__ = [
     # Preprocessing (Module A)
@@ -173,4 +183,13 @@ __all__ = [
     "DescriptionCompleteness",
     "VerbCategory",
     "CONTENT_ANALYZER_VERSION",
+    # Improvement Areas Detection Engine (Sprint 3 Module D)
+    "ImprovementAreasDetector",
+    "detect_improvement_areas",
+    "ImprovementAreasReport",
+    "ImprovementIssue",
+    "ImprovementCategory",
+    "ImprovementSeverity",
+    "ImprovementPriority",
+    "IMPROVEMENT_ENGINE_VERSION",
 ]
