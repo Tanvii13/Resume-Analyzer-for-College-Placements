@@ -82,6 +82,15 @@ from app.nlp.formatting import (
     FormattingQualityAnalyzer,
     analyze_formatting,
 )
+from app.nlp.content import (
+    CONTENT_ANALYZER_VERSION,
+    ContentQualityAnalyzer,
+    ContentQualityReport,
+    DescriptionCompleteness,
+    EntryQualityEvaluation,
+    VerbCategory,
+    analyze_content_quality,
+)
 
 __all__ = [
     # Preprocessing (Module A)
@@ -156,4 +165,12 @@ __all__ = [
     "FindingSeverity",
     "FORMATTING_ANALYZER_VERSION",
     "DEFAULT_ANALYZER_LIMITATIONS",
+    # Content Quality & Impact Analyzer (Sprint 3 Module C)
+    "ContentQualityAnalyzer",
+    "analyze_content_quality",
+    "ContentQualityReport",
+    "EntryQualityEvaluation",
+    "DescriptionCompleteness",
+    "VerbCategory",
+    "CONTENT_ANALYZER_VERSION",
 ]
