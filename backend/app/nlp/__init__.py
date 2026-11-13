@@ -63,6 +63,15 @@ from app.nlp.schemas import (
     SkillItem,
 )
 from app.nlp.pipeline import ResumeNLPPipeline, analyze_resume
+from app.nlp.scoring import (
+    ComponentScore,
+    ResumeScoringEngine,
+    ScoreDeduction,
+    ScoreLabel,
+    ScoringResult,
+    ScoringWeights,
+    score_resume,
+)
 
 __all__ = [
     # Preprocessing (Module A)
@@ -120,4 +129,12 @@ __all__ = [
     "get_all_canonical_skills",
     "get_all_categories",
     "resolve_degree",
+    # Scoring Engine (Sprint 3 Module A)
+    "ResumeScoringEngine",
+    "score_resume",
+    "ScoringWeights",
+    "ScoringResult",
+    "ComponentScore",
+    "ScoreDeduction",
+    "ScoreLabel",
 ]
