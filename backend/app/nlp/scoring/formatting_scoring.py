@@ -14,7 +14,7 @@ Guarantees:
 """
 
 import re
-from typing import List, Set, Tuple
+from typing import Any, List, Optional, Set, Tuple
 from app.nlp.schemas import CandidateProfile, ConfidenceLevel
 from app.nlp.scoring.schemas import ComponentScore, ScoreDeduction
 from app.nlp.scoring.weights import COMPONENT_FORMATTING_READABILITY
@@ -26,12 +26,22 @@ class FormattingReadabilityScorer:
     def __init__(self, max_score: float = 18.75):
         self.max_score = max_score
 
-    def score(self, profile: CandidateProfile) -> Tuple[ComponentScore, List[ScoreDeduction], List[str]]:
+    def score(
+        self,
+        profile: CandidateProfile,
+        formatting_result: Optional[Any] = None,
+        raw_text: Optional[str] = None,
+    ) -> Tuple[ComponentScore, List[ScoreDeduction], List[str]]:
         earned_score = 0.0
         deductions: List[ScoreDeduction] = []
         strengths: List[str] = []
         evidence: List[str] = []
         improvements: List[str] = []
+
+        # If raw text is supplied without an explicit formatting result, analyze it
+        if formatting_result is None and raw_text:
+            from app.nlp.formatting.analyzer import analyze_formatting
+            formatting_result = analyze_formatting(raw_text, profile=profile)
 
         # ---------------------------------------------------------------------
         # 1. Section Structure and Heading Organization (35% of max_score)
@@ -257,6 +267,32 @@ class FormattingReadabilityScorer:
             improvements.append("Resolve formatting issues such as non-standard characters, unusual bullet symbols, or table artifacts.")
 
         earned_score += ats_score
+
+        # ---------------------------------------------------------------------
+        # 4. Granular Formatting Findings Integration (Module B integration)
+        # ---------------------------------------------------------------------
+        if formatting_result:
+            for finding in getattr(formatting_result, "findings", []):
+                sev = getattr(finding.severity, "value", str(finding.severity))
+                if sev in ("critical", "warning"):
+                    # Check if this rule is already in deductions to avoid double-penalizing
+                    if not any(d.rule_id == finding.issue_id for d in deductions):
+                        penalty = round(min(1.5, self.max_score * 0.06 * finding.confidence), 2)
+                        earned_score = max(0.0, earned_score - penalty)
+                        deductions.append(
+                            ScoreDeduction(
+                                component=COMPONENT_FORMATTING_READABILITY,
+                                rule_id=finding.issue_id,
+                                points_deducted=penalty,
+                                reason=finding.description,
+                                evidence=finding.evidence,
+                            )
+                        )
+                        improvements.append(finding.description)
+
+            for st in getattr(formatting_result, "strengths", []):
+                if st not in strengths:
+                    strengths.append(st)
 
         # Final Clamp
         final_score = round(max(0.0, min(self.max_score, earned_score)), 2)

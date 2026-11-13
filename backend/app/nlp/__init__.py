@@ -72,6 +72,16 @@ from app.nlp.scoring import (
     ScoringWeights,
     score_resume,
 )
+from app.nlp.formatting import (
+    DEFAULT_ANALYZER_LIMITATIONS,
+    FORMATTING_ANALYZER_VERSION,
+    FindingSeverity,
+    FormattingAnalysisResult,
+    FormattingCategory,
+    FormattingFinding,
+    FormattingQualityAnalyzer,
+    analyze_formatting,
+)
 
 __all__ = [
     # Preprocessing (Module A)
@@ -137,4 +147,13 @@ __all__ = [
     "ComponentScore",
     "ScoreDeduction",
     "ScoreLabel",
+    # Formatting Quality Analyzer (Sprint 3 Module B)
+    "FormattingQualityAnalyzer",
+    "analyze_formatting",
+    "FormattingAnalysisResult",
+    "FormattingFinding",
+    "FormattingCategory",
+    "FindingSeverity",
+    "FORMATTING_ANALYZER_VERSION",
+    "DEFAULT_ANALYZER_LIMITATIONS",
 ]
