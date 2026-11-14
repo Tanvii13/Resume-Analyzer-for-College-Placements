@@ -15,7 +15,6 @@ from typing import Any, Dict, List, Optional
 
 from app.nlp.preprocessing.normalizer import (
     is_bullet,
-    normalize_line,
     normalize_text,
     split_bullet,
 )
