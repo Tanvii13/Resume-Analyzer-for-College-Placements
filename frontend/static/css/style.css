@@ -525,3 +525,78 @@ a.list-row:hover { background: var(--fill-2); text-decoration: none; }
   #resumes .list-row .badge { margin-left: 52px; margin-right: auto; }
   .list-row.has-icon + .list-row.has-icon::before { left: 66px; }
 }
+
+/* Sprint 3: Advanced Resume Analysis */
+
+.sprint3-section {
+  margin: 28px 0;
+}
+
+.section-heading {
+  margin-bottom: 18px;
+}
+
+.section-heading h2 {
+  margin: 4px 0 6px;
+  font-size: 1.4rem;
+}
+
+.sprint3-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.sprint3-card {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--card);
+  box-shadow: var(--card-shadow);
+}
+
+.sprint3-card h3 {
+  margin: 8px 0;
+  font-size: 1.05rem;
+}
+
+.sprint3-card > p {
+  min-height: 58px;
+  margin: 0;
+  color: var(--label-2);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.sprint3-pending {
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  background: var(--separator);
+}
+
+.sprint3-pending strong {
+  font-size: 0.85rem;
+}
+
+.sprint3-pending p {
+  margin: 5px 0 0;
+  color: var(--label-2);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .sprint3-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sprint3-card {
+    padding: 18px;
+  }
+
+  .sprint3-card > p {
+    min-height: auto;
+  }
+}
