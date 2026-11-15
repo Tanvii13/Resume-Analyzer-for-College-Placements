@@ -16,34 +16,29 @@ How this file is organised:
 """
 
 import os
+import re
 import uuid
 from datetime import datetime, timedelta
 from functools import wraps
 
 from flask import (
-    Flask,
-    abort,
-    flash,
-    redirect,
-    render_template,
-    request,
-    session,
-    url_for,
+    Flask, render_template, request, redirect,
+    url_for, session, flash, abort,
 )
-from resume_parser import MAX_FILE_SIZE, ResumeParseError, parse_resume, validate_file
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+
+from resume_parser import validate_file, parse_resume, ResumeParseError, MAX_FILE_SIZE
+
 
 # ---------------------------------------------------------------------------
 # 1. App setup
 # ---------------------------------------------------------------------------
 app = Flask(__name__)
 app.config.update(
-    SECRET_KEY=os.environ.get(
-        "SECRET_KEY", "dev-only-change-me"
-    ),  # signs the session cookie
-    SESSION_COOKIE_HTTPONLY=True,  # JavaScript can't read the session cookie
-    SESSION_COOKIE_SAMESITE="Lax",  # basic protection against cross-site requests
+    SECRET_KEY=os.environ.get("SECRET_KEY", "dev-only-change-me"),  # signs the session cookie
+    SESSION_COOKIE_HTTPONLY=True,       # JavaScript can't read the session cookie
+    SESSION_COOKIE_SAMESITE="Lax",      # basic protection against cross-site requests
     PERMANENT_SESSION_LIFETIME=timedelta(days=7),  # "Remember this device"
     UPLOAD_FOLDER=os.path.join(app.root_path, "uploads"),  # private, not inside /static
     MAX_CONTENT_LENGTH=MAX_FILE_SIZE + 512 * 1024,  # Flask rejects anything far bigger
@@ -84,26 +79,22 @@ def current_user():
 
 def login_required(view):
     """Only logged-in users may open this page (US-01)."""
-
     @wraps(view)
     def wrapped(*args, **kwargs):
         if current_user() is None:
             flash("Please log in to continue.", "error")
             return redirect(url_for("login"))
         return view(*args, **kwargs)
-
     return wrapped
 
 
 def student_required(view):
     """Only students may upload resumes. Checked on the server, not just hidden in the UI."""
-
     @wraps(view)
     def wrapped(*args, **kwargs):
         if current_user()["role"] != "student":
             abort(403)
         return view(*args, **kwargs)
-
     return wrapped
 
 
@@ -115,43 +106,75 @@ def find_resume(resume_id):
     return None
 
 
+SKILL_KEYWORDS = {
+    "Programming": ["python", "java", "javascript", "typescript", "c++", "c#", "go", "sql", "html", "css"],
+    "Frameworks & tools": ["react", "angular", "vue", "node.js", "flask", "django", "git", "docker", "aws", "figma"],
+    "Data & AI": ["machine learning", "deep learning", "pandas", "numpy", "tensorflow", "pytorch", "power bi", "tableau", "excel"],
+    "Professional": ["communication", "leadership", "teamwork", "problem solving", "project management"],
+}
+
+
+def analyze_resume(parsed):
+    """Create a transparent, rule-based Sprint 2 snapshot from parsed resume text."""
+    content = "\n".join(section["content"] for section in parsed["sections"]).lower()
+    groups = []
+    skills = []
+    for category, terms in SKILL_KEYWORDS.items():
+        found = [term for term in terms if re.search(r"(?<![a-z0-9])" + re.escape(term) + r"(?![a-z0-9])", content)]
+        if found:
+            groups.append({"name": category, "skills": found})
+            skills.extend(found)
+
+    section_keys = {section["key"] for section in parsed["sections"]}
+    criteria = [
+        ("Core resume sections", "education" in section_keys and "skills" in section_keys, "Education and skills sections are present." if {"education", "skills"} <= section_keys else "Add clear Education and Skills sections."),
+        ("Projects", "projects" in section_keys, "Projects section gives recruiters evidence of applied work." if "projects" in section_keys else "Add a Projects section with your role and outcomes."),
+        ("Experience", "experience" in section_keys, "Experience or internship history is included." if "experience" in section_keys else "Add relevant work, internship, volunteering, or practical experience."),
+        ("Contact details", bool(parsed["contact"].get("email") and parsed["contact"].get("phone")), "Email and phone are available." if parsed["contact"].get("email") and parsed["contact"].get("phone") else "Make sure your email and phone number are easy to find."),
+        ("Relevant skills", len(skills) >= 3, f"{len(skills)} recognizable skills were found." if skills else "Add a clearly labeled Skills section with specific tools and technologies."),
+    ]
+    score = round(sum(20 for _, passed, _ in criteria if passed))
+    summary = "Strong foundations" if score >= 80 else "Good starting point" if score >= 60 else "Several areas to strengthen"
+    return {
+        "skills": groups,
+        "skill_count": len(skills),
+        "criteria": [{"title": title, "passed": passed, "detail": detail} for title, passed, detail in criteria],
+        "score": score,
+        "summary": summary,
+        "method_note": "A preliminary checklist based on readable resume text and section headings; it is not a hiring decision.",
+    }
+
+
 def upload_failed(original_name, error):
     """US-04: record the failed attempt and show the reason with a Retry option."""
-    RESUMES.setdefault(session["user_email"], []).insert(
-        0,
-        {
-            "id": uuid.uuid4().hex[:10],
-            "filename": original_name or "Unnamed file",
-            "size": None,
-            "uploaded": datetime.now().strftime("%b %d, %Y · %H:%M"),
-            "status": "Failed",
-            "error_code": error.code,
-            "error_message": error.message,
-            "parsed": None,
-        },
-    )
+    RESUMES.setdefault(session["user_email"], []).insert(0, {
+        "id": uuid.uuid4().hex[:10],
+        "filename": original_name or "Unnamed file",
+        "size": None,
+        "uploaded": datetime.now().strftime("%b %d, %Y · %H:%M"),
+        "status": "Failed",
+        "error_code": error.code,
+        "error_message": error.message,
+        "parsed": None,
+    })
     flash(f"{error.code}|{error.message}", "upload-error")
     return redirect(url_for("dashboard") + "#upload")
 
+
 @app.url_defaults
 def add_static_version(endpoint, values):
-    """Automatically refresh cached static assets when files change."""
-    if endpoint == "static":
-        filename = values.get("filename")
-        if filename:
-            filepath = app.static_folder and os.path.join(
-                app.static_folder, filename
-            )
-            if filepath and os.path.isfile(filepath):
-                values["v"] = int(os.path.getmtime(filepath))
+    """Add ?v=<file timestamp> to CSS/JS links, so the browser always loads the latest version
+    after a file changes instead of showing an old cached copy."""
+    if endpoint == "static" and "filename" in values:
+        path = os.path.join(app.static_folder, values["filename"])
+        if os.path.exists(path):
+            values["v"] = int(os.path.getmtime(path))
+
+
 @app.context_processor
 def inject_globals():
     """Variables every template can use."""
-    return {
-        "user": current_user(),
-        "roles": ROLES,
-        "max_mb": MAX_FILE_SIZE // (1024 * 1024),
-    }
+    return {"user": current_user(), "roles": ROLES, "max_mb": MAX_FILE_SIZE // (1024 * 1024)}
 
 
 # ---------------------------------------------------------------------------
@@ -159,6 +182,7 @@ def inject_globals():
 # ---------------------------------------------------------------------------
 @app.route("/")
 def index():
+    """Public landing page. Its buttons lead to sign-up, or to the dashboard if logged in."""
     return render_template("landing.html")
 
 
@@ -184,17 +208,13 @@ def register():
             error = "An account with this email already exists."
 
         if error:
-            return render_template(
-                "register.html", error=error, name=name, email=email
-            ), 400
+            return render_template("register.html", error=error, name=name, email=email), 400
 
         # New sign-ups are always students. Officer/admin accounts are created by an admin.
         USERS[email] = {
             "name": name,
             "email": email,
-            "password_hash": generate_password_hash(
-                password
-            ),  # never store plain passwords
+            "password_hash": generate_password_hash(password),  # never store plain passwords
             "role": "student",
         }
         flash("Account created. Please log in.", "success")
@@ -213,24 +233,15 @@ def login():
         user = USERS.get(email)
         # Same message for wrong email or wrong password, so attackers can't tell which accounts exist
         if not user or not check_password_hash(user["password_hash"], password):
-            return render_template(
-                "login.html",
-                error="Invalid email or password. Please try again.",
-                error_code="ERR_AUTH_401",
-                email=email,
-                role=role,
-            ), 401
+            return render_template("login.html", error="That email and password don't match. Check both and try again.",
+                                   error_code="ERR_AUTH_401", email=email, role=role), 401
         if user["role"] != role:
-            return render_template(
-                "login.html",
-                error=f"This account isn't registered as {ROLES.get(role, role)}. "
-                f"Choose the {ROLES[user['role']]} tab.",
-                error_code="ERR_AUTH_403",
-                email=email,
-                role=role,
-            ), 403
+            return render_template("login.html",
+                                   error=f"This account isn't registered as {ROLES.get(role, role)}. "
+                                         f"Choose the {ROLES[user['role']]} tab.",
+                                   error_code="ERR_AUTH_403", email=email, role=role), 403
 
-        session.clear()  # fresh session after login
+        session.clear()                     # fresh session after login
         session["user_email"] = email
         session.permanent = bool(request.form.get("remember"))
         flash(f"Welcome back, {user['name'].split()[0]}!", "success")
@@ -279,7 +290,7 @@ def upload():
     try:
         parsed = parse_resume(path, ext)
     except ResumeParseError as e:
-        os.remove(path)  # don't keep files we couldn't read
+        os.remove(path)          # don't keep files we couldn't read
         return upload_failed(original, e)
 
     resume = {
@@ -302,7 +313,8 @@ def view_resume(resume_id):
     resume = find_resume(resume_id)
     if resume is None or resume["status"] != "Parsed":
         abort(404)
-    return render_template("resume.html", resume=resume, p=resume["parsed"])
+    analysis = analyze_resume(resume["parsed"])
+    return render_template("resume.html", resume=resume, p=resume["parsed"], analysis=analysis)
 
 
 # ----- Error pages ----------------------------------------------------------
@@ -310,34 +322,28 @@ def view_resume(resume_id):
 def file_too_large(_):
     if current_user() is None:
         return redirect(url_for("login"))
-    return upload_failed(
-        None,
-        ResumeParseError(
-            "ERR_FILE_TOO_LARGE",
-            "This file is larger than 5 MB. Please compress it and try again.",
-        ),
-    )
+    return upload_failed(None, ResumeParseError(
+        "ERR_FILE_TOO_LARGE", "This file is larger than 5 MB. Please compress it and try again."))
 
 
 @app.errorhandler(403)
 def forbidden(_):
-    return render_template(
-        "error.html",
-        code=403,
-        title="Access denied",
-        message="Your role doesn't have permission to do this.",
-    ), 403
+    return render_template("error.html", code=403, title="Access denied",
+                           message="Your role doesn't have permission to do this."), 403
 
 
 @app.errorhandler(404)
 def not_found(_):
-    return render_template(
-        "error.html",
-        code=404,
-        title="Page not found",
-        message="This page doesn't exist or you don't have access to it.",
-    ), 404
+    return render_template("error.html", code=404, title="Page not found",
+                           message="This page doesn't exist or you don't have access to it."), 404
 
+
+DESIGN_VERSION = "Liquid Glass design (v8, highlighter)"
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Printed once at startup so you can see exactly which copy of the project is running.
+    if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
+        print(f"\n  Resume Analyzer · {DESIGN_VERSION}")
+        print(f"  Running from: {app.root_path}")
+        print("  Open http://127.0.0.1:5000  (stop with Ctrl+C)\n")
+    app.run(debug=True)   # if port 5000 is busy, another copy is still running: close it first

@@ -343,13 +343,14 @@ if (isChromium && !lowTransparency) {
   };
 
   // The floating controls get refraction; big content cards stay frosted (cheaper while scrolling).
-  document.querySelectorAll(".lp-nav-inner, .nav-inner, .auth-card, .toast, .nav-links")
-    .forEach((el) => attach(el, el.classList.contains("auth-card") ? 40 : 20));
+  // Elements can also ask for it in the HTML: data-refract="28" (the number is how strongly it bends).
+  document.querySelectorAll(".nav-inner, .auth-card, .toast, .nav-links, [data-refract]")
+    .forEach((el) => attach(el, Number(el.dataset.refract) || (el.classList.contains("auth-card") ? 40 : 20)));
 }
 
 // ---------- 11. A soft light that follows the pointer across glass ----------
 if (window.matchMedia("(hover: hover)").matches && !reduceMotion) {
-  const GLASS = ".glass, .card, .list, .stat-row, .stage";
+  const GLASS = ".glass, .card, .list, .stat-row, .stage, .lg";
   let target = null, raf = null, px = 0, py = 0;
   document.addEventListener("pointermove", (e) => {
     const el = e.target.closest(GLASS);
@@ -375,3 +376,17 @@ document.querySelectorAll(".role-tabs").forEach((tabs) => {
   });
   tabs.addEventListener("animationend", () => tabs.classList.remove("is-moving"));
 });
+
+// ---------- 13. Landing nav: a glass lens springs to whichever link you point at (like the iOS tab bar) ----------
+const navLinks = document.querySelector(".lp-links");
+const lens = navLinks && navLinks.querySelector(".nav-lens");
+if (lens) {
+  navLinks.querySelectorAll("a").forEach((a) => {
+    a.addEventListener("pointerenter", () => {
+      lens.style.setProperty("--x", `${a.offsetLeft}px`);
+      lens.style.setProperty("--w", `${a.offsetWidth}px`);
+      navLinks.classList.add("has-lens");
+    });
+  });
+  navLinks.addEventListener("pointerleave", () => navLinks.classList.remove("has-lens"));
+}

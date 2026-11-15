@@ -2,7 +2,9 @@
 
 IT314 Software Engineering · Group 26
 
-## Sprint 1 — User Access & Resume Upload
+---
+
+# Sprint 1 — User Access & Resume Upload
 
 **EPIC 1:** User Access & Resume Upload
 **Goal:** Students can securely access the system, upload their resumes, have the content processed, and get a clear explanation when a file is invalid or unreadable.
@@ -44,15 +46,13 @@ pytest -v
 │   ├── login.html        # US-01
 │   ├── register.html     # US-01
 │   ├── dashboard.html    # US-02 upload panel + US-04 error panel + history table
-│   ├── resume.html       # US-03 parsed sections and contact details
+│   ├── resume.html       # US-03 parsed sections and contact details (+ Sprint 2 analysis)
 │   ├── error.html        # 403 / 404 pages
 │   └── _*.html           # small reusable pieces (logo, nav, role tabs)
 ├── static/
 │   ├── css/style.css     # layout and components shared by every page
 │   ├── css/landing.css   # landing page only
 │   ├── css/liquid.css    # the Liquid Glass look, loaded last on every page
- the teal wallpaper the glass blurs and bends
-# the teal wallpaper the glass blurs and bends
 │   └── js/main.js        # form helpers, landing animations, glass refraction + pointer light
 ├── sample_resumes/       # demo files and test fixtures (see below)
 └── tests/test_sprint1.py # acceptance tests, grouped by user story
@@ -133,7 +133,7 @@ Used by the tests and for the live demo. Do not delete.
 - `upload_failed()` records the attempt as Failed, deletes the file, and flashes the message, which the dashboard shows with a Retry button.
 
 **Design language: Liquid Glass (like iOS)**
-- **The material** (`liquid.css`): every surface is frosted glass over a deep night background (blue and teal glows, faint dot grid) — `backdrop-filter: blur() saturate()`, a faint white tint, a bright **specular rim** where light hits the top-left edge, and a thin **rainbow edge** like light through a prism.
+- **The material** (`liquid.css`, section 11 "Lock-screen glass"): modelled on the iOS lock-screen music widget. Glass is *lighter* than what's behind it: a milky, heavily blurred pane with a thin bright rim (strongest along the top), a soft glow inside every edge, and clear round lenses for icon buttons. Earlier versions: every surface is frosted glass over a deep night background (blue and teal glows, faint dot grid) — `backdrop-filter: blur() saturate()`, a faint white tint, a bright **specular rim** where light hits the top-left edge, and a thin **rainbow edge** like light through a prism.
 - **Refraction:** on Chrome, Edge, Opera and Brave, the nav bar, the phone tab bar, the sign-in sheet and notifications bend the wallpaper at their edges, like a lens. `main.js` draws a small *displacement map* for each one (red/green pixels = how far to shift the picture behind) and the browser applies it with an SVG `feDisplacementMap` inside `backdrop-filter`. Safari and Firefox don't support that yet, so they show the same frosted glass without bending. Idea from the MIT-licensed [GlassiFy](https://github.com/Saviru/GlassiFy) and [nopde/liquid-glass](https://github.com/nopde/liquid-glass) projects (found via [github.com/topics/liquid-glass-effect](https://github.com/topics/liquid-glass-effect)); re-implemented here, no code copied.
 - **Motion:** buttons and cards use a real spring curve (CSS `linear()` easing) so they overshoot slightly and settle; a soft light follows the pointer across glass; the role switcher's lens stretches while it slides; sheets float in with a blur-to-sharp entrance.
 - **Font:** San Francisco on Apple devices (the system font), Inter elsewhere. 17px body text, Apple's type scale.
@@ -165,10 +165,113 @@ Used by the tests and for the live demo. Do not delete.
 - [x] Works on desktop and phone screens
 - [x] README explains how to run it
 
-## Out of scope / next sprints
+## Out of scope after Sprint 1
 
 - Scoring and explanations: Sprints 2–3
 - Job-description matching and the placement-staff dashboard: Sprints 4–5
 - Database and deployment: later sprints
 
-Data is currently kept in memory (`USERS`, `RESUMES` in `app.py`) and resets when the server restarts. Scoring, feedback and job matching will build on the `parsed` data that `resume_parser.parse_resume()` already returns.
+Data is currently kept in memory (`USERS`, `RESUMES` in `app.py`) and resets when the server restarts. Scoring, feedback and job matching build on the `parsed` data that `resume_parser.parse_resume()` already returns.
+
+---
+
+# Sprint 2 — Resume Analysis & Readiness Score
+
+**EPIC 2:** Resume Analysis & Readiness Score
+**Goal:** Students can see which skills their parsed resume shows, which placement-readiness items are present or missing, and a preliminary score out of 100.
+**User stories:** US-05 Skill detection · US-06 Placement readiness checklist · US-07 Preliminary readiness score
+**Requirement IDs covered:** *(add from your backlog)*
+
+## Run it
+
+Same as Sprint 1. No new dependencies.
+
+```bash
+python app.py
+```
+
+Log in as `alex.rivera@dau.ac.in` / `Password@123`, upload `sample_resumes/sample_resume.pdf`, and open the parsed resume page. Below the sections and contact details you will now see the skill groups, the readiness checklist and the score.
+
+## Run the tests
+
+```bash
+pytest -v
+```
+
+Sprint 1 tests (35) still pass. Add Sprint 2 tests in `tests/test_sprint2.py`, grouped by user story, and update the count here when they are written.
+
+## What changed in the project
+
+```
+├── app.py                # + analysis helper: skill groups, checklist, score
+├── templates/resume.html # + skill groups, readiness checklist and score sections
+└── static/css/style.css  # + styles for the new sections
+```
+
+Nothing else changed: `resume_parser.py` still returns the same `parsed` data, and the analysis reads from it.
+
+## Traceability: user story → code → tests
+
+| Story | What was built | Where in the code | Tests |
+|---|---|---|---|
+| **US-05** Skill detection | Keyword-based skill detection on the resume text, shown in skill groups | `app.py`: analysis helper; `resume.html`; `style.css` | *(add)* |
+| **US-06** Placement readiness checklist | Five checklist items, each shown as present or missing | `app.py`: analysis helper; `resume.html`; `style.css` | *(add)* |
+| **US-07** Preliminary readiness score | Score out of 100 calculated from the five checklist items | `app.py`: analysis helper; `resume.html`; `style.css` | *(add)* |
+
+## The five checklist items and the score
+
+These items and points are an example based on the Sprint 1 parser. **Check them against your analysis helper in `app.py` and correct them** so the README matches the code.
+
+| # | Checklist item | Points |
+|---|---|---|
+| 1 | Email address found | 20 |
+| 2 | Phone number found | 20 |
+| 3 | LinkedIn or GitHub link found | 20 |
+| 4 | At least one skill detected | 20 |
+| 5 | All expected sections present (no missing-section warning) | 20 |
+| | **Total** | **100** |
+
+## Demo script (≈2 minutes)
+
+1. Log in as `alex.rivera@dau.ac.in` / `Password@123`.
+2. Upload `sample_resumes/sample_resume.pdf` and open the parsed resume page.
+3. Point out the skill groups found in the resume (**US-05**).
+4. Point out the checklist: which items pass and which are missing (**US-06**).
+5. Show the score out of 100 and explain that it is the sum of the passed items (**US-07**).
+6. Optionally upload `sample_resume.docx` and show the same result.
+
+## How it works (viva notes)
+
+**US-05 — Skill detection**
+- The parsed resume text is compared against lists of keywords, one list per skill group (for example programming languages, web, databases, tools).
+- A skill is shown when its keyword appears in the text. This is plain keyword matching, not AI, so it can miss skills written in an unusual way.
+
+**US-06 — Readiness checklist**
+- Each checklist item is a yes/no test on data the parser already produced (a contact detail found, a section present, a skill found).
+- Items that fail are shown as missing, so the student knows exactly what to add.
+- Status uses a symbol and a word, never colour alone.
+
+**US-07 — Preliminary score**
+- The score is the sum of the points of the checklist items that pass, out of 100.
+- It is a transparent prototype heuristic. It is **not** an AI assessment and **not** a validated hiring prediction, and the page does not present it as one.
+- Because the rule is a simple sum, a student can see exactly why they got their score.
+
+## Definition of Done (Sprint 2)
+
+- [x] Skill groups, checklist and score shown on the parsed resume page
+- [x] Score method explained; not presented as an AI or hiring prediction
+- [x] No new dependencies; Sprint 1 tests still pass
+- [ ] Automated tests for US-05, US-06 and US-07 *(add, then tick)*
+- [ ] Checked on desktop and phone screens *(confirm, then tick)*
+
+## Out of scope / next sprints
+
+- AI-based explanations and improvement feedback: Sprint 3
+- Job-description matching and the placement-staff dashboard: Sprints 4–5
+- Database and deployment: later sprints
+
+---
+
+## Adding this project to another repository
+
+This is a standalone Flask project. To add it to another repository without replacing that repository's files, keep it in a subfolder and run it from that folder. If you are merging into an existing Flask app, integrate the analysis helper, the resume template section and the CSS into that application instead of copying files over blindly.

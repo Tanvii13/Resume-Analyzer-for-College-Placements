@@ -15,6 +15,7 @@
   {% block head %}{% endblock %}
   <!-- Liquid Glass layer: loaded last so it re-skins everything above -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/liquid.css') }}">
+  {% block head_late %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
   <!-- Wallpaper: the image the liquid glass blurs and bends -->
