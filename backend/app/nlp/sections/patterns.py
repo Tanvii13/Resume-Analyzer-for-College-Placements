@@ -17,7 +17,7 @@ Supports 10 canonical resume sections:
 """
 
 import re
-from typing import Dict, List, Optional, Pattern, Set, Tuple
+from typing import Dict, List, Pattern
 
 # Attempt to use rapidfuzz if installed; fallback seamlessly to pure-Python implementation
 try:

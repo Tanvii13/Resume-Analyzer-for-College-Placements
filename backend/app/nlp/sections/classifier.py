@@ -16,8 +16,6 @@ import re
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from app.nlp.preprocessing import (
-    BlockType,
-    LineType,
     SegmentedDocument,
     TextBlock,
     TextLine,
@@ -31,7 +29,6 @@ from app.nlp.sections.patterns import (
     SECTION_EDUCATION,
     SECTION_EXPERIENCE,
     SECTION_EXTRACURRICULAR,
-    SECTION_GENERAL_BODY,
     SECTION_INTERNSHIPS,
     SECTION_PERSONAL_INFO,
     SECTION_PROJECTS,

@@ -9,7 +9,6 @@ and deduplication across resume sections.
 """
 
 from dataclasses import dataclass, field
-from functools import lru_cache
 import re
 from typing import Any, Dict, List, Optional, Set, Tuple
 
@@ -30,8 +29,6 @@ from app.nlp.sections import (
     SectionMap,
 )
 from app.nlp.taxonomy import (
-    get_all_canonical_skills,
-    get_canonical_skill,
     get_skill_category,
     load_skill_aliases,
     load_skills_taxonomy,
