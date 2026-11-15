@@ -1,0 +1,15 @@
+Arjun Nair
+arjun.nair@iitgn.ac.in | 7012345678 | linkedin.com/in/arjunnair | github.com/arjun-nair
+
+Education
+Indian Institute of Technology Gandhinagar    Expected May 2026
+M.Tech, Computer Science and Engineering    GPA: 9.1/10
+Experience
+Summer Research Intern
+IIT Gandhinagar | May 2025 – July 2025
+- Trained PyTorch models for medical image segmentation
+Projects
+Expense Tracker (React, Node.js, MongoDB)
+- Tracks monthly spending with charts.
+Technical Skills
+Python, PyTorch, React, Node.js, MongoDB

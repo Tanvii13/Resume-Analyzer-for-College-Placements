@@ -7,9 +7,14 @@ skill normalization, and candidate profile aggregation.
 
 from app.nlp.extractors import (
     BaseExtractor,
+    CertificationsExtractor,
     ContactExtractor,
     ContactInfo,
+    EducationExtractor,
+    ExperienceExtractor,
     ExtractedSkill,
+    ListSections,
+    ProjectExtractor,
     SkillExtractor,
     SkillProfile,
 )
@@ -45,6 +50,57 @@ from app.nlp.taxonomy import (
     load_skills_taxonomy,
     resolve_degree,
 )
+from app.nlp.schemas import (
+    CandidateProfile,
+    ConfidenceLevel,
+    ContactSchema,
+    EducationEntry,
+    ExperienceEntry,
+    NLPProcessingRequest,
+    PipelineMetadata,
+    ProjectEntry,
+    SectionSummary,
+    SkillItem,
+)
+from app.nlp.pipeline import ResumeNLPPipeline, analyze_resume
+from app.nlp.scoring import (
+    ComponentScore,
+    ResumeScoringEngine,
+    ScoreDeduction,
+    ScoreLabel,
+    ScoringResult,
+    ScoringWeights,
+    score_resume,
+)
+from app.nlp.formatting import (
+    DEFAULT_ANALYZER_LIMITATIONS,
+    FORMATTING_ANALYZER_VERSION,
+    FindingSeverity,
+    FormattingAnalysisResult,
+    FormattingCategory,
+    FormattingFinding,
+    FormattingQualityAnalyzer,
+    analyze_formatting,
+)
+from app.nlp.content import (
+    CONTENT_ANALYZER_VERSION,
+    ContentQualityAnalyzer,
+    ContentQualityReport,
+    DescriptionCompleteness,
+    EntryQualityEvaluation,
+    VerbCategory,
+    analyze_content_quality,
+)
+from app.nlp.improvement import (
+    IMPROVEMENT_ENGINE_VERSION,
+    ImprovementAreasDetector,
+    ImprovementAreasReport,
+    ImprovementCategory,
+    ImprovementIssue,
+    ImprovementPriority,
+    ImprovementSeverity,
+    detect_improvement_areas,
+)
 
 __all__ = [
     # Preprocessing (Module A)
@@ -72,6 +128,25 @@ __all__ = [
     "SkillExtractor",
     "ExtractedSkill",
     "SkillProfile",
+    # Entity Extractors (Module D)
+    "EducationExtractor",
+    "ExperienceExtractor",
+    "ProjectExtractor",
+    "CertificationsExtractor",
+    "ListSections",
+    # Profile Aggregation (Module F)
+    "ResumeNLPPipeline",
+    "analyze_resume",
+    "CandidateProfile",
+    "ConfidenceLevel",
+    "ContactSchema",
+    "EducationEntry",
+    "ExperienceEntry",
+    "NLPProcessingRequest",
+    "PipelineMetadata",
+    "ProjectEntry",
+    "SectionSummary",
+    "SkillItem",
     # Skill & Degree Taxonomy (Module E1)
     "load_skills_taxonomy",
     "load_skill_aliases",
@@ -83,4 +158,38 @@ __all__ = [
     "get_all_canonical_skills",
     "get_all_categories",
     "resolve_degree",
+    # Scoring Engine (Sprint 3 Module A)
+    "ResumeScoringEngine",
+    "score_resume",
+    "ScoringWeights",
+    "ScoringResult",
+    "ComponentScore",
+    "ScoreDeduction",
+    "ScoreLabel",
+    # Formatting Quality Analyzer (Sprint 3 Module B)
+    "FormattingQualityAnalyzer",
+    "analyze_formatting",
+    "FormattingAnalysisResult",
+    "FormattingFinding",
+    "FormattingCategory",
+    "FindingSeverity",
+    "FORMATTING_ANALYZER_VERSION",
+    "DEFAULT_ANALYZER_LIMITATIONS",
+    # Content Quality & Impact Analyzer (Sprint 3 Module C)
+    "ContentQualityAnalyzer",
+    "analyze_content_quality",
+    "ContentQualityReport",
+    "EntryQualityEvaluation",
+    "DescriptionCompleteness",
+    "VerbCategory",
+    "CONTENT_ANALYZER_VERSION",
+    # Improvement Areas Detection Engine (Sprint 3 Module D)
+    "ImprovementAreasDetector",
+    "detect_improvement_areas",
+    "ImprovementAreasReport",
+    "ImprovementIssue",
+    "ImprovementCategory",
+    "ImprovementSeverity",
+    "ImprovementPriority",
+    "IMPROVEMENT_ENGINE_VERSION",
 ]
