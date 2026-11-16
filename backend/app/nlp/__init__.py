@@ -101,6 +101,22 @@ from app.nlp.improvement import (
     ImprovementSeverity,
     detect_improvement_areas,
 )
+from app.nlp.recommendations import (
+    RECOMMENDATION_ENGINE_VERSION,
+    Recommendation,
+    RecommendationCategory,
+    RecommendationEngine,
+    RecommendationPriority,
+    RecommendationReport,
+    generate_recommendations,
+)
+from app.nlp.analysis import (
+    SPRINT3_ANALYZER_VERSION,
+    AnalysisExplanations,
+    ResumeAnalysisPipeline,
+    Sprint3AnalysisResult,
+    run_sprint3_analysis,
+)
 
 __all__ = [
     # Preprocessing (Module A)
@@ -192,4 +208,18 @@ __all__ = [
     "ImprovementSeverity",
     "ImprovementPriority",
     "IMPROVEMENT_ENGINE_VERSION",
+    # Rule-Based Recommendation Engine (Sprint 3 Module E)
+    "RecommendationEngine",
+    "generate_recommendations",
+    "Recommendation",
+    "RecommendationReport",
+    "RecommendationCategory",
+    "RecommendationPriority",
+    "RECOMMENDATION_ENGINE_VERSION",
+    # Explainability & Sprint 3 Pipeline (Sprint 3 Module F)
+    "ResumeAnalysisPipeline",
+    "run_sprint3_analysis",
+    "Sprint3AnalysisResult",
+    "AnalysisExplanations",
+    "SPRINT3_ANALYZER_VERSION",
 ]
