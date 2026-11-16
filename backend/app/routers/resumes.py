@@ -1,9 +1,15 @@
-
 import logging
 from pathlib import Path
 from uuid import UUID, uuid4
 
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    HTTPException,
+    UploadFile,
+    status,
+)
 
 from app.database import get_connection
 from app.routers.auth import UserResponse, get_current_user
@@ -11,6 +17,15 @@ from app.routers.auth import UserResponse, get_current_user
 from app.schemas.extraction import (
     ExtractionData,
     SkillExtractionResult,
+)
+
+from app.schemas.sprint3_schemas import (
+    BulletAuditRequest,
+    BulletAuditResponse,
+    ResumeSuggestionsResponse,
+    JDCompareRequest,
+    JDCompareResponse,
+    SectionSuggestion,
 )
 
 from app.services.upload_service import (
@@ -28,6 +43,9 @@ from app.services.persistence_service import (
     ExtractionNotFoundError,
 )
 
+from app.services.suggestion_service import SuggestionService
+from app.services.jd_matcher import JDMatcherService
+
 
 router = APIRouter(
     prefix="/resumes",
@@ -41,6 +59,95 @@ STORAGE_DIR = (
     / "storage"
     / "resumes"
 )
+
+suggestion_service = SuggestionService()
+jd_matcher_service = JDMatcherService()
+skill_extractor_service = SkillExtractor()
+
+
+# ==================================================
+# HELPER: VERIFY RESUME OWNERSHIP AND GET DATA
+# ==================================================
+
+def get_owned_resume_data(
+    resume_id: str,
+    current_user: UserResponse,
+):
+    try:
+        parsed_resume_id = UUID(resume_id)
+
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid resume ID format.",
+        )
+
+    with get_connection() as conn:
+        user = conn.execute(
+            """
+            SELECT id
+            FROM users
+            WHERE email = %s
+            AND is_active = TRUE
+            """,
+            (current_user.email,),
+        ).fetchone()
+
+        if user is None:
+            raise HTTPException(
+                status_code=401,
+                detail="User account not found or inactive.",
+            )
+
+        user_id = user[0]
+
+        resume = conn.execute(
+            """
+            SELECT storage_key, file_type
+            FROM resumes
+            WHERE id = %s
+            AND user_id = %s
+            """,
+            (parsed_resume_id, user_id),
+        ).fetchone()
+
+    if resume is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Resume not found.",
+        )
+
+    storage_key, file_type = resume
+
+    if Path(storage_key).name != storage_key:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid resume storage path.",
+        )
+
+    stored_path = STORAGE_DIR / storage_key
+
+    if not stored_path.is_file():
+        raise HTTPException(
+            status_code=404,
+            detail="Uploaded resume file not found.",
+        )
+
+    # Safe extraction retrieval with fallback
+    try:
+        extracted_data = get_extraction(
+            parsed_resume_id,
+            user_id,
+        )
+    except (ResumeNotFoundError, ExtractionNotFoundError):
+        extracted_data = None
+
+    resume_text = extract_resume_text(
+        stored_path.read_bytes(),
+        f".{file_type.lower()}",
+    )
+
+    return extracted_data, resume_text
 
 
 # ==================================================
@@ -59,9 +166,7 @@ async def upload_resume(
 
     validated_file = await validate_resume(file)
 
-    storage_key = (
-        f"{uuid4().hex}{validated_file['extension']}"
-    )
+    storage_key = f"{uuid4().hex}{validated_file['extension']}"
 
     STORAGE_DIR.mkdir(
         parents=True,
@@ -71,11 +176,9 @@ async def upload_resume(
     stored_path = STORAGE_DIR / storage_key
 
     try:
-        # Store uploaded resume.
         with stored_path.open("xb") as stored_file:
             stored_file.write(validated_file["content"])
 
-        # Save resume information in database.
         with get_connection() as conn:
             with conn.transaction():
 
@@ -123,7 +226,6 @@ async def upload_resume(
 
     except Exception as exc:
 
-        # Remove stored file if database operation fails.
         try:
             stored_path.unlink(missing_ok=True)
 
@@ -175,7 +277,6 @@ async def extract_resume(
     from an uploaded resume and save them in PostgreSQL.
     """
 
-    # Validate resume UUID.
     try:
         resume_id = UUID(resume_id)
 
@@ -188,7 +289,6 @@ async def extract_resume(
     user_id = None
 
     try:
-        # Verify user and resume ownership.
         with get_connection() as conn:
             with conn.transaction():
 
@@ -228,7 +328,6 @@ async def extract_resume(
 
                 storage_key, file_type = resume
 
-                # Update processing status.
                 conn.execute(
                     """
                     UPDATE resumes
@@ -240,7 +339,6 @@ async def extract_resume(
                     (resume_id, user_id),
                 )
 
-        # Validate storage filename.
         if Path(storage_key).name != storage_key:
             raise ValueError(
                 "Invalid resume storage path."
@@ -254,24 +352,19 @@ async def extract_resume(
                 detail="Uploaded resume file not found.",
             )
 
-        # Read stored resume.
         content = stored_path.read_bytes()
 
-        # Extract text from PDF or DOCX.
         resume_text = extract_resume_text(
             content,
             f".{file_type.lower()}",
         )
 
-        # Initialize skill extractor.
         extractor = SkillExtractor()
 
-        # Extract technical and soft skills.
         skill_result = extractor.extract_skills(
             resume_text
         )
 
-        # Combine all extracted skills.
         all_skills = list(
             dict.fromkeys(
                 skill_result["technical_skills"]
@@ -279,12 +372,10 @@ async def extract_resume(
             )
         )
 
-        # Extract education, projects, and experience.
         section_result = extract_resume_sections(
             resume_text
         )
 
-        # Prepare complete extraction data for persistence.
         extracted_data = {
             "skills": all_skills,
             "education": section_result["education"],
@@ -292,14 +383,12 @@ async def extract_resume(
             "experience": section_result["experience"],
         }
 
-        # Save all extracted information.
         save_extraction(
             resume_id,
             user_id,
             extracted_data,
         )
 
-        # Return skill extraction response.
         return SkillExtractionResult(
             technical_skills=skill_result["technical_skills"],
             soft_skills=skill_result["soft_skills"],
@@ -308,7 +397,6 @@ async def extract_resume(
 
     except HTTPException as exc:
 
-        # Update failed status only for the owner's resume.
         if user_id is not None:
             try:
                 with get_connection() as conn:
@@ -386,7 +474,6 @@ async def retrieve_extraction(
     for the authenticated user.
     """
 
-    # Validate UUID.
     try:
         resume_id = UUID(resume_id)
 
@@ -397,7 +484,6 @@ async def retrieve_extraction(
         )
 
     try:
-        # Find authenticated user.
         with get_connection() as conn:
             user = conn.execute(
                 """
@@ -417,7 +503,6 @@ async def retrieve_extraction(
 
         user_id = user[0]
 
-        # Retrieve saved extraction.
         extracted_data = get_extraction(
             resume_id,
             user_id,
@@ -448,4 +533,185 @@ async def retrieve_extraction(
         raise HTTPException(
             status_code=500,
             detail="Unable to retrieve extraction data.",
+        ) from exc
+
+
+# ==================================================
+# 4. BULLET POINT AUDIT API - US-09
+# ==================================================
+
+@router.post(
+    "/feedback/bullet-audit",
+    response_model=BulletAuditResponse,
+    status_code=status.HTTP_200_OK,
+)
+def audit_single_bullet(
+    payload: BulletAuditRequest,
+):
+    """
+    US-09: Evaluates a single resume bullet point
+    against the STAR formula and returns suggestions.
+    """
+
+    try:
+        result = suggestion_service.analyze_bullet_point(
+            payload.bullet_text
+        )
+
+        return BulletAuditResponse(**result)
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        )
+
+
+# ==================================================
+# 5. RESUME SUGGESTIONS API - US-09
+# ==================================================
+
+@router.get(
+    "/{resume_id}/suggestions",
+    response_model=ResumeSuggestionsResponse,
+    status_code=status.HTTP_200_OK,
+)
+def get_resume_suggestions(
+    resume_id: str,
+    current_user: UserResponse = Depends(get_current_user),
+):
+    """
+    US-09: Returns contextual improvement suggestions
+    for a specific authenticated user's resume.
+    """
+
+    try:
+        extracted_data, raw_text = get_owned_resume_data(
+            resume_id,
+            current_user,
+        )
+
+        # Dynamically extract categorized skills from raw text for accurate soft & tech evaluation
+        dynamic_skills = skill_extractor_service.extract_skills(raw_text)
+
+        raw_suggestions = (
+            suggestion_service.generate_resume_suggestions(
+                extracted_skills=dynamic_skills,
+                raw_text=raw_text,
+            )
+        )
+
+        priority_counts = {
+            "High": 0,
+            "Medium": 0,
+            "Low": 0,
+        }
+
+        for suggestion in raw_suggestions:
+            priority = suggestion.get(
+                "priority",
+                "Medium",
+            )
+
+            priority_counts[priority] = (
+                priority_counts.get(priority, 0) + 1
+            )
+
+        formatted_suggestions = [
+            SectionSuggestion(**suggestion)
+            for suggestion in raw_suggestions
+        ]
+
+        return ResumeSuggestionsResponse(
+            resume_id=UUID(resume_id),
+            suggestions_count=len(formatted_suggestions),
+            priority_breakdown=priority_counts,
+            suggestions=formatted_suggestions,
+        )
+
+    except HTTPException:
+        raise
+
+    except Exception as exc:
+        logger.exception(
+            "Failed to generate resume suggestions."
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to generate resume suggestions.",
+        ) from exc
+
+
+# ==================================================
+# 6. JOB DESCRIPTION COMPARISON API - US-11
+# ==================================================
+
+@router.post(
+    "/{resume_id}/compare-jd",
+    response_model=JDCompareResponse,
+    status_code=status.HTTP_200_OK,
+)
+def compare_resume_with_job_description(
+    resume_id: str,
+    payload: JDCompareRequest,
+    current_user: UserResponse = Depends(get_current_user),
+):
+    """
+    US-11: Compares resume skills against job description
+    requirements and calculates skill gaps and match percentage.
+    """
+
+    try:
+        extracted_data, raw_text = get_owned_resume_data(
+            resume_id,
+            current_user,
+        )
+
+        # Safely obtain resume skills whether from extracted_data or dynamically from text
+        resume_skills = []
+        if extracted_data is not None:
+            if isinstance(extracted_data, dict):
+                resume_skills = extracted_data.get("skills", [])
+            else:
+                resume_skills = getattr(extracted_data, "skills", [])
+
+        # Fallback if extraction was not run or empty
+        if not resume_skills and raw_text:
+            extracted = skill_extractor_service.extract_skills(raw_text)
+            resume_skills = (
+                extracted.get("technical_skills", [])
+                + extracted.get("soft_skills", [])
+            )
+
+        match_result = (
+            jd_matcher_service.match_resume_with_jd(
+                resume_skills=resume_skills,
+                jd_text=payload.jd_text,
+            )
+        )
+
+        return JDCompareResponse(
+            resume_id=UUID(resume_id),
+            target_role=payload.target_role,
+            **match_result,
+        )
+
+    except HTTPException:
+        raise
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        )
+
+    except Exception as exc:
+        logger.exception(
+            "Job description comparison failed."
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to compare resume with job description.",
         ) from exc
