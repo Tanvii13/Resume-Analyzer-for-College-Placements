@@ -19,6 +19,7 @@ from app.schemas.extraction import (
     SkillExtractionResult,
 )
 
+
 from app.schemas.sprint3_schemas import (
     BulletAuditRequest,
     BulletAuditResponse,
@@ -26,7 +27,11 @@ from app.schemas.sprint3_schemas import (
     JDCompareRequest,
     JDCompareResponse,
     SectionSuggestion,
+    JDMetadata,
+    ImprovementAreasResponse,
+    ImprovementAreaItem,
 )
+
 
 from app.services.upload_service import (
     validate_resume,
@@ -45,6 +50,8 @@ from app.services.persistence_service import (
 
 from app.services.suggestion_service import SuggestionService
 from app.services.jd_matcher import JDMatcherService
+from app.services.jd_parser import JDParser
+from app.services.improvement_detector import ImprovementDetector
 
 
 router = APIRouter(
@@ -60,9 +67,13 @@ STORAGE_DIR = (
     / "resumes"
 )
 
+
 suggestion_service = SuggestionService()
 jd_matcher_service = JDMatcherService()
 skill_extractor_service = SkillExtractor()
+jd_parser_service = JDParser()
+improvement_detector_service = ImprovementDetector()
+
 
 
 # ==================================================
@@ -652,14 +663,16 @@ def get_resume_suggestions(
     response_model=JDCompareResponse,
     status_code=status.HTTP_200_OK,
 )
+
 def compare_resume_with_job_description(
     resume_id: str,
     payload: JDCompareRequest,
     current_user: UserResponse = Depends(get_current_user),
 ):
     """
-    US-11: Compares resume skills against job description
-    requirements and calculates skill gaps and match percentage.
+    US-11: Sanitizes and parses a job description,
+    extracts its metadata, and compares its skills
+    against the authenticated user's resume.
     """
 
     try:
@@ -668,39 +681,68 @@ def compare_resume_with_job_description(
             current_user,
         )
 
-        # Safely obtain resume skills whether from extracted_data or dynamically from text
+        # Obtain resume skills from saved extraction data.
         resume_skills = []
+
         if extracted_data is not None:
             if isinstance(extracted_data, dict):
                 resume_skills = extracted_data.get("skills", [])
             else:
-                resume_skills = getattr(extracted_data, "skills", [])
+                resume_skills = getattr(
+                    extracted_data,
+                    "skills",
+                    [],
+                )
 
-        # Fallback if extraction was not run or empty
+        # Fallback: dynamically extract skills from resume text.
         if not resume_skills and raw_text:
-            extracted = skill_extractor_service.extract_skills(raw_text)
+            extracted = skill_extractor_service.extract_skills(
+                raw_text
+            )
+
             resume_skills = (
                 extracted.get("technical_skills", [])
                 + extracted.get("soft_skills", [])
             )
 
-        match_result = (
-            jd_matcher_service.match_resume_with_jd(
-                resume_skills=resume_skills,
-                jd_text=payload.jd_text,
-            )
+        # Parse, sanitize, and extract JD metadata.
+        parsed_jd = jd_parser_service.parse_job_description(
+            payload.jd_text
+        )
+
+        # Match resume skills against sanitized JD text.
+        match_result = jd_matcher_service.match_resume_with_jd(
+            resume_skills=resume_skills,
+            jd_text=parsed_jd.clean_text,
+        )
+
+        # Use the manually supplied role if provided;
+        # otherwise use the role detected by the parser.
+        target_role = (
+            payload.target_role.strip()
+            if payload.target_role and payload.target_role.strip()
+            else parsed_jd.title
         )
 
         return JDCompareResponse(
             resume_id=UUID(resume_id),
-            target_role=payload.target_role,
+            target_role=target_role,
+            jd_metadata=JDMetadata(
+                title=parsed_jd.title,
+                experience_level=parsed_jd.experience_level,
+                minimum_experience_years=parsed_jd.minimum_experience_years,
+                required_degrees=parsed_jd.required_degrees,
+                required_disciplines=parsed_jd.required_disciplines,
+                word_count=parsed_jd.word_count,
+                clean_text=parsed_jd.clean_text,
+            ),
             **match_result,
         )
 
     except HTTPException:
         raise
 
-    except ValueError as exc:
+    except (TypeError, ValueError) as exc:
         raise HTTPException(
             status_code=400,
             detail=str(exc),
@@ -714,4 +756,77 @@ def compare_resume_with_job_description(
         raise HTTPException(
             status_code=500,
             detail="Unable to compare resume with job description.",
+        ) from exc
+# 7. IMPROVEMENT AREAS API - US-08
+# ==================================================
+
+@router.get(
+    "/{resume_id}/improvement-areas",
+    response_model=ImprovementAreasResponse,
+    status_code=status.HTTP_200_OK,
+)
+def get_resume_improvement_areas(
+    resume_id: str,
+    current_user: UserResponse = Depends(get_current_user),
+):
+    """
+    US-08: Detect weak and missing resume areas,
+    explain their importance, and rank them by priority.
+    """
+
+    try:
+        extracted_data, raw_text = get_owned_resume_data(
+            resume_id,
+            current_user,
+        )
+
+        structured_data = None
+
+        if extracted_data is not None:
+            if isinstance(extracted_data, dict):
+                structured_data = extracted_data
+            else:
+                structured_data = (
+                    extracted_data.model_dump()
+                    if hasattr(extracted_data, "model_dump")
+                    else None
+                )
+
+        report = improvement_detector_service.detect_improvements(
+            raw_text=raw_text,
+            structured_data=structured_data,
+        )
+
+        return ImprovementAreasResponse(
+            resume_id=UUID(resume_id),
+            total_issues_count=report.total_issues,
+            priority_breakdown=report.priority_breakdown,
+            improvement_areas=[
+                ImprovementAreaItem(
+                    id=issue.id,
+                    section=issue.section,
+                    priority=issue.priority,
+                    issue=issue.issue,
+                    reason=issue.reason,
+                    remediation=issue.remediation,
+                )
+                for issue in report.improvement_areas
+            ],
+        )
+
+    except HTTPException:
+        raise
+
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        )
+
+    except Exception as exc:
+        logger.exception("Failed to detect resume improvement areas.")
+
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to detect resume improvement areas.",
         ) from exc

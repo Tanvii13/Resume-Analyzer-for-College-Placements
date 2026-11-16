@@ -14,7 +14,7 @@ This service does not:
 
 from typing import Any
 from numbers import Number
-
+import re
 
 RUBRIC_VERSION = "1.0"
 
@@ -340,7 +340,11 @@ def _analyze_criterion(
     return result
 
 
-def analyze_placement_readiness(resume_data: dict) -> dict:
+def analyze_placement_readiness(
+    resume_data: dict,
+    raw_text: str = "",
+    page_count: int | None = None,
+) -> dict:
     """
     Analyze structured resume information for placement preparation.
 
@@ -359,7 +363,154 @@ def analyze_placement_readiness(resume_data: dict) -> dict:
         )
 
     return {
-        "rubric_version": RUBRIC_VERSION,
-        "analysis_type": "placement_readiness",
-        "results": results,
+    "rubric_version": RUBRIC_VERSION,
+    "analysis_type": "placement_readiness",
+    "results": results,
+    "score_explanations": explain_placement_deductions(
+        results,
+        raw_text=raw_text,
+        page_count=page_count,
+    ),
+}
+
+def explain_placement_deductions(
+    criterion_results: list[dict],
+    raw_text: str = "",
+    page_count: int | None = None,
+) -> list[dict]:
+    """
+    Explain proposed placement-readiness deductions.
+
+    These are project-defined guidance values, not an official
+    institutional placement rubric. Missing input is not treated
+    as proof that a resume is deficient.
+    """
+
+    deductions = []
+    criteria_map = {
+        result["criterion_id"]: result
+        for result in criterion_results
+        if isinstance(result, dict) and "criterion_id" in result
     }
+
+    def add_deduction(code, points, category, explanation):
+        deductions.append({
+            "code": code,
+            "points": points,
+            "category": category,
+            "explanation": explanation,
+        })
+
+    # 1. Institutional email: only evaluate when raw text is supplied.
+    if raw_text.strip():
+        institutional_email = re.search(
+            r"\b[A-Za-z0-9._%+-]+@(?:dau\.ac\.in|daiict\.ac\.in)\b",
+            raw_text,
+            re.IGNORECASE,
+        )
+        if not institutional_email:
+            add_deduction(
+                "DEDUCT_NO_INSTITUTIONAL_EMAIL",
+                -10,
+                "Contact Information",
+                "-10 points: No recognized institutional email was detected. "
+                "Include one if required by your placement cell.",
+            )
+
+    # 2. Page count: only evaluate when supplied.
+    if page_count is not None and page_count > 2:
+        add_deduction(
+            "DEDUCT_EXCEEDS_PAGE_LIMIT",
+            -5,
+            "Presentation",
+            f"-5 points: The resume has {page_count} pages; "
+            "a maximum of two pages is recommended by this project rubric.",
+        )
+
+    # 3. Academic profile.
+    academic = criteria_map.get("academic_profile")
+    if academic:
+        if academic.get("status") == "missing":
+            add_deduction(
+                "DEDUCT_MISSING_ACADEMICS",
+                -15,
+                "Academic Profile",
+                "-15 points: No academic profile information was found "
+                "in the supplied resume data.",
+            )
+        elif (
+            academic.get("status") == "present"
+            and academic.get("detail_assessment", {}).get("status") == "partial"
+        ):
+            add_deduction(
+                "DEDUCT_PARTIAL_ACADEMICS",
+                -5,
+                "Academic Profile",
+                "-5 points: Some academic details are missing. "
+                "Review degree, field of study, institution, and graduation year.",
+            )
+
+    # 4. Technical skills.
+    technical = criteria_map.get("technical_skills")
+    if technical:
+        if technical.get("status") == "missing":
+            add_deduction(
+                "DEDUCT_MISSING_TECH_SKILLS",
+                -15,
+                "Technical Skills",
+                "-15 points: No technical skills were found "
+                "in the supplied resume data.",
+            )
+        elif technical.get("status") == "present":
+            skill_count = technical.get(
+                "skill_assessment", {}
+            ).get("total_skills", 0)
+
+            if skill_count < 4:
+                add_deduction(
+                    "DEDUCT_LIMITED_TECH_SKILLS",
+                    -5,
+                    "Technical Skills",
+                    f"-5 points: Only {skill_count} technical skill(s) "
+                    "were found; at least four are recommended by this project rubric.",
+                )
+
+    # 5. Projects.
+    projects = criteria_map.get("projects")
+    if projects:
+        if projects.get("status") == "missing":
+            add_deduction(
+                "DEDUCT_MISSING_PROJECTS",
+                -20,
+                "Projects",
+                "-20 points: No project information was found "
+                "in the supplied resume data.",
+            )
+        elif (
+            projects.get("status") == "present"
+            and projects.get("detail_assessment", {}).get("status") == "partial"
+        ):
+            add_deduction(
+                "DEDUCT_PARTIAL_PROJECT_DETAILS",
+                -10,
+                "Projects",
+                "-10 points: Project information is incomplete. "
+                "Add details about the project name, description, technologies, "
+                "your role, and outcomes.",
+            )
+
+    # 6. Soft skills.
+    soft_skills = criteria_map.get("soft_skills")
+    if soft_skills and soft_skills.get("status") == "missing":
+        add_deduction(
+            "DEDUCT_MISSING_SOFT_SKILLS",
+            -5,
+            "Non-Technical Skills",
+            "-5 points: No non-technical skills were found "
+            "in the supplied resume data.",
+        )
+
+    # Deliberately no automatic experience deduction:
+    # students applying for fresher roles may not have work experience.
+
+    return deductions
