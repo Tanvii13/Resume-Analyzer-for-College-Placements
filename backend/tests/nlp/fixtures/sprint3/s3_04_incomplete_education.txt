@@ -1,0 +1,18 @@
+Karan Shah
+karan.shah@gmail.com | +91 98980 77665 | linkedin.com/in/karanshah
+
+EDUCATION
+B.Tech in Computer Engineering, Gujarat Technological University
+
+TECHNICAL SKILLS
+Languages: Java, Python, JavaScript
+Frameworks: Spring Boot, React
+Tools: Git, Docker
+
+PROJECTS
+Library Management System | Java, Spring Boot, MySQL
+- Implemented book issue and return APIs with Spring Boot and MySQL.
+- Designed the database schema for 5,000 book records.
+Weather Dashboard | React, JavaScript
+- Built a React dashboard that shows 7-day forecasts from a public weather API.
+- Added city search with debounced API calls.
