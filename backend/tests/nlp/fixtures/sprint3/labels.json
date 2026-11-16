@@ -1,0 +1,372 @@
+{
+  "_methodology": "Labels were written by reading each synthetic resume, before running the system on it. expected_* = a reviewer would clearly flag this; forbidden_* = flagging it would be wrong; anything not listed is unlabelled (ambiguous) and excluded from precision/recall. content_band: strong / moderate / weak quality of project+experience descriptions. quality_band: overall resume strength used for ordering checks.",
+  "s3_01_strong": {
+    "case": "Strong resume",
+    "quality_band": "strong",
+    "content_band": "strong",
+    "expected_issues": [],
+    "forbidden_issues": [
+      "IMP_MISSING_EDUCATION",
+      "IMP_MISSING_PROJECTS",
+      "IMP_MISSING_SKILLS",
+      "IMP_MISSING_PRACTICAL_WORK",
+      "IMP_CONTACT_MISSING_EMAIL",
+      "IMP_CONTACT_MISSING_PHONE",
+      "IMP_CONTACT_MISSING_DEV_PROFILES",
+      "IMP_EDU_MISSING_CGPA",
+      "IMP_EDU_MISSING_YEAR",
+      "IMP_WEAK_PROJECT_DESCRIPTION",
+      "IMP_LACK_OF_MEASURABLE_IMPACT",
+      "IMP_PASSIVE_PHRASING",
+      "IMP_MISSING_SOFT_SKILLS",
+      "IMP_DUPLICATE_BULLET_CONTENT",
+      "IMP_EXTRACTION_UNCERTAINTY"
+    ],
+    "expected_formatting": [],
+    "forbidden_formatting": [
+      "FMT_INCONSISTENT_HEADING_CASING",
+      "FMT_INCONSISTENT_BULLET_MARKERS",
+      "FMT_EXCESSIVE_BLANK_LINES",
+      "FMT_UNSEGMENTED_WALL_OF_TEXT",
+      "FMT_DUPLICATE_BULLET_CONTENT",
+      "FMT_MISSING_SECTION_HEADING",
+      "FMT_INCONSISTENT_DATE_FORMATS"
+    ],
+    "expected_recommendations": []
+  },
+  "s3_02_weak": {
+    "case": "Weak resume",
+    "quality_band": "weak",
+    "content_band": "weak",
+    "expected_issues": [
+      "IMP_CONTACT_MISSING_PHONE",
+      "IMP_CONTACT_MISSING_DEV_PROFILES",
+      "IMP_EDU_MISSING_CGPA",
+      "IMP_EDU_MISSING_YEAR",
+      "IMP_WEAK_PROJECT_DESCRIPTION",
+      "IMP_PASSIVE_PHRASING",
+      "IMP_LACK_OF_MEASURABLE_IMPACT"
+    ],
+    "forbidden_issues": [
+      "IMP_CONTACT_MISSING_EMAIL",
+      "IMP_MISSING_EDUCATION",
+      "IMP_MISSING_PROJECTS"
+    ],
+    "expected_formatting": [],
+    "forbidden_formatting": [],
+    "expected_recommendations": [
+      "REC_ADD_PHONE",
+      "REC_ADD_ACADEMIC_SCORE",
+      "REC_IMPROVE_PROJECT_DESCRIPTIONS",
+      "REC_USE_ACTION_VERBS"
+    ]
+  },
+  "s3_03_missing_sections": {
+    "case": "Missing critical sections",
+    "quality_band": "weak",
+    "content_band": null,
+    "expected_issues": [
+      "IMP_MISSING_PROJECTS",
+      "IMP_MISSING_SKILLS",
+      "IMP_MISSING_PRACTICAL_WORK"
+    ],
+    "forbidden_issues": [
+      "IMP_MISSING_EDUCATION",
+      "IMP_CONTACT_MISSING_EMAIL",
+      "IMP_CONTACT_MISSING_PHONE",
+      "IMP_CONTACT_MISSING_DEV_PROFILES",
+      "IMP_EDU_MISSING_CGPA",
+      "IMP_EDU_MISSING_YEAR"
+    ],
+    "expected_formatting": [
+      "FMT_MISSING_SECTION_HEADING"
+    ],
+    "forbidden_formatting": [],
+    "expected_recommendations": [
+      "REC_ADD_PROJECTS_SECTION",
+      "REC_ADD_TECHNICAL_SKILLS_SECTION"
+    ]
+  },
+  "s3_04_incomplete_education": {
+    "case": "Incomplete education details",
+    "quality_band": "average",
+    "content_band": "moderate",
+    "expected_issues": [
+      "IMP_EDU_MISSING_CGPA",
+      "IMP_EDU_MISSING_YEAR"
+    ],
+    "forbidden_issues": [
+      "IMP_MISSING_EDUCATION",
+      "IMP_MISSING_PROJECTS",
+      "IMP_MISSING_SKILLS",
+      "IMP_MISSING_PRACTICAL_WORK",
+      "IMP_CONTACT_MISSING_EMAIL",
+      "IMP_CONTACT_MISSING_PHONE",
+      "IMP_CONTACT_MISSING_DEV_PROFILES",
+      "IMP_DUPLICATE_BULLET_CONTENT",
+      "IMP_PASSIVE_PHRASING"
+    ],
+    "expected_formatting": [],
+    "forbidden_formatting": [
+      "FMT_MISSING_SECTION_HEADING",
+      "FMT_DUPLICATE_BULLET_CONTENT"
+    ],
+    "expected_recommendations": [
+      "REC_ADD_ACADEMIC_SCORE",
+      "REC_ADD_GRADUATION_YEAR"
+    ]
+  },
+  "s3_05_limited_projects": {
+    "case": "Limited project descriptions",
+    "quality_band": "weak",
+    "content_band": "weak",
+    "expected_issues": [
+      "IMP_WEAK_PROJECT_DESCRIPTION",
+      "IMP_LACK_OF_MEASURABLE_IMPACT"
+    ],
+    "forbidden_issues": [
+      "IMP_MISSING_EDUCATION",
+      "IMP_MISSING_PROJECTS",
+      "IMP_MISSING_SKILLS",
+      "IMP_MISSING_PRACTICAL_WORK",
+      "IMP_CONTACT_MISSING_EMAIL",
+      "IMP_CONTACT_MISSING_PHONE",
+      "IMP_CONTACT_MISSING_DEV_PROFILES",
+      "IMP_EDU_MISSING_CGPA",
+      "IMP_EDU_MISSING_YEAR"
+    ],
+    "expected_formatting": [],
+    "forbidden_formatting": [
+      "FMT_MISSING_SECTION_HEADING"
+    ],
+    "expected_recommendations": [
+      "REC_IMPROVE_PROJECT_DESCRIPTIONS"
+    ]
+  },
+  "s3_06_detailed_projects": {
+    "case": "Detailed project descriptions",
+    "quality_band": "strong",
+    "content_band": "strong",
+    "expected_issues": [],
+    "forbidden_issues": [
+      "IMP_MISSING_EDUCATION",
+      "IMP_MISSING_PROJECTS",
+      "IMP_MISSING_SKILLS",
+      "IMP_MISSING_PRACTICAL_WORK",
+      "IMP_CONTACT_MISSING_EMAIL",
+      "IMP_CONTACT_MISSING_PHONE",
+      "IMP_CONTACT_MISSING_DEV_PROFILES",
+      "IMP_EDU_MISSING_CGPA",
+      "IMP_EDU_MISSING_YEAR",
+      "IMP_WEAK_PROJECT_DESCRIPTION",
+      "IMP_LACK_OF_MEASURABLE_IMPACT",
+      "IMP_PASSIVE_PHRASING",
+      "IMP_MISSING_SOFT_SKILLS"
+    ],
+    "expected_formatting": [],
+    "forbidden_formatting": [
+      "FMT_INCONSISTENT_HEADING_CASING",
+      "FMT_INCONSISTENT_BULLET_MARKERS",
+      "FMT_EXCESSIVE_BLANK_LINES",
+      "FMT_UNSEGMENTED_WALL_OF_TEXT",
+      "FMT_DUPLICATE_BULLET_CONTENT",
+      "FMT_MISSING_SECTION_HEADING",
+      "FMT_INCONSISTENT_DATE_FORMATS"
+    ],
+    "expected_recommendations": []
+  },
+  "s3_07_no_internships": {
+    "case": "No internships (full-time job only)",
+    "quality_band": "average",
+    "content_band": "moderate",
+    "expected_issues": [
+      "IMP_MISSING_SOFT_SKILLS"
+    ],
+    "forbidden_issues": [
+      "IMP_MISSING_EDUCATION",
+      "IMP_MISSING_PROJECTS",
+      "IMP_MISSING_SKILLS",
+      "IMP_MISSING_PRACTICAL_WORK",
+      "IMP_CONTACT_MISSING_EMAIL",
+      "IMP_CONTACT_MISSING_PHONE",
+      "IMP_CONTACT_MISSING_DEV_PROFILES",
+      "IMP_EDU_MISSING_CGPA",
+      "IMP_EDU_MISSING_YEAR",
+      "IMP_LACK_OF_MEASURABLE_IMPACT"
+    ],
+    "expected_formatting": [],
+    "forbidden_formatting": [
+      "FMT_MISSING_SECTION_HEADING"
+    ],
+    "expected_recommendations": [
+      "REC_SHOW_SOFT_SKILLS"
+    ]
+  },
+  "s3_08_no_work_experience": {
+    "case": "No work experience (fresher)",
+    "quality_band": "average",
+    "content_band": "moderate",
+    "expected_issues": [
+      "IMP_MISSING_SOFT_SKILLS"
+    ],
+    "forbidden_issues": [
+      "IMP_MISSING_EDUCATION",
+      "IMP_MISSING_PROJECTS",
+      "IMP_MISSING_SKILLS",
+      "IMP_MISSING_PRACTICAL_WORK",
+      "IMP_CONTACT_MISSING_EMAIL",
+      "IMP_CONTACT_MISSING_PHONE",
+      "IMP_CONTACT_MISSING_DEV_PROFILES",
+      "IMP_EDU_MISSING_CGPA",
+      "IMP_EDU_MISSING_YEAR",
+      "IMP_LACK_OF_MEASURABLE_IMPACT"
+    ],
+    "expected_formatting": [],
+    "forbidden_formatting": [
+      "FMT_MISSING_SECTION_HEADING"
+    ],
+    "expected_recommendations": [
+      "REC_SHOW_SOFT_SKILLS"
+    ]
+  },
+  "s3_09_inconsistent_formatting": {
+    "case": "Inconsistent formatting",
+    "quality_band": "average",
+    "content_band": "moderate",
+    "expected_issues": [
+      "IMP_INCONSISTENT_HEADINGS",
+      "IMP_INCONSISTENT_BULLET_FORMATTING",
+      "IMP_INCONSISTENT_DATE_FORMATS",
+      "IMP_EXCESSIVE_WHITESPACE"
+    ],
+    "forbidden_issues": [
+      "IMP_MISSING_EDUCATION",
+      "IMP_MISSING_PROJECTS",
+      "IMP_MISSING_SKILLS",
+      "IMP_MISSING_PRACTICAL_WORK",
+      "IMP_CONTACT_MISSING_EMAIL",
+      "IMP_CONTACT_MISSING_PHONE",
+      "IMP_CONTACT_MISSING_DEV_PROFILES",
+      "IMP_EDU_MISSING_CGPA",
+      "IMP_EDU_MISSING_YEAR"
+    ],
+    "expected_formatting": [
+      "FMT_INCONSISTENT_HEADING_CASING",
+      "FMT_INCONSISTENT_BULLET_MARKERS",
+      "FMT_INCONSISTENT_DATE_FORMATS",
+      "FMT_EXCESSIVE_BLANK_LINES",
+      "FMT_INCONSISTENT_BULLET_PUNCTUATION"
+    ],
+    "forbidden_formatting": [
+      "FMT_MISSING_SECTION_HEADING",
+      "FMT_DUPLICATE_BULLET_CONTENT"
+    ],
+    "expected_recommendations": [
+      "REC_CONSISTENT_HEADINGS",
+      "REC_CONSISTENT_BULLETS",
+      "REC_CONSISTENT_DATES"
+    ]
+  },
+  "s3_10_repeated_bullets": {
+    "case": "Repeated bullet points",
+    "quality_band": "average",
+    "content_band": "moderate",
+    "expected_issues": [
+      "IMP_DUPLICATE_BULLET_CONTENT"
+    ],
+    "forbidden_issues": [
+      "IMP_MISSING_EDUCATION",
+      "IMP_MISSING_PROJECTS",
+      "IMP_MISSING_SKILLS",
+      "IMP_MISSING_PRACTICAL_WORK",
+      "IMP_CONTACT_MISSING_EMAIL",
+      "IMP_CONTACT_MISSING_PHONE",
+      "IMP_CONTACT_MISSING_DEV_PROFILES",
+      "IMP_EDU_MISSING_CGPA",
+      "IMP_EDU_MISSING_YEAR"
+    ],
+    "expected_formatting": [
+      "FMT_DUPLICATE_BULLET_CONTENT"
+    ],
+    "forbidden_formatting": [
+      "FMT_MISSING_SECTION_HEADING"
+    ],
+    "expected_recommendations": [
+      "REC_REMOVE_DUPLICATE_BULLETS"
+    ]
+  },
+  "s3_11_measurable_achievements": {
+    "case": "Measurable achievements",
+    "quality_band": "strong",
+    "content_band": "strong",
+    "expected_issues": [],
+    "forbidden_issues": [
+      "IMP_MISSING_EDUCATION",
+      "IMP_MISSING_PROJECTS",
+      "IMP_MISSING_SKILLS",
+      "IMP_MISSING_PRACTICAL_WORK",
+      "IMP_CONTACT_MISSING_EMAIL",
+      "IMP_CONTACT_MISSING_PHONE",
+      "IMP_CONTACT_MISSING_DEV_PROFILES",
+      "IMP_EDU_MISSING_CGPA",
+      "IMP_EDU_MISSING_YEAR",
+      "IMP_LACK_OF_MEASURABLE_IMPACT",
+      "IMP_PASSIVE_PHRASING",
+      "IMP_MISSING_SOFT_SKILLS",
+      "IMP_WEAK_PROJECT_DESCRIPTION"
+    ],
+    "expected_formatting": [],
+    "forbidden_formatting": [
+      "FMT_INCONSISTENT_HEADING_CASING",
+      "FMT_INCONSISTENT_BULLET_MARKERS",
+      "FMT_EXCESSIVE_BLANK_LINES",
+      "FMT_UNSEGMENTED_WALL_OF_TEXT",
+      "FMT_DUPLICATE_BULLET_CONTENT",
+      "FMT_MISSING_SECTION_HEADING",
+      "FMT_INCONSISTENT_DATE_FORMATS"
+    ],
+    "expected_recommendations": []
+  },
+  "s3_12_no_measurable_achievements": {
+    "case": "No measurable achievements",
+    "quality_band": "average",
+    "content_band": "moderate",
+    "expected_issues": [
+      "IMP_LACK_OF_MEASURABLE_IMPACT",
+      "IMP_MISSING_SOFT_SKILLS"
+    ],
+    "forbidden_issues": [
+      "IMP_MISSING_EDUCATION",
+      "IMP_MISSING_PROJECTS",
+      "IMP_MISSING_SKILLS",
+      "IMP_MISSING_PRACTICAL_WORK",
+      "IMP_CONTACT_MISSING_EMAIL",
+      "IMP_CONTACT_MISSING_PHONE",
+      "IMP_CONTACT_MISSING_DEV_PROFILES",
+      "IMP_EDU_MISSING_CGPA",
+      "IMP_EDU_MISSING_YEAR",
+      "IMP_PASSIVE_PHRASING"
+    ],
+    "expected_formatting": [],
+    "forbidden_formatting": [
+      "FMT_MISSING_SECTION_HEADING"
+    ],
+    "expected_recommendations": [
+      "REC_ADD_REAL_OUTCOMES"
+    ]
+  },
+  "s3_13_low_confidence": {
+    "case": "Low-confidence extraction (garbled layout)",
+    "quality_band": "weak",
+    "content_band": null,
+    "expected_issues": [
+      "IMP_EXTRACTION_UNCERTAINTY"
+    ],
+    "forbidden_issues": [],
+    "expected_formatting": [],
+    "forbidden_formatting": [],
+    "expected_recommendations": [
+      "REC_CHECK_EXTRACTION"
+    ]
+  }
+}
