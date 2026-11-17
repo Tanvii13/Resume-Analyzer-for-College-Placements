@@ -101,6 +101,38 @@ from app.nlp.improvement import (
     ImprovementSeverity,
     detect_improvement_areas,
 )
+from app.nlp.recommendations import (
+    RECOMMENDATION_ENGINE_VERSION,
+    Recommendation,
+    RecommendationCategory,
+    RecommendationEngine,
+    RecommendationPriority,
+    RecommendationReport,
+    generate_recommendations,
+)
+from app.nlp.analysis import (
+    SPRINT3_ANALYZER_VERSION,
+    AnalysisExplanations,
+    ResumeAnalysisPipeline,
+    Sprint3AnalysisResult,
+    run_sprint3_analysis,
+)
+from app.nlp.job_matching import (
+    JOB_PARSER_VERSION,
+    EducationRequirement,
+    EligibilityCriteria,
+    ExperienceRequirement,
+    JobDescriptionParser,
+    JobParsingMetadata,
+    JobSkillRequirement,
+    JobType,
+    LocationRequirement,
+    OtherJobRequirements,
+    ParsedJobDescription,
+    WorkplaceType,
+    parse_job_description,
+    parse_multiple_job_descriptions,
+)
 
 __all__ = [
     # Preprocessing (Module A)
@@ -192,4 +224,33 @@ __all__ = [
     "ImprovementSeverity",
     "ImprovementPriority",
     "IMPROVEMENT_ENGINE_VERSION",
+    # Rule-Based Recommendation Engine (Sprint 3 Module E)
+    "RecommendationEngine",
+    "generate_recommendations",
+    "Recommendation",
+    "RecommendationReport",
+    "RecommendationCategory",
+    "RecommendationPriority",
+    "RECOMMENDATION_ENGINE_VERSION",
+    # Explainability & Sprint 3 Pipeline (Sprint 3 Module F)
+    "ResumeAnalysisPipeline",
+    "run_sprint3_analysis",
+    "Sprint3AnalysisResult",
+    "AnalysisExplanations",
+    "SPRINT3_ANALYZER_VERSION",
+    # Job Description Processing (Sprint 4 Module A)
+    "JOB_PARSER_VERSION",
+    "JobType",
+    "WorkplaceType",
+    "JobSkillRequirement",
+    "ExperienceRequirement",
+    "EducationRequirement",
+    "EligibilityCriteria",
+    "LocationRequirement",
+    "OtherJobRequirements",
+    "JobParsingMetadata",
+    "ParsedJobDescription",
+    "JobDescriptionParser",
+    "parse_job_description",
+    "parse_multiple_job_descriptions",
 ]
