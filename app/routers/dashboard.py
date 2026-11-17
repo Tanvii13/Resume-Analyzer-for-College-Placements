@@ -2,37 +2,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
-from app.routers.auth import get_current_user
+from app.dependencies.roles import require_staff_or_counselor
 from app.services.dashboard_service import (
     calculate_batch_metrics,
     save_batch_statistics,
 )
 
 router = APIRouter(prefix="/dashboard", tags=["Placement Dashboard"])
-
-
-def _user_value(user, key):
-    if isinstance(user, dict):
-        return user.get(key)
-    return getattr(user, key, None)
-
-
-def require_placement_officer(user=Depends(get_current_user)):
-    role = str(_user_value(user, "role") or "").lower()
-
-    allowed_roles = {
-        "placement_officer",
-        "placement officer",
-        "officer",
-    }
-
-    if role not in allowed_roles:
-        raise HTTPException(
-            status_code=403,
-            detail="Placement officer access required",
-        )
-
-    return user
 
 
 class StatisticsRequest(BaseModel):
@@ -42,7 +18,7 @@ class StatisticsRequest(BaseModel):
 @router.get("/overview")
 def dashboard_overview(
     batch_year: int = Query(..., ge=2000, le=2100),
-    current_user=Depends(require_placement_officer),
+    current_user=Depends(require_staff_or_counselor),
 ):
     try:
         return calculate_batch_metrics(batch_year)
@@ -53,7 +29,7 @@ def dashboard_overview(
 @router.get("/skill-deficits")
 def dashboard_skill_deficits(
     batch_year: int = Query(..., ge=2000, le=2100),
-    current_user=Depends(require_placement_officer),
+    current_user=Depends(require_staff_or_counselor),
 ):
     try:
         metrics = calculate_batch_metrics(batch_year)
@@ -68,7 +44,7 @@ def dashboard_skill_deficits(
 @router.post("/refresh")
 def refresh_dashboard_statistics(
     payload: StatisticsRequest,
-    current_user=Depends(require_placement_officer),
+    current_user=Depends(require_staff_or_counselor),
 ):
     try:
         metrics = calculate_batch_metrics(payload.batch_year)
