@@ -398,6 +398,27 @@ class SkillExtractor(BaseExtractor):
                     ):
                         continue
 
+                # Reject soft skills embedded in academic degrees or branches in Education section
+                if pat_entry.category == "Soft Skills" and section_name == SECTION_EDUCATION:
+                    window = text[max(0, start - 50):min(len(text), end + 50)].lower()
+                    edu_contexts = [
+                        "electronics", "telecommunication", "engineering", "b.tech", "b.e.",
+                        "m.tech", "diploma", "bachelor", "master", "degree", "branch",
+                        "department", "curriculum", "coursework", "systems", "communication systems"
+                    ]
+                    if any(ctx in window for ctx in edu_contexts):
+                        continue
+
+                # Reject skill matches embedded in URLs, emails, or profile labels in Personal Info
+                if section_name == SECTION_PERSONAL_INFO:
+                    before_char = text[start - 1] if start > 0 else " "
+                    after_char = text[end] if end < len(text) else " "
+                    if before_char in {"/", "@", ".", ":"} or after_char in {"/", "@", ".", ":"}:
+                        continue
+                    window = text[max(0, start - 25):min(len(text), end + 25)].lower()
+                    if "/" in window or "@" in window or any(d in window for d in [".com", ".org", ".io", ".dev", ".in", ".net", "github", "linkedin"]):
+                        continue
+
                 # Claim this character span
                 claimed_spans.append((start, end))
 

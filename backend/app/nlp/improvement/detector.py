@@ -228,8 +228,15 @@ class ImprovementAreasDetector:
                 )
             )
 
-        if not profile.technical_skills:
-            title = "Missing Technical Skills Section" if "technical_skills" not in identified else "Technical Skills Section Empty"
+        skills_section_present = (
+            "technical_skills" in identified and "technical_skills" not in missing_critical
+        )
+        if not skills_section_present or not profile.technical_skills:
+            title = (
+                "Missing Technical Skills Section"
+                if not skills_section_present
+                else "Technical Skills Section Empty"
+            )
             issues.append(
                 ImprovementIssue(
                     issue_id="IMP_MISSING_SKILLS",
@@ -242,14 +249,18 @@ class ImprovementAreasDetector:
                     severity=ImprovementSeverity.CRITICAL,
                     priority=ImprovementPriority.HIGH,
                     affected_section="technical_skills",
-                    evidence="No technical skills parsed in CandidateProfile.",
+                    evidence=(
+                        "Technical skills section not detected in resume structure."
+                        if not skills_section_present
+                        else "No technical skills parsed in CandidateProfile."
+                    ),
                     related_score_component=COMPONENT_SECTION_COMPLETENESS,
                     confidence=1.0,
                     detection_rule="check_missing_skills_section",
                 )
             )
 
-        if profile.education and profile.projects and profile.technical_skills:
+        if profile.education and profile.projects and profile.technical_skills and skills_section_present:
             strengths.append("Complete core sections: Education, Projects, and Skills are well-represented.")
 
         # 1.2 Education Completeness (CGPA, Year, Degree)
@@ -452,7 +463,29 @@ class ImprovementAreasDetector:
                 )
             )
 
-        # 2.3 Measurable Impact
+        # 2.3 Action Verbs Frequency
+        if report.total_entries_analyzed > 0 and report.aggregate_action_verb_count < 3:
+            issues.append(
+                ImprovementIssue(
+                    issue_id="IMP_LACK_OF_ACTION_VERBS",
+                    category=ImprovementCategory.CONTENT_QUALITY,
+                    title="Lack of Strong Action Verbs",
+                    description=(
+                        f"Project and experience descriptions make sparse use of action verbs "
+                        f"({report.aggregate_action_verb_count} detected). "
+                        "Lead each bullet point with a decisive technical action verb (e.g., 'Engineered', 'Architected', 'Implemented')."
+                    ),
+                    severity=ImprovementSeverity.WARNING,
+                    priority=ImprovementPriority.HIGH if report.aggregate_action_verb_count == 0 else ImprovementPriority.MEDIUM,
+                    affected_section="experience" if any(e.entry_type == "experience" for e in report.entries) else "projects",
+                    evidence=f"Only {report.aggregate_action_verb_count} action verb(s) found across {report.total_entries_analyzed} entries analyzed.",
+                    related_score_component=COMPONENT_CONTENT_QUALITY,
+                    confidence=0.92,
+                    detection_rule="check_action_verb_usage",
+                )
+            )
+
+        # 2.4 Measurable Impact
         if report.aggregate_impact_metrics_count == 0 and report.total_entries_analyzed > 0:
             issues.append(
                 ImprovementIssue(
@@ -531,28 +564,35 @@ class ImprovementAreasDetector:
         unique_canonical = {s.canonical_name.lower().strip() for s in tech_skills if s.canonical_name}
         num_skills = len(unique_canonical)
 
-        # 3.1 Skill Volume
-        if 1 <= num_skills < 5:
-            issues.append(
-                ImprovementIssue(
-                    issue_id="IMP_LOW_SKILL_INVENTORY",
-                    category=ImprovementCategory.SKILL_VISIBILITY,
-                    title="Limited Technical Skill Inventory",
-                    description=(
-                        f"Resume lists only {num_skills} technical skills. "
-                        "College recruitment screenings typically favor an inventory of 8-15 skills covering languages, tools, and databases."
-                    ),
-                    severity=ImprovementSeverity.WARNING,
-                    priority=ImprovementPriority.HIGH,
-                    affected_section="technical_skills",
-                    evidence=f"Recognized skills: {', '.join(sorted(unique_canonical))}",
-                    related_score_component=COMPONENT_SKILL_VISIBILITY,
-                    confidence=0.95,
-                    detection_rule="check_skill_volume",
+        identified = set(profile.section_summary.identified_sections or [])
+        missing_critical = set(profile.section_summary.missing_critical_sections or [])
+        skills_section_present = (
+            "technical_skills" in identified and "technical_skills" not in missing_critical
+        )
+
+        # 3.1 Skill Volume (evaluated when skills section is present to prevent duplicate penalties with IMP_MISSING_SKILLS)
+        if skills_section_present:
+            if 1 <= num_skills < 5:
+                issues.append(
+                    ImprovementIssue(
+                        issue_id="IMP_LOW_SKILL_INVENTORY",
+                        category=ImprovementCategory.SKILL_VISIBILITY,
+                        title="Limited Technical Skill Inventory",
+                        description=(
+                            f"Resume lists only {num_skills} technical skills. "
+                            "College recruitment screenings typically favor an inventory of 8-15 skills covering languages, tools, and databases."
+                        ),
+                        severity=ImprovementSeverity.WARNING,
+                        priority=ImprovementPriority.HIGH,
+                        affected_section="technical_skills",
+                        evidence=f"Recognized skills: {', '.join(sorted(unique_canonical))}",
+                        related_score_component=COMPONENT_SKILL_VISIBILITY,
+                        confidence=0.95,
+                        detection_rule="check_skill_volume",
+                    )
                 )
-            )
-        elif num_skills >= 8:
-            strengths.append(f"Strong skill breadth: {num_skills} verified technical skills listed.")
+            elif num_skills >= 8:
+                strengths.append(f"Strong skill breadth: {num_skills} verified technical skills listed.")
 
         # 3.2 Categorization / Domain Diversity
         active_cats = set()
@@ -605,6 +645,53 @@ class ImprovementAreasDetector:
                     detection_rule="check_soft_skills_presence",
                 )
             )
+
+        # 3.4 Contextual Verification (Unsubstantiated Skills)
+        has_practical_entries = bool(profile.projects or profile.experience or profile.internships)
+        if num_skills > 0 and has_practical_entries:
+            context_technologies: Set[str] = set()
+            for p in (profile.projects or []):
+                for t in (p.technologies or []):
+                    if t:
+                        context_technologies.add(t.strip().lower())
+            for exp in (profile.experience or []):
+                for t in (exp.technologies_used or []):
+                    if t:
+                        context_technologies.add(t.strip().lower())
+            for exp in (profile.internships or []):
+                for t in (exp.technologies_used or []):
+                    if t:
+                        context_technologies.add(t.strip().lower())
+
+            substantiated_skills: Set[str] = set()
+            for s in tech_skills:
+                cname = s.canonical_name.strip().lower()
+                if cname in context_technologies:
+                    substantiated_skills.add(cname)
+                elif s.occurrences > 1:
+                    substantiated_skills.add(cname)
+                elif s.source_section and s.source_section.lower() in ("projects", "experience", "work_experience"):
+                    substantiated_skills.add(cname)
+
+            if len(substantiated_skills) == 0:
+                issues.append(
+                    ImprovementIssue(
+                        issue_id="IMP_UNSUBSTANTIATED_SKILLS",
+                        category=ImprovementCategory.SKILL_VISIBILITY,
+                        title="Unsubstantiated Technical Skills",
+                        description=(
+                            "Listed technical skills do not appear in project or work experience descriptions. "
+                            "Integrate your listed skills (languages, frameworks, databases) into project bullets showing practical application."
+                        ),
+                        severity=ImprovementSeverity.WARNING,
+                        priority=ImprovementPriority.MEDIUM,
+                        affected_section="technical_skills",
+                        evidence="0 listed skills mentioned in project or experience details.",
+                        related_score_component=COMPONENT_SKILL_VISIBILITY,
+                        confidence=0.90,
+                        detection_rule="check_unsubstantiated_skills",
+                    )
+                )
 
         return issues, strengths
 

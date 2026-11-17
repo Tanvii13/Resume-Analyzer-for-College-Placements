@@ -644,8 +644,12 @@ class ResumeConsistencyChecker:
         r"\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}\b",
         re.IGNORECASE,
     )
-    _NUMERIC_SLASH_DATE = re.compile(r"\b\d{1,2}/\d{2,4}\b")
-    _NUMERIC_DASH_DATE = re.compile(r"\b\d{4}-\d{2}\b")
+    _NUMERIC_SLASH_DATE = re.compile(
+        r"(?<![\.\d])\b(?:0?[1-9]|[12]\d|3[01])/(?:0?[1-9]|1[0-2]|(?:19|20)\d{2})/(?:19|20)\d{2}\b"
+        r"|(?<![\.\d])\b(?:0?[1-9]|1[0-2])/(?:19|20)\d{2}\b"
+        r"|(?<![\.\d])\b(?:0?[1-9]|1[0-2])/(?:[7-9]\d|[0-3]\d)\b"
+    )
+    _NUMERIC_DASH_DATE = re.compile(r"\b(?:19|20)\d{2}-(?:0[1-9]|1[0-2])\b")
     _APOSTROPHE_DATE = re.compile(
         r"\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)['’]\s*\d{2}\b",
         re.IGNORECASE,

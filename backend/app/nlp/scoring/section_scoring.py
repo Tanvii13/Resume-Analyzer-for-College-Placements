@@ -240,7 +240,7 @@ class SectionCompletenessScorer:
             deductions.append(
                 ScoreDeduction(
                     component=COMPONENT_SECTION_COMPLETENESS,
-                    rule_id="SEC_MISSING_PROJECTS",
+                    rule_id="SEC_NO_STANDALONE_PROJECTS",
                     points_deducted=round(prac_weight * 0.30, 2),
                     reason="No standalone technical projects listed.",
                     evidence="projects list is empty.",

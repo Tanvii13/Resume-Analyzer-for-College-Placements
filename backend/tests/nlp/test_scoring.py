@@ -39,6 +39,7 @@ from app.nlp.scoring import (
     ScoringWeights,
     score_resume,
 )
+from app.nlp.scoring.section_scoring import SectionCompletenessScorer
 
 
 @pytest.fixture
@@ -483,4 +484,69 @@ def test_pipeline_fixture_resumes_scoring():
         # Validate that model dumps to clean JSON
         dumped = result.model_dump()
         assert dumped["overall_score"] == result.overall_score
+
+
+# =============================================================================
+# 15. Practical Work Scenarios Regression Tests (Fix 1 Verification)
+# =============================================================================
+def test_practical_work_four_scenarios_deduplication(high_quality_candidate_profile):
+    """
+    Verify scoring behavior and absence of duplicate deductions for:
+    1. Neither experience nor projects
+    2. Experience but no projects
+    3. Projects but no experience (fresher accommodation)
+    4. Both experience and projects
+    """
+    scorer = SectionCompletenessScorer(max_score=25.0)
+
+    # 1. Neither experience nor projects
+    p1 = high_quality_candidate_profile.model_copy(deep=True)
+    p1.projects = []
+    p1.experience = []
+    p1.internships = []
+    p1.section_summary.identified_sections = ["contact", "education", "technical_skills"]
+    p1.section_summary.missing_critical_sections = ["projects"]
+    score1, deds1, _ = scorer.score(p1)
+    rule_ids1 = [d.rule_id for d in deds1]
+    assert len(rule_ids1) == len(set(rule_ids1)), "Duplicate deductions found for scenario 1"
+    assert "SEC_MISSING_PROJECTS" in rule_ids1
+    assert "SEC_NO_PRACTICAL_WORK" in rule_ids1
+
+    # 2. Experience but no projects
+    p2 = high_quality_candidate_profile.model_copy(deep=True)
+    p2.projects = []
+    p2.section_summary.identified_sections = ["contact", "education", "technical_skills", "experience"]
+    p2.section_summary.missing_critical_sections = ["projects"]
+    score2, deds2, _ = scorer.score(p2)
+    rule_ids2 = [d.rule_id for d in deds2]
+    assert len(rule_ids2) == len(set(rule_ids2)), "Duplicate deductions found for scenario 2"
+    assert "SEC_MISSING_PROJECTS" in rule_ids2
+    assert "SEC_NO_STANDALONE_PROJECTS" in rule_ids2
+    assert rule_ids2.count("SEC_MISSING_PROJECTS") == 1
+    assert rule_ids2.count("SEC_NO_STANDALONE_PROJECTS") == 1
+
+    # 3. Projects but no experience (fresher accommodation)
+    p3 = high_quality_candidate_profile.model_copy(deep=True)
+    p3.experience = []
+    p3.internships = []
+    p3.section_summary.identified_sections = ["contact", "education", "technical_skills", "projects"]
+    p3.section_summary.missing_critical_sections = []
+    score3, deds3, strengths3 = scorer.score(p3)
+    rule_ids3 = [d.rule_id for d in deds3]
+    assert len(rule_ids3) == len(set(rule_ids3)), "Duplicate deductions found for scenario 3"
+    assert "SEC_MISSING_PROJECTS" not in rule_ids3
+    assert "SEC_NO_STANDALONE_PROJECTS" not in rule_ids3
+    assert "SEC_NO_PRACTICAL_WORK" not in rule_ids3
+    # Fresher with >=2 projects gets full practical credit
+    assert any("fresher accommodation" in s.lower() for s in score3.evidence)
+
+    # 4. Both experience and projects
+    p4 = high_quality_candidate_profile.model_copy(deep=True)
+    score4, deds4, strengths4 = scorer.score(p4)
+    rule_ids4 = [d.rule_id for d in deds4]
+    assert len(rule_ids4) == len(set(rule_ids4)), "Duplicate deductions found for scenario 4"
+    assert "SEC_MISSING_PROJECTS" not in rule_ids4
+    assert "SEC_NO_STANDALONE_PROJECTS" not in rule_ids4
+    assert "SEC_NO_PRACTICAL_WORK" not in rule_ids4
+
 
