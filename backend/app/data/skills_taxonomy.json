@@ -1,4 +1,3 @@
-
 {
   "technical_skills": [
     "Python",
@@ -149,5 +148,19 @@
         "PyTorch"
       ]
     }
+  },
+  "related_skills": {
+    "postgresql": ["MySQL", "SQLite", "Oracle"],
+    "mysql": ["PostgreSQL", "SQLite"],
+    "fastapi": ["Flask", "Django"],
+    "flask": ["FastAPI", "Django"],
+    "django": ["FastAPI", "Flask"],
+    "react": ["Next.js", "Vue.js", "Angular"],
+    "vue.js": ["React", "Angular"],
+    "docker": ["Kubernetes"],
+    "kubernetes": ["Docker"],
+    "javascript": ["TypeScript"],
+    "typescript": ["JavaScript"],
+    "mongodb": ["PostgreSQL", "Redis"]
   }
 }

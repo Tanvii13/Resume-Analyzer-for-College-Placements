@@ -17,39 +17,73 @@ TAXONOMY_PATH = (
 class JDMatcherService:
 
     def __init__(self, taxonomy_path: str = str(TAXONOMY_PATH)):
+
         self.skill_extractor = SkillExtractor(
             taxonomy_path=taxonomy_path
         )
 
-        self.aliases = self._load_aliases(taxonomy_path)
-
         taxonomy = self.skill_extractor.taxonomy
 
-        self.canonical_skills = (
-            taxonomy.get("technical_skills", [])
-            + taxonomy.get("soft_skills", [])
+        self.aliases = self._load_aliases(taxonomy)
+
+        self.canonical_skills = self._extract_canonical_skills(
+            taxonomy
         )
 
-    def _load_aliases(self, path: str) -> Dict[str, str]:
+    def _load_aliases(
+        self,
+        taxonomy: Dict[str, Any]
+    ) -> Dict[str, str]:
         """Load skill aliases from the taxonomy."""
 
-        with open(path, "r", encoding="utf-8") as file:
-            data = json.load(file)
+        aliases = taxonomy.get("aliases", {})
 
-        aliases = data.get("aliases", {})
+        if not isinstance(aliases, dict):
+            return {}
 
         return {
-            str(alias).strip().lower(): canonical
+            str(alias).strip().lower(): str(canonical).strip()
             for alias, canonical in aliases.items()
+            if str(alias).strip() and str(canonical).strip()
         }
 
+    def _extract_canonical_skills(
+        self,
+        taxonomy: Dict[str, Any]
+    ) -> List[str]:
+        """Extract canonical technical and soft skills."""
+
+        technical = taxonomy.get("technical_skills", [])
+        soft = taxonomy.get("soft_skills", [])
+
+        if not isinstance(technical, list):
+            raise ValueError(
+                "technical_skills must be a list in taxonomy."
+            )
+
+        if not isinstance(soft, list):
+            raise ValueError(
+                "soft_skills must be a list in taxonomy."
+            )
+
+        skills = [
+            skill.strip()
+            for skill in technical + soft
+            if isinstance(skill, str) and skill.strip()
+        ]
+
+        return list(dict.fromkeys(skills))
+
     def normalize_skill(self, skill_name: str) -> str:
-        """Convert aliases into standard skill names."""
+        """Convert skill aliases into canonical skill names."""
+
+        if not isinstance(skill_name, str):
+            return ""
 
         clean = skill_name.strip()
 
         if not clean:
-            return clean
+            return ""
 
         normalized = self.aliases.get(clean.lower())
 
@@ -65,7 +99,7 @@ class JDMatcherService:
     def extract_jd_skills(self, jd_text: str) -> List[str]:
         """
         Extract technical and soft skills from a job description.
-        Also recognizes aliases defined in the taxonomy.
+        Also detect aliases defined in the taxonomy.
         """
 
         if not isinstance(jd_text, str):
@@ -76,17 +110,18 @@ class JDMatcherService:
 
         extracted = self.skill_extractor.extract_skills(jd_text)
 
-        all_skills = (
-            extracted.get("technical_skills", [])
-            + extracted.get("soft_skills", [])
-        )
+        technical = extracted.get("technical_skills") or []
+        soft = extracted.get("soft_skills") or []
 
-        normalized = {
+        all_skills = technical + soft
+
+        normalized: Set[str] = {
             self.normalize_skill(skill)
             for skill in all_skills
+            if isinstance(skill, str) and skill.strip()
         }
 
-        # Detect aliases directly from the job description.
+        # Detect aliases directly in the job description.
         for alias, canonical in self.aliases.items():
 
             pattern = (
@@ -96,7 +131,9 @@ class JDMatcherService:
             )
 
             if re.search(pattern, jd_text, re.IGNORECASE):
-                normalized.add(canonical)
+                normalized.add(
+                    self.normalize_skill(canonical)
+                )
 
         return sorted(normalized)
 
@@ -124,52 +161,55 @@ class JDMatcherService:
         normalized_jd_skills: Set[str] = set(jd_skills)
 
         # Find matched and missing skills.
-        matched_set = (
-            normalized_resume_skills.intersection(
-                normalized_jd_skills
-            )
+        matched_set = normalized_resume_skills.intersection(
+            normalized_jd_skills
         )
 
-        missing_set = (
-            normalized_jd_skills.difference(
-                normalized_resume_skills
-            )
+        missing_set = normalized_jd_skills.difference(
+            normalized_resume_skills
         )
 
         matched_list = sorted(matched_set)
         missing_list = sorted(missing_set)
 
-        # Calculate match percentage.
         total_jd_count = len(normalized_jd_skills)
-       if total_jd_count == 0:
-    match_percentage = 0.0
-else:
-    match_percentage = round(
-        (len(matched_list) / total_jd_count) * 100.0,
-        1
-    )
-       
 
-        # Generate skill gap recommendations.
         gap_recommendations = []
 
-        if missing_list:
+        if total_jd_count == 0:
 
-            top_missing = missing_list[:4]
+            match_percentage = 0.0
 
             gap_recommendations.append(
-                f"High-priority missing skills for this role: "
-                f"{', '.join(top_missing)}. "
-                "Highlight relevant coursework, side-projects, "
-                "or certifications for these tools if you have exposure."
+                "No technical or soft skills could be detected "
+                "in this job description. Please ensure the job "
+                "description includes specific skills and requirements."
             )
 
         else:
 
-            gap_recommendations.append(
-                "Excellent alignment: Your resume covers all "
-                "required skills detected in this job description."
+            match_percentage = round(
+                (len(matched_list) / total_jd_count) * 100.0,
+                1
             )
+
+            if missing_list:
+
+                top_missing = missing_list[:4]
+
+                gap_recommendations.append(
+                    f"High-priority missing skills for this role: "
+                    f"{', '.join(top_missing)}. "
+                    "Highlight relevant coursework, side-projects, "
+                    "or certifications for these skills if you have exposure."
+                )
+
+            else:
+
+                gap_recommendations.append(
+                    "Excellent alignment: Your resume covers all "
+                    "required skills detected in this job description."
+                )
 
         return {
             "total_jd_skills_found": total_jd_count,
