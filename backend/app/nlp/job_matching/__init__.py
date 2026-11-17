@@ -4,8 +4,6 @@ Job Matching and Job Description Processing Package.
 Sprint 4 NLP components for Resume Analyzer for College Placements.
 """
 
-from typing import List, Optional
-
 from app.nlp.job_matching.job_description_parser import JobDescriptionParser
 from app.nlp.job_matching.schemas import (
     JOB_PARSER_VERSION,
@@ -20,9 +18,29 @@ from app.nlp.job_matching.schemas import (
     ParsedJobDescription,
     WorkplaceType,
 )
+from app.nlp.job_matching.skill_engine import (
+    ENGINE_VERSION as SKILL_ENGINE_VERSION,
+)
+from app.nlp.job_matching.skill_engine import (
+    SkillEquivalenceEngine,
+    SkillNormalizer,
+    compare_candidate_to_job_skills,
+    evaluate_skill_equivalence,
+    get_equivalence_engine,
+    get_skill_normalizer,
+    normalize_skill,
+)
+from app.nlp.job_matching.skill_normalization_schemas import (
+    EquivalenceEvaluation,
+    EquivalenceRule,
+    NormalizedSkill,
+    SkillMatchMethod,
+    SkillRelationshipType,
+    SkillSetComparison,
+)
 
 
-def parse_job_description(text: str, job_id: Optional[str] = None) -> ParsedJobDescription:
+def parse_job_description(text: str, job_id: str | None = None) -> ParsedJobDescription:
     """
     Convenience function to parse a raw job description string into a validated ParsedJobDescription.
 
@@ -36,7 +54,7 @@ def parse_job_description(text: str, job_id: Optional[str] = None) -> ParsedJobD
     return JobDescriptionParser().parse(text, job_id=job_id)
 
 
-def parse_multiple_job_descriptions(texts: List[str]) -> List[ParsedJobDescription]:
+def parse_multiple_job_descriptions(texts: list[str]) -> list[ParsedJobDescription]:
     """
     Convenience function to parse a list of raw job descriptions independently.
 
@@ -51,17 +69,31 @@ def parse_multiple_job_descriptions(texts: List[str]) -> List[ParsedJobDescripti
 
 __all__ = [
     "JOB_PARSER_VERSION",
-    "JobType",
-    "WorkplaceType",
-    "JobSkillRequirement",
-    "ExperienceRequirement",
+    "SKILL_ENGINE_VERSION",
     "EducationRequirement",
     "EligibilityCriteria",
-    "LocationRequirement",
-    "OtherJobRequirements",
-    "JobParsingMetadata",
-    "ParsedJobDescription",
+    "EquivalenceEvaluation",
+    "EquivalenceRule",
+    "ExperienceRequirement",
     "JobDescriptionParser",
+    "JobParsingMetadata",
+    "JobSkillRequirement",
+    "JobType",
+    "LocationRequirement",
+    "NormalizedSkill",
+    "OtherJobRequirements",
+    "ParsedJobDescription",
+    "SkillEquivalenceEngine",
+    "SkillMatchMethod",
+    "SkillNormalizer",
+    "SkillRelationshipType",
+    "SkillSetComparison",
+    "WorkplaceType",
+    "compare_candidate_to_job_skills",
+    "evaluate_skill_equivalence",
+    "get_equivalence_engine",
+    "get_skill_normalizer",
+    "normalize_skill",
     "parse_job_description",
     "parse_multiple_job_descriptions",
 ]
