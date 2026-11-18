@@ -5,6 +5,22 @@ Sprint 4 NLP components for Resume Analyzer for College Placements.
 """
 
 from app.nlp.job_matching.job_description_parser import JobDescriptionParser
+from app.nlp.job_matching.matcher_schemas import (
+    MATCHER_ENGINE_VERSION,
+    ComponentScore,
+    EvidenceSource,
+    JobDescriptionProfile,
+    JobMatchResult,
+    MatchCategory,
+    MatchingWeights,
+    RequirementMatch,
+    RequirementType,
+)
+from app.nlp.job_matching.resume_job_matcher import (
+    ResumeJobMatcher,
+    calculate_text_similarity,
+    match_resume_to_job,
+)
 from app.nlp.job_matching.schemas import (
     JOB_PARSER_VERSION,
     EducationRequirement,
@@ -67,33 +83,48 @@ def parse_multiple_job_descriptions(texts: list[str]) -> list[ParsedJobDescripti
     return JobDescriptionParser().parse_multiple(texts)
 
 
-__all__ = [
+__all__ = [  # noqa: RUF022
+    # Module A: Job Description Processing
     "JOB_PARSER_VERSION",
-    "SKILL_ENGINE_VERSION",
+    "JobType",
+    "WorkplaceType",
+    "JobSkillRequirement",
+    "ExperienceRequirement",
     "EducationRequirement",
     "EligibilityCriteria",
-    "EquivalenceEvaluation",
-    "EquivalenceRule",
-    "ExperienceRequirement",
-    "JobDescriptionParser",
-    "JobParsingMetadata",
-    "JobSkillRequirement",
-    "JobType",
     "LocationRequirement",
-    "NormalizedSkill",
     "OtherJobRequirements",
+    "JobParsingMetadata",
     "ParsedJobDescription",
-    "SkillEquivalenceEngine",
-    "SkillMatchMethod",
-    "SkillNormalizer",
-    "SkillRelationshipType",
-    "SkillSetComparison",
-    "WorkplaceType",
-    "compare_candidate_to_job_skills",
-    "evaluate_skill_equivalence",
-    "get_equivalence_engine",
-    "get_skill_normalizer",
-    "normalize_skill",
+    "JobDescriptionParser",
     "parse_job_description",
     "parse_multiple_job_descriptions",
+    # Module B: Skill Normalization and Equivalence Engine
+    "SKILL_ENGINE_VERSION",
+    "SkillRelationshipType",
+    "SkillMatchMethod",
+    "EquivalenceRule",
+    "NormalizedSkill",
+    "EquivalenceEvaluation",
+    "SkillSetComparison",
+    "SkillNormalizer",
+    "SkillEquivalenceEngine",
+    "get_skill_normalizer",
+    "get_equivalence_engine",
+    "normalize_skill",
+    "evaluate_skill_equivalence",
+    "compare_candidate_to_job_skills",
+    # Module C: Resume-Job Matching Engine
+    "MATCHER_ENGINE_VERSION",
+    "JobDescriptionProfile",
+    "MatchCategory",
+    "RequirementType",
+    "EvidenceSource",
+    "RequirementMatch",
+    "ComponentScore",
+    "MatchingWeights",
+    "JobMatchResult",
+    "ResumeJobMatcher",
+    "match_resume_to_job",
+    "calculate_text_similarity",
 ]
