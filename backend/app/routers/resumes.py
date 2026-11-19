@@ -19,7 +19,6 @@ from app.schemas.extraction import (
     SkillExtractionResult,
 )
 
-
 from app.schemas.sprint3_schemas import (
     BulletAuditRequest,
     BulletAuditResponse,
@@ -32,6 +31,11 @@ from app.schemas.sprint3_schemas import (
     ImprovementAreaItem,
 )
 
+from app.schemas.privacy_schemas import (
+    AnonymizedResumeResponse,
+    DirectMaskRequest,
+    DirectMaskResponse,
+)
 
 from app.services.upload_service import (
     validate_resume,
@@ -52,6 +56,7 @@ from app.services.suggestion_service import SuggestionService
 from app.services.jd_matcher import JDMatcherService
 from app.services.jd_parser import JDParser
 from app.services.improvement_detector import ImprovementDetector
+from app.services.privacy_masking_service import PrivacyMaskingService
 
 
 router = APIRouter(
@@ -73,7 +78,6 @@ jd_matcher_service = JDMatcherService()
 skill_extractor_service = SkillExtractor()
 jd_parser_service = JDParser()
 improvement_detector_service = ImprovementDetector()
-
 
 
 # ==================================================
@@ -602,7 +606,6 @@ def get_resume_suggestions(
             current_user,
         )
 
-        # Dynamically extract categorized skills from raw text for accurate soft & tech evaluation
         dynamic_skills = skill_extractor_service.extract_skills(raw_text)
 
         raw_suggestions = (
@@ -663,7 +666,6 @@ def get_resume_suggestions(
     response_model=JDCompareResponse,
     status_code=status.HTTP_200_OK,
 )
-
 def compare_resume_with_job_description(
     resume_id: str,
     payload: JDCompareRequest,
@@ -681,7 +683,6 @@ def compare_resume_with_job_description(
             current_user,
         )
 
-        # Obtain resume skills from saved extraction data.
         resume_skills = []
 
         if extracted_data is not None:
@@ -694,7 +695,6 @@ def compare_resume_with_job_description(
                     [],
                 )
 
-        # Fallback: dynamically extract skills from resume text.
         if not resume_skills and raw_text:
             extracted = skill_extractor_service.extract_skills(
                 raw_text
@@ -705,19 +705,15 @@ def compare_resume_with_job_description(
                 + extracted.get("soft_skills", [])
             )
 
-        # Parse, sanitize, and extract JD metadata.
         parsed_jd = jd_parser_service.parse_job_description(
             payload.jd_text
         )
 
-        # Match resume skills against sanitized JD text.
         match_result = jd_matcher_service.match_resume_with_jd(
             resume_skills=resume_skills,
             jd_text=parsed_jd.clean_text,
         )
 
-        # Use the manually supplied role if provided;
-        # otherwise use the role detected by the parser.
         target_role = (
             payload.target_role.strip()
             if payload.target_role and payload.target_role.strip()
@@ -757,6 +753,9 @@ def compare_resume_with_job_description(
             status_code=500,
             detail="Unable to compare resume with job description.",
         ) from exc
+
+
+# ==================================================
 # 7. IMPROVEMENT AREAS API - US-08
 # ==================================================
 
@@ -829,4 +828,139 @@ def get_resume_improvement_areas(
         raise HTTPException(
             status_code=500,
             detail="Unable to detect resume improvement areas.",
+        ) from exc
+
+
+# ==================================================
+# 8. ANONYMIZED RESUME VIEW API - US-17
+# ==================================================
+
+@router.get(
+    "/{resume_id}/anonymized-view",
+    response_model=AnonymizedResumeResponse,
+    status_code=status.HTTP_200_OK,
+)
+def get_anonymized_resume_view(
+    resume_id: str,
+    mask_style: str = "tag",
+    current_user: UserResponse = Depends(get_current_user),
+):
+    """
+    US-17: Returns a privacy-compliant, anonymized view of a resume
+    for blind candidate screening by placement officers and recruiters.
+    Contact PII (email, phone, pincode) is redacted while preserving technical
+    skills, academic scores, and project metrics intact.
+    """
+    try:
+        extracted_data, raw_text = get_owned_resume_data(
+            resume_id,
+            current_user,
+        )
+
+        candidate_name = None
+        if extracted_data is not None:
+            if isinstance(extracted_data, dict):
+                candidate_name = extracted_data.get("candidate_name")
+            else:
+                candidate_name = getattr(extracted_data, "candidate_name", None)
+
+        masked_text, pii_stats, masked_fields = PrivacyMaskingService.anonymize_text(
+            text=raw_text,
+            candidate_name=candidate_name,
+            style=mask_style,
+        )
+
+        skills = []
+        if extracted_data is not None:
+            if isinstance(extracted_data, dict):
+                skills = extracted_data.get("skills", [])
+            else:
+                skills = getattr(extracted_data, "skills", [])
+
+        if not skills and raw_text:
+            extracted_skills_dict = skill_extractor_service.extract_skills(raw_text)
+            tech = extracted_skills_dict.get("technical_skills", [])
+            soft = extracted_skills_dict.get("soft_skills", [])
+            skills = list(dict.fromkeys(tech + soft))
+
+        candidate_hash = PrivacyMaskingService.generate_candidate_hash(
+            str(current_user.email)
+        )
+
+        exp_years = None
+        cgpa = None
+        degree = None
+        if extracted_data is not None:
+            if isinstance(extracted_data, dict):
+                exp_years = extracted_data.get("experience_years")
+                cgpa = extracted_data.get("cgpa")
+                degree = extracted_data.get("degree")
+            else:
+                exp_years = getattr(extracted_data, "experience_years", None)
+                cgpa = getattr(extracted_data, "cgpa", None)
+                degree = getattr(extracted_data, "degree", None)
+
+        return AnonymizedResumeResponse(
+            resume_id=resume_id,
+            candidate_id_hash=candidate_hash,
+            anonymized_text=masked_text,
+            skills=skills,
+            experience_years=exp_years,
+            cgpa=cgpa,
+            degree=degree,
+            masked_fields=masked_fields,
+            detected_pii_counts=pii_stats,
+            is_anonymized=True,
+            status="success",
+        )
+
+    except HTTPException:
+        raise
+
+    except Exception as exc:
+        logger.exception("Failed to generate anonymized resume view.")
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to generate anonymized resume view.",
+        ) from exc
+
+
+# ==================================================
+# 9. DIRECT RESUME TEXT MASKING API - US-17
+# ==================================================
+
+@router.post(
+    "/privacy/mask-text",
+    response_model=DirectMaskResponse,
+    status_code=status.HTTP_200_OK,
+)
+def mask_resume_text_directly(
+    payload: DirectMaskRequest,
+    current_user: UserResponse = Depends(get_current_user),
+):
+    """
+    US-17: Utility endpoint for sanitizing and anonymizing raw resume text on demand.
+    """
+    try:
+        masked_text, pii_stats, _ = PrivacyMaskingService.anonymize_text(
+            text=payload.raw_text,
+            candidate_name=payload.candidate_name,
+            style=payload.mask_style or "tag",
+        )
+
+        is_safe = PrivacyMaskingService.is_properly_anonymized(masked_text)
+
+        return DirectMaskResponse(
+            original_length=len(payload.raw_text),
+            masked_length=len(masked_text),
+            masked_text=masked_text,
+            detected_pii_counts=pii_stats,
+            is_safe=is_safe,
+        )
+
+    except Exception as exc:
+        logger.exception("Direct text masking failed.")
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to mask text.",
         ) from exc
