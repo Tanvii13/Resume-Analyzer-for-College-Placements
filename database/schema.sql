@@ -481,3 +481,88 @@ CREATE TABLE IF NOT EXISTS resume_job_recommendations (
 
 CREATE INDEX IF NOT EXISTS idx_resume_job_recommendations_resume
     ON resume_job_recommendations(resume_id, rank ASC);
+
+-- ============================================================
+-- Sprint 5: Placement Staff Access & Reporting
+-- US-14: View Student Resume Analysis
+-- US-15: View Placement Dashboard and Reports
+-- ============================================================
+
+-- 16. STAFF_RESUME_ACCESS_LOG
+
+CREATE TABLE IF NOT EXISTS staff_resume_access_log (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    staff_user_id UUID NOT NULL
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+    student_user_id UUID NOT NULL
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+    resume_id UUID NOT NULL
+        REFERENCES resumes(id)
+        ON DELETE CASCADE,
+
+    analysis_id UUID
+        REFERENCES resume_analyses(id)
+        ON DELETE SET NULL,
+
+    access_type VARCHAR(30) NOT NULL DEFAULT 'view_analysis'
+        CHECK (
+            access_type IN (
+                'view_analysis',
+                'view_resume',
+                'view_skills',
+                'view_feedback'
+            )
+        ),
+
+    accessed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_staff_access_log_staff
+    ON staff_resume_access_log(staff_user_id, accessed_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_staff_access_log_student
+    ON staff_resume_access_log(student_user_id, accessed_at DESC);
+
+
+-- 17. PLACEMENT_REPORTS
+
+CREATE TABLE IF NOT EXISTS placement_reports (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    generated_by UUID NOT NULL
+        REFERENCES users(id)
+        ON DELETE RESTRICT,
+
+    report_type VARCHAR(40) NOT NULL
+        CHECK (
+            report_type IN (
+                'overall_summary',
+                'skills_gap',
+                'readiness_distribution',
+                'job_match_summary'
+            )
+        ),
+
+    title VARCHAR(200) NOT NULL,
+
+    filter_parameters JSONB,
+
+    report_data JSONB,
+
+    generated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    is_archived BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE INDEX IF NOT EXISTS idx_placement_reports_generated_by
+    ON placement_reports(generated_by, generated_at DESC)
+    WHERE is_archived = FALSE;
+
+CREATE INDEX IF NOT EXISTS idx_placement_reports_type
+    ON placement_reports(report_type, generated_at DESC)
+    WHERE is_archived = FALSE;

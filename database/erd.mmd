@@ -17,6 +17,11 @@ erDiagram
     SKILLS ||--o{ JOB_DESCRIPTION_SKILLS : listed_in
     RESUME_JD_COMPARISONS ||--o{ JD_SKILL_MATCHES : breaks_down_to
     SKILLS ||--o{ JD_SKILL_MATCHES : matched_as
+    USERS ||--o{ STAFF_RESUME_ACCESS_LOG : "accesses as staff"
+    USERS ||--o{ STAFF_RESUME_ACCESS_LOG : "accessed as student"
+    RESUMES ||--o{ STAFF_RESUME_ACCESS_LOG : accessed_via
+    RESUME_ANALYSES ||--o{ STAFF_RESUME_ACCESS_LOG : logged_in
+    USERS ||--o{ PLACEMENT_REPORTS : generates
 
     USERS {
         uuid id PK
@@ -155,4 +160,23 @@ erDiagram
         smallint rank
         numeric relevance_score
         timestamptz generated_at
+    }
+    STAFF_RESUME_ACCESS_LOG {
+        uuid id PK
+        uuid staff_user_id FK
+        uuid student_user_id FK
+        uuid resume_id FK
+        uuid analysis_id FK
+        varchar access_type
+        timestamptz accessed_at
+    }
+    PLACEMENT_REPORTS {
+        uuid id PK
+        uuid generated_by FK
+        varchar report_type
+        varchar title
+        jsonb filter_parameters
+        jsonb report_data
+        timestamptz generated_at
+        boolean is_archived
     }

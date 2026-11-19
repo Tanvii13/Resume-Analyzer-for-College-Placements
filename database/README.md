@@ -1,6 +1,6 @@
 # Resume Analyzer — Database
 
-PostgreSQL 18 database schema covering Sprint 1, Sprint 2, and Sprint 3.
+PostgreSQL 18 database schema covering Sprint 1 through Sprint 5.
 
 ---
 
@@ -90,6 +90,86 @@ Scores are constrained to the range 0–100.
 
 ---
 
+## Sprint 4 — Job & Internship Matching
+
+Covers user stories **US-11 to US-13**.
+
+| User Story | Description |
+|---|---|
+| US-11 | Store job and internship opportunities with required skills |
+| US-12 | Compare a resume against a job description and track skill matches |
+| US-13 | Rank and recommend job/internship opportunities for a resume |
+
+### Requirements
+
+- FR-08: Store job/internship opportunities and required skills.
+- FR-09: Compare resume skills against job description skills.
+- FR-10: Recommend and rank job/internship opportunities.
+- DR-02: Job opportunity data storage standards.
+- DR-03: Resume–JD comparison data standards.
+- DR-04: Skill match tracking standards.
+
+### Tables
+
+| Table | Purpose |
+|---|---|
+| `job_opportunities` | Job and internship listings with metadata |
+| `job_description_skills` | Skills required by a job, with importance (required / preferred) |
+| `resume_jd_comparisons` | Match scores between a resume and a job description |
+| `jd_skill_matches` | Per-skill match breakdown for each comparison |
+| `resume_job_recommendations` | Ranked job recommendations generated for a resume |
+
+### Match Scores
+
+`overall_match_score` and `required_skills_match_score` are `NUMERIC(5,2)` constrained to 0–100.  
+`match_confidence` on `jd_skill_matches` is `NUMERIC(5,4)` constrained to 0–1.
+
+### Skill Importance
+
+`required` — must-have skills for the role.  
+`preferred` — nice-to-have skills.
+
+---
+
+## Sprint 5 — Placement Staff Access & Reporting
+
+Covers user stories **US-14 to US-15**.
+
+| User Story | Description |
+|---|---|
+| US-14 | Placement officers and counselors view student resume analysis |
+| US-15 | Placement officers view dashboard summaries and reports |
+
+### Requirements
+
+- FR-12: Placement staff view of student resume analysis.
+- FR-13: Placement dashboard and report generation.
+- DR-05: Placement data aggregation standards (aggregated stats, no individual PII in reports).
+- DR-07: Data governance — all staff access to student data is audited.
+
+### Tables
+
+| Table | Purpose |
+|---|---|
+| `staff_resume_access_log` | Audit trail — records every staff access to student resume/analysis data |
+| `placement_reports` | Stores generated placement summary reports with aggregated statistics |
+
+### Access Types (`staff_resume_access_log`)
+
+`view_analysis` · `view_resume` · `view_skills` · `view_feedback`
+
+### Report Types (`placement_reports`)
+
+`overall_summary` · `skills_gap` · `readiness_distribution` · `job_match_summary`
+
+### Design Notes
+
+- `report_data` stores aggregated cohort statistics only — no individual student PII is stored in a report row (satisfies DR-05, US-15 AC-2).
+- `is_archived` is a soft-delete flag. Reports are never hard-deleted, supporting institutional data retention requirements (US-15 AC-3).
+- `generated_by` uses `ON DELETE RESTRICT` — a placement officer account cannot be deleted while they own reports, preserving the audit chain.
+
+---
+
 ## Database Setup
 
 Make sure PostgreSQL 18 is running and the `resume_analyzer` database exists.
@@ -117,6 +197,12 @@ psql -U postgres -d resume_analyzer -f database/migration/sprint2_schema.sql
 
 # Sprint 3 — run after Sprint 2
 psql -U postgres -d resume_analyzer -f database/migration/sprint3_feedback.sql
+
+# Sprint 4 — run after Sprint 3
+psql -U postgres -d resume_analyzer -f database/migration/sprint4_job_matching.sql
+
+# Sprint 5 — run after Sprint 4
+psql -U postgres -d resume_analyzer -f database/migration/sprint5_placement_staff.sql
 ```
 
 Replace `postgres` with your PostgreSQL username if different.
@@ -139,6 +225,19 @@ erDiagram
     RESUME_ANALYSES ||--o{ ANALYSIS_FEEDBACK : produces
     ANALYSIS_FEEDBACK ||--o{ IMPROVEMENT_SUGGESTIONS : contains
     RESUME_ANALYSES ||--o{ SCORE_EXPLANATIONS : explains
+    RESUMES ||--o{ RESUME_JD_COMPARISONS : compared_in
+    RESUMES ||--o{ RESUME_JOB_RECOMMENDATIONS : recommended
+    JOB_OPPORTUNITIES ||--o{ JOB_DESCRIPTION_SKILLS : requires
+    JOB_OPPORTUNITIES ||--o{ RESUME_JD_COMPARISONS : compared_against
+    JOB_OPPORTUNITIES ||--o{ RESUME_JOB_RECOMMENDATIONS : recommended_as
+    SKILLS ||--o{ JOB_DESCRIPTION_SKILLS : listed_in
+    RESUME_JD_COMPARISONS ||--o{ JD_SKILL_MATCHES : breaks_down_to
+    SKILLS ||--o{ JD_SKILL_MATCHES : matched_as
+    USERS ||--o{ STAFF_RESUME_ACCESS_LOG : "accesses as staff"
+    USERS ||--o{ STAFF_RESUME_ACCESS_LOG : "accessed as student"
+    RESUMES ||--o{ STAFF_RESUME_ACCESS_LOG : accessed_via
+    RESUME_ANALYSES ||--o{ STAFF_RESUME_ACCESS_LOG : logged_in
+    USERS ||--o{ PLACEMENT_REPORTS : generates
 
     USERS {
         uuid id PK
@@ -240,6 +339,80 @@ erDiagram
         text explanation
         timestamptz created_at
     }
+
+    JOB_OPPORTUNITIES {
+        uuid id PK
+        varchar title
+        varchar company
+        varchar type
+        text description_text
+        varchar location
+        varchar experience_level
+        boolean is_active
+        timestamptz posted_at
+        timestamptz expires_at
+    }
+
+    JOB_DESCRIPTION_SKILLS {
+        uuid id PK
+        uuid job_id FK
+        uuid skill_id FK
+        varchar importance
+        timestamptz created_at
+    }
+
+    RESUME_JD_COMPARISONS {
+        uuid id PK
+        uuid resume_id FK
+        uuid job_id FK
+        numeric overall_match_score
+        numeric required_skills_match_score
+        varchar status
+        text error_message
+        timestamptz compared_at
+        timestamptz completed_at
+    }
+
+    JD_SKILL_MATCHES {
+        uuid id PK
+        uuid comparison_id FK
+        uuid skill_id FK
+        boolean is_matched
+        varchar importance
+        numeric match_confidence
+        varchar match_note
+        timestamptz created_at
+    }
+
+    RESUME_JOB_RECOMMENDATIONS {
+        uuid id PK
+        uuid resume_id FK
+        uuid job_id FK
+        smallint rank
+        numeric relevance_score
+        timestamptz generated_at
+    }
+
+    STAFF_RESUME_ACCESS_LOG {
+        uuid id PK
+        uuid staff_user_id FK
+        uuid student_user_id FK
+        uuid resume_id FK
+        uuid analysis_id FK
+        varchar access_type
+        timestamptz accessed_at
+    }
+
+    PLACEMENT_REPORTS {
+        uuid id PK
+        uuid generated_by FK
+        varchar report_type
+        varchar title
+        jsonb filter_parameters
+        jsonb report_data
+        timestamptz generated_at
+        boolean is_archived
+    }
 ```
 
 The editable Mermaid source is also available in [`erd.mmd`](erd.mmd).
@@ -260,6 +433,9 @@ The editable Mermaid source is also available in [`erd.mmd`](erd.mmd).
 - **Data integrity:** UUID identifiers, foreign keys, constraints, indexes, and timezone-aware `TIMESTAMPTZ` columns are used throughout.
 - **Safe reruns:** `CREATE TABLE IF NOT EXISTS` and conflict-safe inserts support rerunning compatible schema scripts. They do not update existing table definitions.
 - **File size:** Resume files must be greater than 0 bytes and no larger than 5 MiB (5,242,880 bytes), enforced by a database constraint.
+- **Job matching scores:** `overall_match_score` and `required_skills_match_score` are `NUMERIC(5,2)` constrained to 0–100. `match_confidence` on `jd_skill_matches` is `NUMERIC(5,4)` constrained to 0–1.
+- **Soft delete for reports:** `placement_reports` uses `is_archived` instead of hard deletion to satisfy institutional data retention requirements.
+- **Audit log cascade:** When a user or resume is deleted, associated `staff_resume_access_log` rows are deleted too (consistent with right-to-erasure). If only an analysis is deleted, the log row's `analysis_id` is set to NULL — the access event is preserved.
 
 ---
 
@@ -274,3 +450,10 @@ The editable Mermaid source is also available in [`erd.mmd`](erd.mmd).
 - Store actionable suggestions in `improvement_suggestions`, linked to their feedback entry.
 - Store score explanations in `score_explanations`, linked to the corresponding analysis and score category.
 - Keep authentication and role assignment consistent with `users`, `roles`, and `user_roles`.
+- Populate `job_opportunities` and `job_description_skills` when job listings are created or imported.
+- Insert a row into `resume_jd_comparisons` when a comparison is started; update match scores and `status` when it completes.
+- Write per-skill results into `jd_skill_matches` for each comparison.
+- Insert into `resume_job_recommendations` with a rank and relevance score after generating recommendations for a resume.
+- Insert a row into `staff_resume_access_log` every time a placement officer or counselor views student resume or analysis data.
+- Insert into `placement_reports` when a placement officer generates a summary report; store only aggregated statistics in `report_data`, never individual student records.
+- Set `placement_reports.is_archived = TRUE` to hide a report from the UI; do not hard-delete report rows.
