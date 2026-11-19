@@ -1,0 +1,17 @@
+Aditya Rao
+aditya.rao@gmail.com | +91 91060 23456 | github.com/adityarao
+
+EDUCATION
+B.Tech in Electronics and Communication Engineering, SVNIT Surat, 2023 - 2027, CGPA 8.3/10
+
+TECHNICAL SKILLS
+Languages: C, C++, Python
+Tools: MATLAB, Arduino, Git
+
+PROJECTS
+Line Following Robot | Arduino, C++
+- Built an Arduino robot that follows a track using 5 IR sensors and PID control.
+- Tuned PID constants to complete the college robotics track in 42 seconds.
+Signal Denoising Tool | Python, NumPy
+- Implemented FIR and IIR filters in Python to remove noise from ECG recordings.
+- Compared filter outputs using SNR and plotted results with Matplotlib.
