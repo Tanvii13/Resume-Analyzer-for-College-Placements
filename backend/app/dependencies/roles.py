@@ -44,3 +44,45 @@ def require_career_counselor(
         )
 
     return current_user
+def require_admin(
+    current_user: UserResponse = Depends(get_current_user),
+) -> UserResponse:
+    """
+    Allow only administrators to access admin-only functionality.
+    """
+
+    if (current_user.role or "").strip().lower() != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access forbidden: Administrator role required.",
+        )
+
+    return current_user
+def require_role(*allowed_roles: str):
+    """
+    Create a dependency that allows users with any specified role.
+    """
+
+    normalized_roles = {
+        role.strip().lower()
+        for role in allowed_roles
+        if isinstance(role, str) and role.strip()
+    }
+
+    if not normalized_roles:
+        raise ValueError("At least one valid role must be specified.")
+
+    def role_checker(
+        current_user: UserResponse = Depends(get_current_user),
+    ) -> UserResponse:
+        user_role = (current_user.role or "").strip().lower()
+
+        if user_role not in normalized_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Access forbidden: Insufficient permissions.",
+            )
+
+        return current_user
+
+    return role_checker
