@@ -18,6 +18,8 @@ from app.schemas.extraction import (
     ExtractionData,
     SkillExtractionResult,
 )
+
+
 from app.schemas.sprint3_schemas import (
     BulletAuditRequest,
     BulletAuditResponse,
@@ -30,6 +32,11 @@ from app.schemas.sprint3_schemas import (
     ImprovementAreaItem,
 )
 
+from app.schemas.privacy_schemas import (
+    AnonymizedResumeResponse,
+    DirectMaskRequest,
+    DirectMaskResponse,
+)
 
 from app.services.upload_service import (
     validate_resume,
@@ -56,6 +63,7 @@ from app.services.suggestion_service import SuggestionService
 from app.services.jd_matcher import JDMatcherService
 from app.services.jd_parser import JDParser
 from app.services.improvement_detector import ImprovementDetector
+from app.services.privacy_masking_service import PrivacyMaskingService
 
 
 router = APIRouter(
@@ -77,7 +85,6 @@ jd_matcher_service = JDMatcherService()
 skill_extractor_service = SkillExtractor()
 jd_parser_service = JDParser()
 improvement_detector_service = ImprovementDetector()
-
 
 
 # ==================================================
@@ -735,7 +742,6 @@ def get_resume_suggestions(
             current_user,
         )
 
-        # Dynamically extract categorized skills from raw text for accurate soft & tech evaluation
         dynamic_skills = skill_extractor_service.extract_skills(raw_text)
 
         raw_suggestions = (
@@ -796,7 +802,6 @@ def get_resume_suggestions(
     response_model=JDCompareResponse,
     status_code=status.HTTP_200_OK,
 )
-
 def compare_resume_with_job_description(
     resume_id: str,
     payload: JDCompareRequest,
@@ -814,7 +819,6 @@ def compare_resume_with_job_description(
             current_user,
         )
 
-        # Obtain resume skills from saved extraction data.
         resume_skills = []
 
         if extracted_data is not None:
@@ -827,7 +831,6 @@ def compare_resume_with_job_description(
                     [],
                 )
 
-        # Fallback: dynamically extract skills from resume text.
         if not resume_skills and raw_text:
             extracted = skill_extractor_service.extract_skills(
                 raw_text
@@ -838,19 +841,15 @@ def compare_resume_with_job_description(
                 + extracted.get("soft_skills", [])
             )
 
-        # Parse, sanitize, and extract JD metadata.
         parsed_jd = jd_parser_service.parse_job_description(
             payload.jd_text
         )
 
-        # Match resume skills against sanitized JD text.
         match_result = jd_matcher_service.match_resume_with_jd(
             resume_skills=resume_skills,
             jd_text=parsed_jd.clean_text,
         )
 
-        # Use the manually supplied role if provided;
-        # otherwise use the role detected by the parser.
         target_role = (
             payload.target_role.strip()
             if payload.target_role and payload.target_role.strip()
@@ -890,7 +889,7 @@ def compare_resume_with_job_description(
             status_code=500,
             detail="Unable to compare resume with job description.",
         ) from exc
-# 9. IMPROVEMENT AREAS API - US-08
+# 7. IMPROVEMENT AREAS API - US-08
 # ==================================================
 
 @router.get(
