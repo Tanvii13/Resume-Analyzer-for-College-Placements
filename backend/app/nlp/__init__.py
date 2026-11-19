@@ -5,6 +5,15 @@ Provides modular text preprocessing, section classification, entity extraction,
 skill normalization, and candidate profile aggregation.
 """
 
+from app.nlp.content import (
+    CONTENT_ANALYZER_VERSION,
+    ContentQualityAnalyzer,
+    ContentQualityReport,
+    DescriptionCompleteness,
+    EntryQualityEvaluation,
+    VerbCategory,
+    analyze_content_quality,
+)
 from app.nlp.extractors import (
     BaseExtractor,
     CertificationsExtractor,
@@ -18,10 +27,71 @@ from app.nlp.extractors import (
     SkillExtractor,
     SkillProfile,
 )
+from app.nlp.formatting import (
+    DEFAULT_ANALYZER_LIMITATIONS,
+    FORMATTING_ANALYZER_VERSION,
+    FindingSeverity,
+    FormattingAnalysisResult,
+    FormattingCategory,
+    FormattingFinding,
+    FormattingQualityAnalyzer,
+    analyze_formatting,
+)
+from app.nlp.improvement import (
+    IMPROVEMENT_ENGINE_VERSION,
+    ImprovementAreasDetector,
+    ImprovementAreasReport,
+    ImprovementCategory,
+    ImprovementIssue,
+    ImprovementPriority,
+    ImprovementSeverity,
+    detect_improvement_areas,
+)
+from app.nlp.job_matching import (
+    JOB_PARSER_VERSION,
+    MATCHER_ENGINE_VERSION,
+    SKILL_ENGINE_VERSION,
+    EducationRequirement,
+    EligibilityCriteria,
+    EquivalenceEvaluation,
+    EquivalenceRule,
+    EvidenceSource,
+    ExperienceRequirement,
+    JobDescriptionParser,
+    JobDescriptionProfile,
+    JobMatchResult,
+    JobParsingMetadata,
+    JobSkillRequirement,
+    JobType,
+    LocationRequirement,
+    MatchCategory,
+    MatchingWeights,
+    NormalizedSkill,
+    OtherJobRequirements,
+    ParsedJobDescription,
+    RequirementMatch,
+    RequirementType,
+    ResumeJobMatcher,
+    SkillEquivalenceEngine,
+    SkillMatchMethod,
+    SkillNormalizer,
+    SkillRelationshipType,
+    SkillSetComparison,
+    WorkplaceType,
+    compare_candidate_to_job_skills,
+    evaluate_skill_equivalence,
+    get_equivalence_engine,
+    get_skill_normalizer,
+    match_resume_to_job,
+    normalize_skill,
+    parse_job_description,
+    parse_multiple_job_descriptions,
+)
+from app.nlp.pipeline import ResumeNLPPipeline, analyze_resume
 from app.nlp.preprocessing import (
+    PROTECTED_TECHNICAL_PATTERNS,
     BlockType,
     LineType,
-    PROTECTED_TECHNICAL_PATTERNS,
     SegmentedDocument,
     TextBlock,
     TextLine,
@@ -30,6 +100,27 @@ from app.nlp.preprocessing import (
     normalize_text,
     segment_text,
     split_bullet,
+)
+from app.nlp.schemas import (
+    CandidateProfile,
+    ConfidenceLevel,
+    ContactSchema,
+    EducationEntry,
+    ExperienceEntry,
+    NLPProcessingRequest,
+    PipelineMetadata,
+    ProjectEntry,
+    SectionSummary,
+    SkillItem,
+)
+from app.nlp.scoring import (
+    ComponentScore,
+    ResumeScoringEngine,
+    ScoreDeduction,
+    ScoreLabel,
+    ScoringResult,
+    ScoringWeights,
+    score_resume,
 )
 from app.nlp.sections import (
     CANONICAL_SECTIONS,
@@ -50,75 +141,8 @@ from app.nlp.taxonomy import (
     load_skills_taxonomy,
     resolve_degree,
 )
-from app.nlp.schemas import (
-    CandidateProfile,
-    ConfidenceLevel,
-    ContactSchema,
-    EducationEntry,
-    ExperienceEntry,
-    NLPProcessingRequest,
-    PipelineMetadata,
-    ProjectEntry,
-    SectionSummary,
-    SkillItem,
-)
-from app.nlp.pipeline import ResumeNLPPipeline, analyze_resume
-from app.nlp.scoring import (
-    ComponentScore,
-    ResumeScoringEngine,
-    ScoreDeduction,
-    ScoreLabel,
-    ScoringResult,
-    ScoringWeights,
-    score_resume,
-)
-from app.nlp.formatting import (
-    DEFAULT_ANALYZER_LIMITATIONS,
-    FORMATTING_ANALYZER_VERSION,
-    FindingSeverity,
-    FormattingAnalysisResult,
-    FormattingCategory,
-    FormattingFinding,
-    FormattingQualityAnalyzer,
-    analyze_formatting,
-)
-from app.nlp.content import (
-    CONTENT_ANALYZER_VERSION,
-    ContentQualityAnalyzer,
-    ContentQualityReport,
-    DescriptionCompleteness,
-    EntryQualityEvaluation,
-    VerbCategory,
-    analyze_content_quality,
-)
-from app.nlp.improvement import (
-    IMPROVEMENT_ENGINE_VERSION,
-    ImprovementAreasDetector,
-    ImprovementAreasReport,
-    ImprovementCategory,
-    ImprovementIssue,
-    ImprovementPriority,
-    ImprovementSeverity,
-    detect_improvement_areas,
-)
-from app.nlp.recommendations import (
-    RECOMMENDATION_ENGINE_VERSION,
-    Recommendation,
-    RecommendationCategory,
-    RecommendationEngine,
-    RecommendationPriority,
-    RecommendationReport,
-    generate_recommendations,
-)
-from app.nlp.analysis import (
-    SPRINT3_ANALYZER_VERSION,
-    AnalysisExplanations,
-    ResumeAnalysisPipeline,
-    Sprint3AnalysisResult,
-    run_sprint3_analysis,
-)
 
-__all__ = [
+__all__ = [  # noqa: RUF022
     # Preprocessing (Module A)
     "normalize_text",
     "normalize_line",
@@ -208,18 +232,45 @@ __all__ = [
     "ImprovementSeverity",
     "ImprovementPriority",
     "IMPROVEMENT_ENGINE_VERSION",
-    # Rule-Based Recommendation Engine (Sprint 3 Module E)
-    "RecommendationEngine",
-    "generate_recommendations",
-    "Recommendation",
-    "RecommendationReport",
-    "RecommendationCategory",
-    "RecommendationPriority",
-    "RECOMMENDATION_ENGINE_VERSION",
-    # Explainability & Sprint 3 Pipeline (Sprint 3 Module F)
-    "ResumeAnalysisPipeline",
-    "run_sprint3_analysis",
-    "Sprint3AnalysisResult",
-    "AnalysisExplanations",
-    "SPRINT3_ANALYZER_VERSION",
+    # Job Description Processing (Sprint 4 Module A)
+    "JOB_PARSER_VERSION",
+    "JobType",
+    "WorkplaceType",
+    "JobSkillRequirement",
+    "ExperienceRequirement",
+    "EducationRequirement",
+    "EligibilityCriteria",
+    "LocationRequirement",
+    "OtherJobRequirements",
+    "JobParsingMetadata",
+    "ParsedJobDescription",
+    "JobDescriptionParser",
+    "parse_job_description",
+    "parse_multiple_job_descriptions",
+    # Skill Normalization & Equivalence Engine (Sprint 4 Module B)
+    "SKILL_ENGINE_VERSION",
+    "SkillRelationshipType",
+    "SkillMatchMethod",
+    "EquivalenceRule",
+    "NormalizedSkill",
+    "EquivalenceEvaluation",
+    "SkillSetComparison",
+    "SkillNormalizer",
+    "SkillEquivalenceEngine",
+    "get_skill_normalizer",
+    "get_equivalence_engine",
+    "normalize_skill",
+    "evaluate_skill_equivalence",
+    "compare_candidate_to_job_skills",
+    # Resume-Job Matching Engine (Sprint 4 Module C)
+    "MATCHER_ENGINE_VERSION",
+    "JobDescriptionProfile",
+    "MatchCategory",
+    "RequirementType",
+    "EvidenceSource",
+    "RequirementMatch",
+    "MatchingWeights",
+    "JobMatchResult",
+    "ResumeJobMatcher",
+    "match_resume_to_job",
 ]

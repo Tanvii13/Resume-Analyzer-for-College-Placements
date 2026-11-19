@@ -52,6 +52,8 @@ NON_IMPACT_NUMERIC_PATTERNS = [
     re.compile(r"\b(?:200\s+ok|404\s+not\s+found|500\s+internal\s+(?:server\s+)?error)\b", re.IGNORECASE),
     # Academic Course Codes: CS 101, CS-50, CSE-401
     re.compile(r"\b(?:cs|cse|ece|it|math|phys|engg)[-_ ]?\d{2,4}\b", re.IGNORECASE),
+    # Team / Group sizes: team of 3, group of 4 students, cohort of 20
+    re.compile(r"\b(?:team|group|cohort|batch|pair)\s+of\s+\d+\b", re.IGNORECASE),
 ]
 
 # -----------------------------------------------------------------------------
@@ -98,6 +100,13 @@ IMPACT_PATTERNS: List[Tuple[re.Pattern, str]] = [
         "user_scale",
     ),
     # 5. Throughput & Data Volumes (e.g. 15,000 requests/sec, 500 QPS, 1.2M records)
+    (
+        re.compile(
+            r"\b\d+(?:,\d{3})*\+?\s*(?:daily|weekly|monthly|customer|course)?\s*(?:orders|tickets|ratings|reviews|queries|records|items|products|transactions|submissions|issues|prs|pull\s+requests|commits|endpoints|tests)(?:\s*(?:per|\/)\s*(?:sec(?:ond)?|min(?:ute)?|hour|day|week|month|year))?\b",
+            re.IGNORECASE,
+        ),
+        "throughput",
+    ),
     (
         re.compile(
             r"\b\d+(?:,\d{3})*\+?\s*(?:requests|events|transactions|messages|queries|calls|hits|tasks|jobs|qps|rps|ops|operations)\s*(?:per|\/)\s*(?:sec(?:ond)?|min(?:ute)?|hour|day)\b",

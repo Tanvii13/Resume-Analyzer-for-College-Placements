@@ -12,8 +12,7 @@ Guarantees:
 - Does not inspect inaccessible visual styling (fonts, margins, colors).
 """
 
-from typing import Any, Dict, List, Optional, Union
-from pydantic import BaseModel
+from typing import Any, List, Optional, Union
 from app.nlp.formatting.limitations import DEFAULT_ANALYZER_LIMITATIONS
 from app.nlp.formatting.rules import (
     BulletStructureChecker,

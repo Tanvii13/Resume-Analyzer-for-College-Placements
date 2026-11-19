@@ -32,11 +32,14 @@ ACTION_VERB_TAXONOMY: Dict[str, Tuple[VerbCategory, Set[str]]] = {
     "debug": (VerbCategory.ENGINEERING, {"debug", "debugged", "debugging", "debugs"}),
     "model": (VerbCategory.ENGINEERING, {"model", "modeled", "modelled", "modeling", "modelling", "models"}),
     "structure": (VerbCategory.ENGINEERING, {"structure", "structured", "structuring", "structures"}),
+    "write": (VerbCategory.ENGINEERING, {"write", "wrote", "written", "writing", "writes"}),
+    "train": (VerbCategory.ENGINEERING, {"train", "trained", "training", "trains"}),
 
     # -------------------------------------------------------------------------
     # Optimization & Performance
     # -------------------------------------------------------------------------
     "optimize": (VerbCategory.OPTIMIZATION, {"optimize", "optimized", "optimizing", "optimizes", "optimise", "optimised", "optimising"}),
+    "achieve": (VerbCategory.OPTIMIZATION, {"achieve", "achieved", "achieving", "achieves"}),
     "accelerate": (VerbCategory.OPTIMIZATION, {"accelerate", "accelerated", "accelerating", "accelerates"}),
     "reduce": (VerbCategory.OPTIMIZATION, {"reduce", "reduced", "reducing", "reduces"}),
     "cut": (VerbCategory.OPTIMIZATION, {"cut", "cutting", "cuts"}),
@@ -109,6 +112,7 @@ ACTION_VERB_TAXONOMY: Dict[str, Tuple[VerbCategory, Set[str]]] = {
     "introduce": (VerbCategory.CREATION, {"introduce", "introduced", "introducing", "introduces"}),
     "pioneer": (VerbCategory.CREATION, {"pioneer", "pioneered", "pioneering", "pioneers"}),
     "invent": (VerbCategory.CREATION, {"invent", "invented", "inventing", "invents"}),
+    "publish": (VerbCategory.CREATION, {"publish", "published", "publishing", "publishes"}),
 }
 
 # Reverse lookup table: inflected_word -> (lemma, VerbCategory)

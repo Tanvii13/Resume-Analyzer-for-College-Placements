@@ -5,19 +5,20 @@ Provides centralized, curated skills taxonomy, alias normalization,
 and degree taxonomy loaders with in-memory caching.
 """
 
-from functools import lru_cache
 import json
+from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 TAXONOMY_DIR = Path(__file__).resolve().parent
 SKILLS_TAXONOMY_FILE = TAXONOMY_DIR / "skills_taxonomy.json"
 SKILL_ALIASES_FILE = TAXONOMY_DIR / "skill_aliases.json"
+SKILL_EQUIVALENCES_FILE = TAXONOMY_DIR / "skill_equivalences.json"
 DEGREES_FILE = TAXONOMY_DIR / "degrees.json"
 
 
 @lru_cache(maxsize=1)
-def load_skills_taxonomy() -> Dict[str, Any]:
+def load_skills_taxonomy() -> dict[str, Any]:
     """
     Load the curated skills taxonomy JSON file.
 
@@ -29,7 +30,7 @@ def load_skills_taxonomy() -> Dict[str, Any]:
 
 
 @lru_cache(maxsize=1)
-def load_skill_aliases() -> Dict[str, Any]:
+def load_skill_aliases() -> dict[str, Any]:
     """
     Load the skill aliases JSON file.
 
@@ -41,7 +42,21 @@ def load_skill_aliases() -> Dict[str, Any]:
 
 
 @lru_cache(maxsize=1)
-def load_degrees() -> Dict[str, Any]:
+def load_skill_equivalences() -> dict[str, Any]:
+    """
+    Load the curated skill equivalences and relationships JSON file.
+
+    Returns:
+        Dict with keys: 'version', 'description', 'relationships'.
+    """
+    if not SKILL_EQUIVALENCES_FILE.exists():
+        return {"version": "1.0.0", "description": "", "relationships": []}
+    with open(SKILL_EQUIVALENCES_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+@lru_cache(maxsize=1)
+def load_degrees() -> dict[str, Any]:
     """
     Load the academic degrees taxonomy JSON file.
 
@@ -53,12 +68,12 @@ def load_degrees() -> Dict[str, Any]:
 
 
 @lru_cache(maxsize=1)
-def _build_canonical_skill_map() -> Dict[str, str]:
+def _build_canonical_skill_map() -> dict[str, str]:
     """
     Build a case-insensitive map of canonical skill names: lower_name -> Canonical Name.
     """
     taxonomy = load_skills_taxonomy()
-    lookup: Dict[str, str] = {}
+    lookup: dict[str, str] = {}
     for item in taxonomy.get("skills", []):
         name = item["name"]
         lookup[name.strip().lower()] = name
@@ -66,7 +81,7 @@ def _build_canonical_skill_map() -> Dict[str, str]:
 
 
 @lru_cache(maxsize=1)
-def _build_full_skill_resolution_map() -> Dict[str, str]:
+def _build_full_skill_resolution_map() -> dict[str, str]:
     """
     Build a comprehensive resolution map covering both canonical names and aliases:
     lower(name_or_alias) -> Canonical Name.
@@ -87,18 +102,18 @@ def _build_full_skill_resolution_map() -> Dict[str, str]:
 
 
 @lru_cache(maxsize=1)
-def _build_skill_category_map() -> Dict[str, str]:
+def _build_skill_category_map() -> dict[str, str]:
     """
     Build a mapping from canonical skill name -> category.
     """
     taxonomy = load_skills_taxonomy()
-    cat_map: Dict[str, str] = {}
+    cat_map: dict[str, str] = {}
     for item in taxonomy.get("skills", []):
         cat_map[item["name"]] = item["category"]
     return cat_map
 
 
-def get_canonical_skill(name_or_alias: str) -> Optional[str]:
+def get_canonical_skill(name_or_alias: str) -> str | None:
     """
     Resolve a skill name or alias (case-insensitive) to its canonical skill name.
 
@@ -128,7 +143,7 @@ def is_valid_skill(name_or_alias: str) -> bool:
     return get_canonical_skill(name_or_alias) is not None
 
 
-def get_skill_category(skill_name: str) -> Optional[str]:
+def get_skill_category(skill_name: str) -> str | None:
     """
     Get the category for a skill. If given an alias, resolves to canonical first.
 
@@ -146,7 +161,7 @@ def get_skill_category(skill_name: str) -> Optional[str]:
 
 
 @lru_cache(maxsize=1)
-def get_all_canonical_skills() -> List[str]:
+def get_all_canonical_skills() -> list[str]:
     """
     Return a list of all canonical skill names in the taxonomy.
     """
@@ -155,7 +170,7 @@ def get_all_canonical_skills() -> List[str]:
 
 
 @lru_cache(maxsize=1)
-def get_all_categories() -> List[str]:
+def get_all_categories() -> list[str]:
     """
     Return a list of all skill category names in the taxonomy.
     """
@@ -163,7 +178,7 @@ def get_all_categories() -> List[str]:
     return list(taxonomy.get("categories", []))
 
 
-def get_skills_by_category(category: str) -> List[str]:
+def get_skills_by_category(category: str) -> list[str]:
     """
     Return all canonical skill names belonging to the specified category.
 
@@ -185,7 +200,7 @@ def get_skills_by_category(category: str) -> List[str]:
 
 
 @lru_cache(maxsize=1)
-def _build_degree_resolution_map() -> Dict[str, Dict[str, Any]]:
+def _build_degree_resolution_map() -> dict[str, dict[str, Any]]:
     """
     Build a resolution map from degree alias/name (lowercase) to degree metadata dict:
     {
@@ -197,7 +212,7 @@ def _build_degree_resolution_map() -> Dict[str, Dict[str, Any]]:
     }
     """
     data = load_degrees()
-    resolution: Dict[str, Dict[str, Any]] = {}
+    resolution: dict[str, dict[str, Any]] = {}
     levels = data.get("levels", {})
 
     for level_key, level_info in levels.items():
@@ -223,7 +238,7 @@ def _build_degree_resolution_map() -> Dict[str, Dict[str, Any]]:
     return resolution
 
 
-def resolve_degree(degree_str: str) -> Optional[Dict[str, Any]]:
+def resolve_degree(degree_str: str) -> dict[str, Any] | None:
     """
     Resolve a degree string or alias to its degree metadata.
 
@@ -245,7 +260,7 @@ def resolve_degree(degree_str: str) -> Optional[Dict[str, Any]]:
     return degree_map.get(cleaned)
 
 
-def get_all_degree_levels() -> List[str]:
+def get_all_degree_levels() -> list[str]:
     """
     Return all academic degree levels present in the degree taxonomy.
     """
@@ -254,19 +269,21 @@ def get_all_degree_levels() -> List[str]:
 
 
 __all__ = [
-    "TAXONOMY_DIR",
+    "DEGREES_FILE",
     "SKILLS_TAXONOMY_FILE",
     "SKILL_ALIASES_FILE",
-    "DEGREES_FILE",
-    "load_skills_taxonomy",
-    "load_skill_aliases",
-    "load_degrees",
-    "get_canonical_skill",
-    "is_valid_skill",
-    "get_skill_category",
+    "SKILL_EQUIVALENCES_FILE",
+    "TAXONOMY_DIR",
     "get_all_canonical_skills",
     "get_all_categories",
-    "get_skills_by_category",
-    "resolve_degree",
     "get_all_degree_levels",
+    "get_canonical_skill",
+    "get_skill_category",
+    "get_skills_by_category",
+    "is_valid_skill",
+    "load_degrees",
+    "load_skill_aliases",
+    "load_skill_equivalences",
+    "load_skills_taxonomy",
+    "resolve_degree",
 ]

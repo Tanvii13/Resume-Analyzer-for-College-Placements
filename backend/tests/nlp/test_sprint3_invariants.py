@@ -237,18 +237,11 @@ def _duplicate_rule_ids(result):
     return sorted({i for i in ids if ids.count(i) > 1})
 
 
-@pytest.mark.parametrize("case", [c for c in IDS if c != "04_diploma_fulltime"])
+@pytest.mark.parametrize("case", IDS)
 def test_no_duplicate_deductions(results, case):
     assert _duplicate_rule_ids(results[case]) == [], case
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "Known Module A issue: with experience but no projects, section_scoring deducts "
-        "SEC_MISSING_PROJECTS twice (missing critical section + practical-work check)."
-    ),
-)
 def test_no_duplicate_deductions_experience_without_projects(results):
     assert _duplicate_rule_ids(results["04_diploma_fulltime"]) == []
 

@@ -14,7 +14,7 @@ Guarantees:
 """
 
 import re
-from typing import Any, List, Optional, Set, Tuple
+from typing import Any, List, Optional, Tuple
 from app.nlp.schemas import CandidateProfile, ConfidenceLevel
 from app.nlp.scoring.schemas import ComponentScore, ScoreDeduction
 from app.nlp.scoring.weights import COMPONENT_FORMATTING_READABILITY

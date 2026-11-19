@@ -26,19 +26,8 @@ from app.nlp.recommendations import RULES
 FIXTURES = Path(__file__).parent / "fixtures" / "sprint3"
 
 KNOWN_MISSES = {
-    # Module D: checks profile.technical_skills instead of section_summary.missing_critical_sections,
-    # and a GitHub URL in the header is extracted as a "skill", so the missing section is not flagged.
-    "improvement_fn": {
-        "s3_03_missing_sections:IMP_MISSING_SKILLS",
-        # Sprint 2 skill extractor reads "Communication" from the branch name
-        # "Electronics and Communication Engineering" as a soft skill.
-        "s3_08_no_work_experience:IMP_MISSING_SOFT_SKILLS",
-    },
-    # Module B: year-only education ranges vs month-year job ranges counted as inconsistent dates.
-    "formatting_fp": {
-        "s3_01_strong:FMT_INCONSISTENT_DATE_FORMATS",
-        "s3_11_measurable_achievements:FMT_INCONSISTENT_DATE_FORMATS",
-    },
+    "improvement_fn": set(),
+    "formatting_fp": set(),
 }
 
 
@@ -124,23 +113,23 @@ def test_confusion_counts_math():
 def test_improvement_detection_quality(evaluation):
     m = evaluation["improvement_detection"]
     assert m["support"] >= 20
-    assert m["precision"] >= 0.95, m["false_positives"]
-    assert m["recall"] >= 0.90, m["false_negatives"]
-    assert m["f1"] >= 0.92
+    assert m["precision"] >= 0.98, m["false_positives"]
+    assert m["recall"] >= 0.98, m["false_negatives"]
+    assert m["f1"] >= 0.98
 
 
 def test_formatting_detection_quality(evaluation):
     m = evaluation["formatting_detection"]
-    assert m["recall"] >= 0.95, m["false_negatives"]
-    assert m["precision"] >= 0.75, m["false_positives"]
-    assert m["false_positive_rate"] <= 0.10
+    assert m["recall"] >= 0.98, m["false_negatives"]
+    assert m["precision"] >= 0.95, m["false_positives"]
+    assert m["false_positive_rate"] <= 0.05
 
 
 def test_content_quality_metrics(evaluation):
     c = evaluation["content_quality"]
     assert c["labelled_bullets"] >= 30
-    assert c["action_verb_detection_accuracy"] >= 0.90
-    assert c["impact_metric_detection_accuracy"] >= 0.85
+    assert c["action_verb_detection_accuracy"] >= 0.95
+    assert c["impact_metric_detection_accuracy"] >= 0.95
     assert c["weak_opening_detection_accuracy"] >= 0.95
     assert c["band_agreement"] >= 0.70
 
@@ -149,7 +138,7 @@ def test_recommendation_metrics(evaluation):
     r = evaluation["recommendations"]
     assert r["issue_to_recommendation_mapping_accuracy"] == 1.0
     assert r["duplicate_recommendation_rate"] == 0.0
-    assert r["expected_recommendation_recall"] >= 0.85, r["missing_expected_recommendations"]
+    assert r["expected_recommendation_recall"] >= 0.95, r["missing_expected_recommendations"]
 
 
 def test_scores_order_strong_above_weak(evaluation):
