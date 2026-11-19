@@ -16,7 +16,7 @@ Guarantees:
 - Output is 100% deterministic, explainable, and testable without external LLMs.
 """
 
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import List, Optional, Set, Tuple
 from app.nlp.content import ContentQualityReport, analyze_content_quality
 from app.nlp.formatting import FormattingAnalysisResult, analyze_formatting
 from app.nlp.improvement.deduplicator import deduplicate_and_rank_issues

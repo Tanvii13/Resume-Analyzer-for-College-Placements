@@ -264,10 +264,12 @@ class SectionCompletenessScorer:
 
         final_score = round(max(0.0, min(self.max_score, earned_score)), 2)
 
-        reason = (
-            f"Section completeness earned {final_score}/{self.max_score} points. "
-            f"{'All core sections and contact details verified.' if not missing_set else f'Missing sections: {', '.join(sorted(missing_set))}.'}"
+        section_summary = (
+            f"Missing sections: {', '.join(sorted(missing_set))}."
+            if missing_set
+            else "All core sections and contact details verified."
         )
+        reason = f"Section completeness earned {final_score}/{self.max_score} points. {section_summary}"
 
         return (
             ComponentScore(

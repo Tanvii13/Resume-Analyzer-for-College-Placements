@@ -14,12 +14,9 @@ from app.nlp.preprocessing import (
     BlockType,
     LineType,
     SegmentedDocument,
-    TextBlock,
-    TextLine,
 )
 from app.nlp.schemas import CandidateProfile
 from app.nlp.sections import (
-    ClassifiedSection,
     SectionMap,
     SECTION_EDUCATION,
     SECTION_EXPERIENCE,

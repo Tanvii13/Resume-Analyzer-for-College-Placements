@@ -27,7 +27,7 @@ from app.nlp.extractors._entries import (
     split_fragments,
 )
 from app.nlp.extractors.base import BaseExtractor
-from app.nlp.preprocessing import BlockType, SegmentedDocument, TextBlock
+from app.nlp.preprocessing import SegmentedDocument, TextBlock
 from app.nlp.schemas import EducationEntry
 from app.nlp.sections import SECTION_EDUCATION, SectionMap
 from app.nlp.taxonomy import load_degrees

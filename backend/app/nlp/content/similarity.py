@@ -13,7 +13,7 @@ Guarantees:
 """
 
 import re
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Tuple
 
 # Common generic, boilerplate, or low-specificity resume phrases
 GENERIC_PHRASE_PATTERNS: List[Tuple[str, re.Pattern]] = [

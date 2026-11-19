@@ -13,7 +13,7 @@ Guarantees:
 - Accounts for college placement student projects lacking production metrics.
 """
 
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import List, Set, Tuple
 from app.nlp.content.action_verbs import (
     check_leading_action_verb,
     detect_weak_introductory_phrase,
@@ -22,16 +22,12 @@ from app.nlp.content.action_verbs import (
 from app.nlp.content.impact_metrics import detect_impact_metrics
 from app.nlp.content.schemas import (
     CONTENT_ANALYZER_VERSION,
-    ActionVerbMatch,
     BulletPointEvaluation,
     ContentQualityReport,
     DescriptionCompleteness,
     EntryQualityEvaluation,
-    ImpactMetricMatch,
 )
 from app.nlp.content.similarity import (
-    compute_jaccard_similarity,
-    detect_generic_content,
     evaluate_description_substance,
     find_duplicate_bullets_across_entries,
 )

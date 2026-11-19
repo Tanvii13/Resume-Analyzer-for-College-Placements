@@ -246,7 +246,7 @@ def test_no_experience_fresher_accommodation(high_quality_candidate_profile):
     assert len(fresher.projects) >= 2
 
     engine = ResumeScoringEngine()
-    result = fresher_result = engine.evaluate(fresher)
+    fresher_result = engine.evaluate(fresher)
 
     # Section completeness should still score highly due to fresher accommodation
     sec_score = fresher_result.component_scores[COMPONENT_SECTION_COMPLETENESS]
