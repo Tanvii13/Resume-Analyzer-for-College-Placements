@@ -1,3 +1,4 @@
+
 # Python
 __pycache__/
 *.py[cod]
@@ -46,6 +47,10 @@ storage/resumes/*
 !storage/resumes/.gitkeep
 uploads/*
 !uploads/.gitkeep
+
+# Backup Files
+*.backup
+*.bak
 
 # IDEs & OS
 .vscode/

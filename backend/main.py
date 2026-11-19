@@ -1,9 +1,15 @@
+
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from app.routers.auth import router as auth_router
 from app.routers.resumes import router as resumes_router
+from app.routers.dashboard import router as dashboard_router
+from app.routers.resume_insights import router as resume_insights_router
+from app.routers.officer import router as officer_router
+
 from app.services.resume_parser import ResumeParsingError
+
 
 app = FastAPI(
     title="Resume Analyzer API",
@@ -25,6 +31,9 @@ async def resume_parsing_exception_handler(request: Request, exc: ResumeParsingE
 
 app.include_router(auth_router)
 app.include_router(resumes_router)
+app.include_router(dashboard_router)
+app.include_router(resume_insights_router)
+app.include_router(officer_router)
 
 
 @app.get("/")

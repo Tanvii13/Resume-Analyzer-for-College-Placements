@@ -408,3 +408,208 @@ def test_soft_skills_include_supporting_evidence():
     assert assessment["skills_with_evidence"] == 1
     assert assessment["skills"][0]["evidence_status"] == "available"
     assert assessment["skills"][1]["evidence_status"] == "not_provided"
+
+from app.services.placement_analyzer import explain_placement_deductions
+
+
+def test_no_deductions_for_unassessable_information():
+    criterion_results = [
+        {
+            "criterion_id": "academic_profile",
+            "status": "not_assessable",
+        },
+        {
+            "criterion_id": "technical_skills",
+            "status": "not_assessable",
+        },
+        {
+            "criterion_id": "projects",
+            "status": "not_assessable",
+        },
+        {
+            "criterion_id": "soft_skills",
+            "status": "not_assessable",
+        },
+        {
+            "criterion_id": "experience",
+            "status": "not_assessable",
+        },
+    ]
+
+    deductions = explain_placement_deductions(
+        criterion_results
+    )
+
+    assert deductions == []
+
+
+def test_missing_institutional_email_deduction():
+    deductions = explain_placement_deductions(
+        criterion_results=[],
+        raw_text="student@example.com",
+    )
+
+    assert any(
+        item["code"] == "DEDUCT_NO_INSTITUTIONAL_EMAIL"
+        and item["points"] == -10
+        for item in deductions
+    )
+
+
+def test_recognized_institutional_email_has_no_email_deduction():
+    deductions = explain_placement_deductions(
+        criterion_results=[],
+        raw_text="student@dau.ac.in",
+    )
+
+    assert not any(
+        item["code"] == "DEDUCT_NO_INSTITUTIONAL_EMAIL"
+        for item in deductions
+    )
+
+
+def test_page_limit_deduction():
+    deductions = explain_placement_deductions(
+        criterion_results=[],
+        page_count=3,
+    )
+
+    assert any(
+        item["code"] == "DEDUCT_EXCEEDS_PAGE_LIMIT"
+        and item["points"] == -5
+        for item in deductions
+    )
+
+
+def test_missing_academic_and_project_deductions():
+    criterion_results = [
+        {
+            "criterion_id": "academic_profile",
+            "status": "missing",
+        },
+        {
+            "criterion_id": "projects",
+            "status": "missing",
+        },
+    ]
+
+    deductions = explain_placement_deductions(
+        criterion_results
+    )
+
+    deduction_codes = {
+        item["code"] for item in deductions
+    }
+
+    assert "DEDUCT_MISSING_ACADEMICS" in deduction_codes
+    assert "DEDUCT_MISSING_PROJECTS" in deduction_codes
+
+
+def test_limited_technical_skills_deduction():
+    criterion_results = [
+        {
+            "criterion_id": "technical_skills",
+            "status": "present",
+            "skill_assessment": {
+                "total_skills": 2,
+            },
+        },
+    ]
+
+    deductions = explain_placement_deductions(
+        criterion_results
+    )
+
+    assert any(
+        item["code"] == "DEDUCT_LIMITED_TECH_SKILLS"
+        and item["points"] == -5
+        for item in deductions
+    )
+
+
+def test_sufficient_technical_skills_have_no_deduction():
+    criterion_results = [
+        {
+            "criterion_id": "technical_skills",
+            "status": "present",
+            "skill_assessment": {
+                "total_skills": 5,
+            },
+        },
+    ]
+
+    deductions = explain_placement_deductions(
+        criterion_results
+    )
+
+    assert not any(
+        item["code"] == "DEDUCT_LIMITED_TECH_SKILLS"
+        for item in deductions
+    )
+
+
+def test_partial_academics_and_projects_deductions():
+    criterion_results = [
+        {
+            "criterion_id": "academic_profile",
+            "status": "present",
+            "detail_assessment": {
+                "status": "partial",
+            },
+        },
+        {
+            "criterion_id": "projects",
+            "status": "present",
+            "detail_assessment": {
+                "status": "partial",
+            },
+        },
+    ]
+
+    deductions = explain_placement_deductions(
+        criterion_results
+    )
+
+    deduction_codes = {
+        item["code"] for item in deductions
+    }
+
+    assert "DEDUCT_PARTIAL_ACADEMICS" in deduction_codes
+    assert "DEDUCT_PARTIAL_PROJECT_DETAILS" in deduction_codes
+
+
+def test_missing_soft_skills_deduction():
+    criterion_results = [
+        {
+            "criterion_id": "soft_skills",
+            "status": "missing",
+        },
+    ]
+
+    deductions = explain_placement_deductions(
+        criterion_results
+    )
+
+    assert any(
+        item["code"] == "DEDUCT_MISSING_SOFT_SKILLS"
+        and item["points"] == -5
+        for item in deductions
+    )
+
+
+def test_no_automatic_experience_deduction_for_freshers():
+    criterion_results = [
+        {
+            "criterion_id": "experience",
+            "status": "missing",
+        },
+    ]
+
+    deductions = explain_placement_deductions(
+        criterion_results
+    )
+
+    assert not any(
+        "EXPERIENCE" in item["code"]
+        for item in deductions
+    )
