@@ -69,6 +69,13 @@ USERS = {
 
 RESUMES = {}  # email -> list of resume records (newest first)
 
+# Curated sample opportunities for the Sprint 4 prototype. Replace with a verified feed later.
+OPPORTUNITIES = [
+    {"id": "intern-python", "title": "Software Engineering Intern", "company": "Campus Technology Lab", "type": "Internship", "location": "Hybrid · Ahmedabad", "description": "Build Python services and REST APIs. Work with SQL, Git, testing, and a small collaborative team. JavaScript experience is a plus."},
+    {"id": "analyst-data", "title": "Junior Data Analyst", "company": "Student Analytics Co.", "type": "Full-time", "location": "On-site · Ahmedabad", "description": "Use Python, SQL, pandas, Excel, and Power BI to clean data and communicate insights. Strong problem solving and teamwork required."},
+    {"id": "frontend-intern", "title": "Frontend Developer Intern", "company": "BrightWeb Studio", "type": "Internship", "location": "Remote · India", "description": "Create accessible web interfaces using JavaScript, TypeScript, React, HTML, CSS, and Git. Collaborate with designers and backend engineers."},
+]
+
 
 # ---------------------------------------------------------------------------
 # 3. Helpers
@@ -305,6 +312,43 @@ def upload():
     RESUMES.setdefault(session["user_email"], []).insert(0, resume)
     flash("Resume uploaded and parsed successfully.", "success")
     return redirect(url_for("view_resume", resume_id=resume["id"]))
+
+
+@app.route("/matching", methods=["GET", "POST"])
+@login_required
+@student_required
+def matching():
+    resumes = [r for r in RESUMES.get(session["user_email"], []) if r["status"] == "Parsed"]
+    selected_id = request.values.get("resume_id", "")
+    resume = next((r for r in resumes if r["id"] == selected_id), resumes[0] if resumes else None)
+    result = None
+    job_text = request.form.get("job_description", "").strip() if request.method == "POST" else ""
+    if request.method == "POST":
+        if not resume:
+            flash("Upload a readable resume before comparing it with a role.", "error")
+        elif not job_text:
+            flash("Paste a job description to see your skill match.", "error")
+        else:
+            result = compare_skills(resume, job_text)
+    opportunities = []
+    if resume:
+        for job in OPPORTUNITIES:
+            match = compare_skills(resume, job["description"])
+            opportunities.append({**job, **match})
+        opportunities.sort(key=lambda item: (-item["match_percent"], item["title"]))
+    return render_template("matching.html", resumes=resumes, resume=resume, result=result,
+                           job_text=job_text, opportunities=opportunities)
+
+
+def compare_skills(resume, description):
+    """Compare transparent keyword sets from the selected parsed resume and role text."""
+    parsed_text = "\n".join(section["content"] for section in resume["parsed"]["sections"]).lower()
+    available = [term for terms in SKILL_KEYWORDS.values() for term in terms]
+    required = [term for term in available if re.search(r"(?<![a-z0-9])" + re.escape(term) + r"(?![a-z0-9])", description.lower())]
+    present = [term for term in required if re.search(r"(?<![a-z0-9])" + re.escape(term) + r"(?![a-z0-9])", parsed_text)]
+    missing = [term for term in required if term not in present]
+    return {"matched_skills": present, "missing_skills": missing, "required_skills": required,
+            "match_percent": round(100 * len(present) / len(required)) if required else 0}
 
 
 @app.route("/resume/<resume_id>")
