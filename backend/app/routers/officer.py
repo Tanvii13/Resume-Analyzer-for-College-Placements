@@ -1,7 +1,6 @@
 """
 Placement officer and career counselor endpoints for US-14.
 """
-
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 

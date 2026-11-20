@@ -1,7 +1,8 @@
 
+import os
 import logging
 from pathlib import Path
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import psycopg
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
@@ -113,3 +114,198 @@ async def upload_resume(
             "message": "Resume parsing is handled by the NLP team.",
         },
     }
+
+
+@router.delete("/{resume_id}/erase")
+def erase_resume(
+    resume_id: str,
+    current_user: UserResponse = Depends(get_current_user),
+):
+    """
+    Permanently erase a resume owned by the authenticated student.
+    """
+
+    try:
+        parsed_resume_id = UUID(resume_id)
+    except (ValueError, TypeError):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid resume ID format.",
+        )
+
+    staged_path = None
+    original_path = None
+    database_committed = False
+
+    try:
+        with get_connection() as conn:
+            with conn.transaction():
+                user = conn.execute(
+                    """
+                    SELECT id
+                    FROM users
+                    WHERE email = %s AND is_active = TRUE
+                    """,
+                    (current_user.email,),
+                ).fetchone()
+
+                if user is None:
+                    raise HTTPException(
+                        status_code=401,
+                        detail="User account not found or inactive.",
+                    )
+
+                resume = conn.execute(
+                    """
+                    SELECT storage_key
+                    FROM resumes
+                    WHERE id = %s AND user_id = %s
+                    FOR UPDATE
+                    """,
+                    (parsed_resume_id, user[0]),
+                ).fetchone()
+
+                if resume is None:
+                    raise HTTPException(
+                        status_code=404,
+                        detail="Resume not found.",
+                    )
+
+                storage_key = resume[0]
+
+                # Only allow a filename, never a user-supplied path.
+                if not storage_key or Path(storage_key).name != storage_key:
+                    raise HTTPException(
+                        status_code=500,
+                        detail="Invalid stored resume path.",
+                    )
+
+                storage_root = STORAGE_DIR.resolve()
+                original_path = (STORAGE_DIR / storage_key).resolve()
+
+                if original_path.parent != storage_root:
+                    raise HTTPException(
+                        status_code=500,
+                        detail="Stored resume path is outside storage.",
+                    )
+
+                if original_path.exists():
+                    if not original_path.is_file():
+                        raise HTTPException(
+                            status_code=500,
+                            detail="Stored resume is not a regular file.",
+                        )
+
+                    quarantine_dir = STORAGE_DIR / ".deletion_pending"
+                    quarantine_dir.mkdir(parents=True, exist_ok=True)
+
+                    staged_path = quarantine_dir / (
+                        f"{parsed_resume_id}_{uuid4().hex}.pending"
+                    )
+
+                    # Move the file out of normal storage before DB deletion.
+                    os.replace(original_path, staged_path)
+
+                # Explicitly remove known extraction data.
+                conn.execute(
+                    "DELETE FROM resume_sections WHERE resume_id = %s",
+                    (parsed_resume_id,),
+                )
+
+                conn.execute(
+                    "DELETE FROM resume_skills WHERE resume_id = %s",
+                    (parsed_resume_id,),
+                )
+
+                # Delete the resume only after its dependent data.
+                deleted = conn.execute(
+                    """
+                    DELETE FROM resumes
+                    WHERE id = %s AND user_id = %s
+                    RETURNING id
+                    """,
+                    (parsed_resume_id, user[0]),
+                ).fetchone()
+
+                if deleted is None:
+                    raise HTTPException(
+                        status_code=404,
+                        detail="Resume not found.",
+                    )
+
+            # The database transaction has successfully committed.
+            database_committed = True
+
+        # Permanently remove the staged file after the DB commit.
+        if staged_path and staged_path.exists():
+            try:
+                staged_path.unlink()
+            except OSError:
+                # Do not restore the file after the DB record is deleted.
+                logger.critical(
+                    "Resume database record was erased, but its staged file "
+                    "could not be deleted. Manual cleanup required: %s",
+                    staged_path,
+                    exc_info=True,
+                )
+
+                return {
+                    "status": "erased",
+                    "resume_id": str(parsed_resume_id),
+                    "message": (
+                        "Resume data was erased from the database, but the "
+                        "stored file is awaiting administrator cleanup."
+                    ),
+                    "file_cleanup_pending": True,
+                }
+
+        return {
+            "status": "erased",
+            "resume_id": str(parsed_resume_id),
+            "message": "Resume and extracted data erased successfully.",
+            "file_cleanup_pending": False,
+        }
+
+    except HTTPException:
+        # Restore the file only if the database transaction did not commit.
+        if (
+            not database_committed
+            and staged_path
+            and staged_path.exists()
+            and original_path
+        ):
+            try:
+                original_path.parent.mkdir(parents=True, exist_ok=True)
+                os.replace(staged_path, original_path)
+            except OSError:
+                logger.exception(
+                    "CRITICAL: Could not restore staged resume file."
+                )
+
+        raise
+
+    except Exception as exc:
+        logger.exception("Resume erasure failed.")
+
+        # Restore the original file only if the DB transaction failed.
+        if (
+            not database_committed
+            and staged_path
+            and staged_path.exists()
+            and original_path
+        ):
+            try:
+                original_path.parent.mkdir(parents=True, exist_ok=True)
+                os.replace(staged_path, original_path)
+            except OSError:
+                logger.exception(
+                    "CRITICAL: Could not restore staged resume file."
+                )
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Resume erasure could not be completed. "
+                "Contact the administrator if the problem continues."
+            ),
+        ) from exc

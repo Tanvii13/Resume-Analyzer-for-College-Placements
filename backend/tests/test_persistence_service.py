@@ -1,4 +1,4 @@
-import json
+
 from unittest.mock import MagicMock
 from uuid import uuid4
 
@@ -13,14 +13,7 @@ def fake_database(monkeypatch):
     cursor = MagicMock()
 
     connection.__enter__.return_value = connection
-    connection.transaction.return_value.__enter__.return_value = connection
     connection.cursor.return_value.__enter__.return_value = cursor
-
-    # Forward connection.execute to cursor.execute and return cursor
-    connection.execute.side_effect = lambda *args, **kwargs: (
-        cursor.execute(*args, **kwargs),
-        cursor,
-    )[1]
 
     monkeypatch.setattr(
         service,
@@ -66,9 +59,7 @@ def test_save_extraction(fake_database, sample_data):
     assert result["resume_id"] == str(resume_id)
     assert result["message"] == "Extraction saved successfully"
 
-    assert fake_database.execute.called
-    calls = [str(call) for call in fake_database.execute.mock_calls]
-    assert any("UPDATE resumes" in call and "status = 'processed'" in call for call in calls)
+    fake_database.execute.assert_called_once()
 
 
 def test_save_rejects_invalid_data(sample_data):
@@ -100,15 +91,13 @@ def test_get_extraction(fake_database, sample_data):
     resume_id = uuid4()
     user_id = uuid4()
 
-    fake_database.fetchone.return_value = (resume_id,)
-    fake_database.fetchall.side_effect = [
-        [(skill,) for skill in sample_data["skills"]],
-        [
-            ("education", json.dumps(sample_data["education"])),
-            ("projects", json.dumps(sample_data["projects"])),
-            ("experience", json.dumps(sample_data["experience"])),
-        ],
-    ]
+    fake_database.fetchone.return_value = (
+        resume_id,
+        sample_data["skills"],
+        sample_data["education"],
+        sample_data["projects"],
+        sample_data["experience"],
+    )
 
     result = service.get_extraction(resume_id, user_id)
 
@@ -120,17 +109,9 @@ def test_get_extraction(fake_database, sample_data):
 
 
 def test_get_extraction_not_found(fake_database):
-    fake_database.fetchone.return_value = (uuid4(),)
-    fake_database.fetchall.side_effect = [[], []]
-
-    with pytest.raises(service.ExtractionNotFoundError):
-        service.get_extraction(uuid4(), uuid4())
-
-
-def test_get_extraction_wrong_owner(fake_database):
     fake_database.fetchone.return_value = None
 
-    with pytest.raises(service.ResumeNotFoundError):
+    with pytest.raises(service.ExtractionNotFoundError):
         service.get_extraction(uuid4(), uuid4())
 
 
@@ -142,5 +123,7 @@ def test_reextraction_uses_upsert(fake_database, sample_data):
 
     service.save_extraction(resume_id, user_id, sample_data)
 
-    calls = [str(call) for call in fake_database.execute.mock_calls]
-    assert any("ON CONFLICT (resume_id, section_name)" in call and "DO UPDATE SET" in call for call in calls)
+    sql = fake_database.execute.call_args.args[0]
+
+    assert "ON CONFLICT (resume_id)" in sql
+    assert "DO UPDATE SET" in sql

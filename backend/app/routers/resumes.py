@@ -18,6 +18,7 @@ from app.schemas.extraction import (
     ExtractionData,
     SkillExtractionResult,
 )
+
 from app.schemas.sprint3_schemas import (
     BulletAuditRequest,
     BulletAuditResponse,
@@ -30,16 +31,15 @@ from app.schemas.sprint3_schemas import (
     ImprovementAreaItem,
 )
 
+from app.schemas.privacy_schemas import (
+    AnonymizedResumeResponse,
+    DirectMaskRequest,
+    DirectMaskResponse,
+)
 
 from app.services.upload_service import (
     validate_resume,
     extract_resume_text,
-)
-
-from app.services.resume_parser import (
-    InvalidFileError,
-    ResumeParsingError,
-    parse_resume,
 )
 
 from app.services.skill_extractor import SkillExtractor
@@ -56,6 +56,7 @@ from app.services.suggestion_service import SuggestionService
 from app.services.jd_matcher import JDMatcherService
 from app.services.jd_parser import JDParser
 from app.services.improvement_detector import ImprovementDetector
+from app.services.privacy_masking_service import PrivacyMaskingService
 
 
 router = APIRouter(
@@ -77,7 +78,6 @@ jd_matcher_service = JDMatcherService()
 skill_extractor_service = SkillExtractor()
 jd_parser_service = JDParser()
 improvement_detector_service = ImprovementDetector()
-
 
 
 # ==================================================
@@ -113,7 +113,8 @@ def get_owned_resume_data(
                 status_code=401,
                 detail="User account not found or inactive.",
             )
-user_id = user[0]
+
+        user_id = user[0]
 
         resume = conn.execute(
             """
@@ -274,138 +275,8 @@ async def upload_resume(
     }
 
 
-
 # ==================================================
-# 2. PARSE RESUME DIRECT API
-# ==================================================
-
-@router.post("/parse")
-async def parse_resume_direct(
-    file: UploadFile = File(...),
-    current_user: UserResponse = Depends(get_current_user),
-):
-    """Directly parse an uploaded resume without saving it to storage."""
-    if not file.filename:
-        raise InvalidFileError("Please select a resume file.")
-
-    content = await file.read()
-    parsed = parse_resume(content, file.filename)
-
-    return {
-        "message": "Resume parsed successfully.",
-        "status": "success",
-        "filename": parsed.filename,
-        "file_type": parsed.file_type,
-        "page_count": parsed.page_count,
-        "text": parsed.text,
-        "word_count": parsed.word_count,
-        "char_count": parsed.char_count,
-    }
-
-# ==================================================
-# 3. PARSE RESUME BY ID API
-# ==================================================
-
-@router.post("/{resume_id}/parse")
-def parse_resume_by_id(
-    resume_id: str,
-    current_user: UserResponse = Depends(get_current_user),
-):
-    """Parse an already uploaded resume by its ID and record status in the database."""
-    with get_connection() as conn:
-        with conn.transaction():
-            user = conn.execute(
-                """
-                SELECT id
-                FROM users
-                WHERE email = %s AND is_active = TRUE
-                """,
-                (current_user.email,),
-            ).fetchone()
-
-            if user is None:
-                raise HTTPException(
-                    status_code=401,
-                    detail="User account not found or inactive.",
-                )
-
-            resume = conn.execute(
-                """
-                SELECT id, original_filename, storage_key, file_type
-                FROM resumes
-                WHERE id = %s AND user_id = %s
-                """,
-                (resume_id, user[0]),
-            ).fetchone()
-
-            if resume is None:
-                raise HTTPException(
-                    status_code=404,
-                    detail="Resume not found or access denied.",
-                )
-
-
-    _, original_filename, storage_key, _ = resume
-    stored_path = STORAGE_DIR / storage_key
-
-    if not stored_path.is_file():
-        raise HTTPException(
-            status_code=404,
-            detail="Stored resume file not found.",
-        )
-
-    try:
-        file_bytes = stored_path.read_bytes()
-    except OSError as exc:
-        logger.exception("Could not read stored resume file: %s", storage_key)
-        raise HTTPException(
-            status_code=500,
-            detail="Unable to read the stored resume file.",
-        ) from exc
-
-    try:
-        parsed = parse_resume(file_bytes, original_filename)
-    except ResumeParsingError:
-        try:
-            with get_connection() as conn:
-                with conn.transaction():
-                    conn.execute(
-                        """
-                        UPDATE resumes
-                        SET status = 'failed', processed_at = CURRENT_TIMESTAMP
-                        WHERE id = %s
-                        """,
-                        (resume_id,),
-                    )
-        except Exception:
-            logger.exception("Failed to update resume status to 'failed' in database")
-        raise
-
-    with get_connection() as conn:
-        with conn.transaction():
-            conn.execute(
-                """
-                UPDATE resumes
-                SET status = 'parsed', processed_at = CURRENT_TIMESTAMP
-                WHERE id = %s
-                """,
-                (resume_id,),
-            )
-
-    return {
-        "message": "Resume parsed successfully.",
-        "status": "success",
-        "resume_id": str(resume_id),
-        "filename": parsed.filename,
-        "file_type": parsed.file_type,
-        "page_count": parsed.page_count,
-        "text": parsed.text,
-        "word_count": parsed.word_count,
-        "char_count": parsed.char_count,
-    }
- 
-# ==================================================
-# 4. EXTRACT RESUME INFORMATION API
+# 2. EXTRACT RESUME INFORMATION API
 # ==================================================
 
 @router.post(
@@ -626,7 +497,7 @@ async def retrieve_extraction(
             status_code=400,
             detail="Invalid resume ID format.",
         )
-    
+
     try:
         with get_connection() as conn:
             user = conn.execute(
@@ -735,7 +606,6 @@ def get_resume_suggestions(
             current_user,
         )
 
-        # Dynamically extract categorized skills from raw text for accurate soft & tech evaluation
         dynamic_skills = skill_extractor_service.extract_skills(raw_text)
 
         raw_suggestions = (
@@ -796,7 +666,6 @@ def get_resume_suggestions(
     response_model=JDCompareResponse,
     status_code=status.HTTP_200_OK,
 )
-
 def compare_resume_with_job_description(
     resume_id: str,
     payload: JDCompareRequest,
@@ -814,7 +683,6 @@ def compare_resume_with_job_description(
             current_user,
         )
 
-        # Obtain resume skills from saved extraction data.
         resume_skills = []
 
         if extracted_data is not None:
@@ -827,7 +695,6 @@ def compare_resume_with_job_description(
                     [],
                 )
 
-        # Fallback: dynamically extract skills from resume text.
         if not resume_skills and raw_text:
             extracted = skill_extractor_service.extract_skills(
                 raw_text
@@ -838,19 +705,15 @@ def compare_resume_with_job_description(
                 + extracted.get("soft_skills", [])
             )
 
-        # Parse, sanitize, and extract JD metadata.
         parsed_jd = jd_parser_service.parse_job_description(
             payload.jd_text
         )
 
-        # Match resume skills against sanitized JD text.
         match_result = jd_matcher_service.match_resume_with_jd(
             resume_skills=resume_skills,
             jd_text=parsed_jd.clean_text,
         )
 
-        # Use the manually supplied role if provided;
-        # otherwise use the role detected by the parser.
         target_role = (
             payload.target_role.strip()
             if payload.target_role and payload.target_role.strip()
@@ -890,7 +753,10 @@ def compare_resume_with_job_description(
             status_code=500,
             detail="Unable to compare resume with job description.",
         ) from exc
-# 9. IMPROVEMENT AREAS API - US-08
+
+
+# ==================================================
+# 7. IMPROVEMENT AREAS API - US-08
 # ==================================================
 
 @router.get(
@@ -955,11 +821,146 @@ def get_resume_improvement_areas(
             status_code=400,
             detail=str(exc),
         )
-    
+
     except Exception as exc:
         logger.exception("Failed to detect resume improvement areas.")
 
         raise HTTPException(
             status_code=500,
             detail="Unable to detect resume improvement areas.",
+        ) from exc
+
+
+# ==================================================
+# 8. ANONYMIZED RESUME VIEW API - US-17
+# ==================================================
+
+@router.get(
+    "/{resume_id}/anonymized-view",
+    response_model=AnonymizedResumeResponse,
+    status_code=status.HTTP_200_OK,
+)
+def get_anonymized_resume_view(
+    resume_id: str,
+    mask_style: str = "tag",
+    current_user: UserResponse = Depends(get_current_user),
+):
+    """
+    US-17: Returns a privacy-compliant, anonymized view of a resume
+    for blind candidate screening by placement officers and recruiters.
+    Contact PII (email, phone, pincode) is redacted while preserving technical
+    skills, academic scores, and project metrics intact.
+    """
+    try:
+        extracted_data, raw_text = get_owned_resume_data(
+            resume_id,
+            current_user,
+        )
+
+        candidate_name = None
+        if extracted_data is not None:
+            if isinstance(extracted_data, dict):
+                candidate_name = extracted_data.get("candidate_name")
+            else:
+                candidate_name = getattr(extracted_data, "candidate_name", None)
+
+        masked_text, pii_stats, masked_fields = PrivacyMaskingService.anonymize_text(
+            text=raw_text,
+            candidate_name=candidate_name,
+            style=mask_style,
+        )
+
+        skills = []
+        if extracted_data is not None:
+            if isinstance(extracted_data, dict):
+                skills = extracted_data.get("skills", [])
+            else:
+                skills = getattr(extracted_data, "skills", [])
+
+        if not skills and raw_text:
+            extracted_skills_dict = skill_extractor_service.extract_skills(raw_text)
+            tech = extracted_skills_dict.get("technical_skills", [])
+            soft = extracted_skills_dict.get("soft_skills", [])
+            skills = list(dict.fromkeys(tech + soft))
+
+        candidate_hash = PrivacyMaskingService.generate_candidate_hash(
+            str(current_user.email)
+        )
+
+        exp_years = None
+        cgpa = None
+        degree = None
+        if extracted_data is not None:
+            if isinstance(extracted_data, dict):
+                exp_years = extracted_data.get("experience_years")
+                cgpa = extracted_data.get("cgpa")
+                degree = extracted_data.get("degree")
+            else:
+                exp_years = getattr(extracted_data, "experience_years", None)
+                cgpa = getattr(extracted_data, "cgpa", None)
+                degree = getattr(extracted_data, "degree", None)
+
+        return AnonymizedResumeResponse(
+            resume_id=resume_id,
+            candidate_id_hash=candidate_hash,
+            anonymized_text=masked_text,
+            skills=skills,
+            experience_years=exp_years,
+            cgpa=cgpa,
+            degree=degree,
+            masked_fields=masked_fields,
+            detected_pii_counts=pii_stats,
+            is_anonymized=True,
+            status="success",
+        )
+
+    except HTTPException:
+        raise
+
+    except Exception as exc:
+        logger.exception("Failed to generate anonymized resume view.")
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to generate anonymized resume view.",
+        ) from exc
+
+
+# ==================================================
+# 9. DIRECT RESUME TEXT MASKING API - US-17
+# ==================================================
+
+@router.post(
+    "/privacy/mask-text",
+    response_model=DirectMaskResponse,
+    status_code=status.HTTP_200_OK,
+)
+def mask_resume_text_directly(
+    payload: DirectMaskRequest,
+    current_user: UserResponse = Depends(get_current_user),
+):
+    """
+    US-17: Utility endpoint for sanitizing and anonymizing raw resume text on demand.
+    """
+    try:
+        masked_text, pii_stats, _ = PrivacyMaskingService.anonymize_text(
+            text=payload.raw_text,
+            candidate_name=payload.candidate_name,
+            style=payload.mask_style or "tag",
+        )
+
+        is_safe = PrivacyMaskingService.is_properly_anonymized(masked_text)
+
+        return DirectMaskResponse(
+            original_length=len(payload.raw_text),
+            masked_length=len(masked_text),
+            masked_text=masked_text,
+            detected_pii_counts=pii_stats,
+            is_safe=is_safe,
+        )
+
+    except Exception as exc:
+        logger.exception("Direct text masking failed.")
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to mask text.",
         ) from exc
