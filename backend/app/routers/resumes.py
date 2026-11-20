@@ -18,7 +18,6 @@ from app.schemas.extraction import (
     ExtractionData,
     SkillExtractionResult,
 )
-
 from app.schemas.sprint3_schemas import (
     BulletAuditRequest,
     BulletAuditResponse,
@@ -753,10 +752,7 @@ def compare_resume_with_job_description(
             status_code=500,
             detail="Unable to compare resume with job description.",
         ) from exc
-
-
-# ==================================================
-# 7. IMPROVEMENT AREAS API - US-08
+# 9. IMPROVEMENT AREAS API - US-08
 # ==================================================
 
 @router.get(
@@ -828,139 +824,4 @@ def get_resume_improvement_areas(
         raise HTTPException(
             status_code=500,
             detail="Unable to detect resume improvement areas.",
-        ) from exc
-
-
-# ==================================================
-# 8. ANONYMIZED RESUME VIEW API - US-17
-# ==================================================
-
-@router.get(
-    "/{resume_id}/anonymized-view",
-    response_model=AnonymizedResumeResponse,
-    status_code=status.HTTP_200_OK,
-)
-def get_anonymized_resume_view(
-    resume_id: str,
-    mask_style: str = "tag",
-    current_user: UserResponse = Depends(get_current_user),
-):
-    """
-    US-17: Returns a privacy-compliant, anonymized view of a resume
-    for blind candidate screening by placement officers and recruiters.
-    Contact PII (email, phone, pincode) is redacted while preserving technical
-    skills, academic scores, and project metrics intact.
-    """
-    try:
-        extracted_data, raw_text = get_owned_resume_data(
-            resume_id,
-            current_user,
-        )
-
-        candidate_name = None
-        if extracted_data is not None:
-            if isinstance(extracted_data, dict):
-                candidate_name = extracted_data.get("candidate_name")
-            else:
-                candidate_name = getattr(extracted_data, "candidate_name", None)
-
-        masked_text, pii_stats, masked_fields = PrivacyMaskingService.anonymize_text(
-            text=raw_text,
-            candidate_name=candidate_name,
-            style=mask_style,
-        )
-
-        skills = []
-        if extracted_data is not None:
-            if isinstance(extracted_data, dict):
-                skills = extracted_data.get("skills", [])
-            else:
-                skills = getattr(extracted_data, "skills", [])
-
-        if not skills and raw_text:
-            extracted_skills_dict = skill_extractor_service.extract_skills(raw_text)
-            tech = extracted_skills_dict.get("technical_skills", [])
-            soft = extracted_skills_dict.get("soft_skills", [])
-            skills = list(dict.fromkeys(tech + soft))
-
-        candidate_hash = PrivacyMaskingService.generate_candidate_hash(
-            str(current_user.email)
-        )
-
-        exp_years = None
-        cgpa = None
-        degree = None
-        if extracted_data is not None:
-            if isinstance(extracted_data, dict):
-                exp_years = extracted_data.get("experience_years")
-                cgpa = extracted_data.get("cgpa")
-                degree = extracted_data.get("degree")
-            else:
-                exp_years = getattr(extracted_data, "experience_years", None)
-                cgpa = getattr(extracted_data, "cgpa", None)
-                degree = getattr(extracted_data, "degree", None)
-
-        return AnonymizedResumeResponse(
-            resume_id=resume_id,
-            candidate_id_hash=candidate_hash,
-            anonymized_text=masked_text,
-            skills=skills,
-            experience_years=exp_years,
-            cgpa=cgpa,
-            degree=degree,
-            masked_fields=masked_fields,
-            detected_pii_counts=pii_stats,
-            is_anonymized=True,
-            status="success",
-        )
-
-    except HTTPException:
-        raise
-
-    except Exception as exc:
-        logger.exception("Failed to generate anonymized resume view.")
-        raise HTTPException(
-            status_code=500,
-            detail="Unable to generate anonymized resume view.",
-        ) from exc
-
-
-# ==================================================
-# 9. DIRECT RESUME TEXT MASKING API - US-17
-# ==================================================
-
-@router.post(
-    "/privacy/mask-text",
-    response_model=DirectMaskResponse,
-    status_code=status.HTTP_200_OK,
-)
-def mask_resume_text_directly(
-    payload: DirectMaskRequest,
-    current_user: UserResponse = Depends(get_current_user),
-):
-    """
-    US-17: Utility endpoint for sanitizing and anonymizing raw resume text on demand.
-    """
-    try:
-        masked_text, pii_stats, _ = PrivacyMaskingService.anonymize_text(
-            text=payload.raw_text,
-            candidate_name=payload.candidate_name,
-            style=payload.mask_style or "tag",
-        )
-
-        is_safe = PrivacyMaskingService.is_properly_anonymized(masked_text)
-
-        return DirectMaskResponse(
-            original_length=len(payload.raw_text),
-            masked_length=len(masked_text),
-            masked_text=masked_text,
-            detected_pii_counts=pii_stats,
-            is_safe=is_safe,
-        )
-
-    except Exception as exc:
-        logger.exception("Direct text masking failed.")
-        raise HTTPException(
-            status_code=500,
-            detail="Unable to mask text.",
         ) from exc
