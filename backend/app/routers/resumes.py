@@ -19,7 +19,6 @@ from app.schemas.extraction import (
     SkillExtractionResult,
 )
 
-
 from app.schemas.sprint3_schemas import (
     BulletAuditRequest,
     BulletAuditResponse,
@@ -120,7 +119,8 @@ def get_owned_resume_data(
                 status_code=401,
                 detail="User account not found or inactive.",
             )
-user_id = user[0]
+
+        user_id = user[0]
 
         resume = conn.execute(
             """
@@ -281,7 +281,6 @@ async def upload_resume(
     }
 
 
-
 # ==================================================
 # 2. PARSE RESUME DIRECT API
 # ==================================================
@@ -308,6 +307,7 @@ async def parse_resume_direct(
         "word_count": parsed.word_count,
         "char_count": parsed.char_count,
     }
+
 
 # ==================================================
 # 3. PARSE RESUME BY ID API
@@ -350,7 +350,6 @@ def parse_resume_by_id(
                     status_code=404,
                     detail="Resume not found or access denied.",
                 )
-
 
     _, original_filename, storage_key, _ = resume
     stored_path = STORAGE_DIR / storage_key
@@ -410,7 +409,8 @@ def parse_resume_by_id(
         "word_count": parsed.word_count,
         "char_count": parsed.char_count,
     }
- 
+
+
 # ==================================================
 # 4. EXTRACT RESUME INFORMATION API
 # ==================================================
@@ -609,7 +609,7 @@ async def extract_resume(
 
 
 # ==================================================
-# 3. GET SAVED EXTRACTION API
+# 5. GET SAVED EXTRACTION API
 # ==================================================
 
 @router.get(
@@ -633,7 +633,7 @@ async def retrieve_extraction(
             status_code=400,
             detail="Invalid resume ID format.",
         )
-    
+
     try:
         with get_connection() as conn:
             user = conn.execute(
@@ -688,7 +688,7 @@ async def retrieve_extraction(
 
 
 # ==================================================
-# 4. BULLET POINT AUDIT API - US-09
+# 6. BULLET POINT AUDIT API - US-09
 # ==================================================
 
 @router.post(
@@ -719,7 +719,7 @@ def audit_single_bullet(
 
 
 # ==================================================
-# 5. RESUME SUGGESTIONS API - US-09
+# 7. RESUME SUGGESTIONS API - US-09
 # ==================================================
 
 @router.get(
@@ -794,7 +794,7 @@ def get_resume_suggestions(
 
 
 # ==================================================
-# 6. JOB DESCRIPTION COMPARISON API - US-11
+# 8. JOB DESCRIPTION COMPARISON API - US-11
 # ==================================================
 
 @router.post(
@@ -889,7 +889,10 @@ def compare_resume_with_job_description(
             status_code=500,
             detail="Unable to compare resume with job description.",
         ) from exc
-# 7. IMPROVEMENT AREAS API - US-08
+
+
+# ==================================================
+# 9. IMPROVEMENT AREAS API - US-08
 # ==================================================
 
 @router.get(
@@ -954,11 +957,287 @@ def get_resume_improvement_areas(
             status_code=400,
             detail=str(exc),
         )
-    
+
     except Exception as exc:
         logger.exception("Failed to detect resume improvement areas.")
 
         raise HTTPException(
             status_code=500,
             detail="Unable to detect resume improvement areas.",
+        ) from exc
+
+
+# ==================================================
+# 10. ANONYMIZED RESUME VIEW API - US-17
+# ==================================================
+
+@router.get(
+    "/{resume_id}/anonymized-view",
+    response_model=AnonymizedResumeResponse,
+    status_code=status.HTTP_200_OK,
+)
+def get_anonymized_resume_view(
+    resume_id: str,
+    mask_style: str = "tag",
+    current_user: UserResponse = Depends(get_current_user),
+):
+    """
+    US-17: Returns a privacy-compliant, anonymized view of a resume
+    for blind candidate screening by placement officers and recruiters.
+    Contact PII (email, phone, pincode) is redacted while preserving technical
+    skills, academic scores, and project metrics intact.
+    """
+    try:
+        extracted_data, raw_text = get_owned_resume_data(
+            resume_id,
+            current_user,
+        )
+
+        candidate_name = None
+        if extracted_data is not None:
+            if isinstance(extracted_data, dict):
+                candidate_name = extracted_data.get("candidate_name")
+            else:
+                candidate_name = getattr(extracted_data, "candidate_name", None)
+
+        masked_text, pii_stats, masked_fields = PrivacyMaskingService.anonymize_text(
+            text=raw_text,
+            candidate_name=candidate_name,
+            style=mask_style,
+        )
+
+        skills = []
+        if extracted_data is not None:
+            if isinstance(extracted_data, dict):
+                skills = extracted_data.get("skills", [])
+            else:
+                skills = getattr(extracted_data, "skills", [])
+
+        if not skills and raw_text:
+            extracted_skills_dict = skill_extractor_service.extract_skills(raw_text)
+            tech = extracted_skills_dict.get("technical_skills", [])
+            soft = extracted_skills_dict.get("soft_skills", [])
+            skills = list(dict.fromkeys(tech + soft))
+
+        candidate_hash = PrivacyMaskingService.generate_candidate_hash(
+            str(current_user.email)
+        )
+
+        exp_years = None
+        cgpa = None
+        degree = None
+        if extracted_data is not None:
+            if isinstance(extracted_data, dict):
+                exp_years = extracted_data.get("experience_years")
+                cgpa = extracted_data.get("cgpa")
+                degree = extracted_data.get("degree")
+            else:
+                exp_years = getattr(extracted_data, "experience_years", None)
+                cgpa = getattr(extracted_data, "cgpa", None)
+                degree = getattr(extracted_data, "degree", None)
+
+        return AnonymizedResumeResponse(
+            resume_id=resume_id,
+            candidate_id_hash=candidate_hash,
+            anonymized_text=masked_text,
+            skills=skills,
+            experience_years=exp_years,
+            cgpa=cgpa,
+            degree=degree,
+            masked_fields=masked_fields,
+            detected_pii_counts=pii_stats,
+            is_anonymized=True,
+            status="success",
+        )
+
+    except HTTPException:
+        raise
+
+    except Exception as exc:
+        logger.exception("Failed to generate anonymized resume view.")
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to generate anonymized resume view.",
+        ) from exc
+
+
+# ==================================================
+# 11. DIRECT RESUME TEXT MASKING API - US-17
+# ==================================================
+
+@router.post(
+    "/privacy/mask-text",
+    response_model=DirectMaskResponse,
+    status_code=status.HTTP_200_OK,
+)
+def mask_resume_text_directly(
+    payload: DirectMaskRequest,
+    current_user: UserResponse = Depends(get_current_user),
+):
+    """
+    US-17: Utility endpoint for sanitizing and anonymizing raw resume text on demand.
+    """
+    try:
+        masked_text, pii_stats, _ = PrivacyMaskingService.anonymize_text(
+            text=payload.raw_text,
+            candidate_name=payload.candidate_name,
+            style=payload.mask_style or "tag",
+        )
+
+        is_safe = PrivacyMaskingService.is_properly_anonymized(masked_text)
+
+        return DirectMaskResponse(
+            original_length=len(payload.raw_text),
+            masked_length=len(masked_text),
+            masked_text=masked_text,
+            detected_pii_counts=pii_stats,
+            is_safe=is_safe,
+        )
+
+    except Exception as exc:
+        logger.exception("Direct text masking failed.")
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to mask text.",
+        ) from exc
+
+
+# ==================================================
+# 12. SECURE RESUME ERASURE API - US-17
+# ==================================================
+
+@router.delete("/{resume_id}/erase")
+def erase_resume(
+    resume_id: str,
+    current_user: UserResponse = Depends(get_current_user),
+):
+    """Erase a resume owned by the authenticated student."""
+
+    try:
+        parsed_resume_id = UUID(resume_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid resume ID format.",
+        )
+
+    pending_path = None
+    database_committed = False
+
+    try:
+        with get_connection() as conn:
+            with conn.transaction():
+                user = conn.execute(
+                    """
+                    SELECT id
+                    FROM users
+                    WHERE email = %s
+                    AND is_active = TRUE
+                    """,
+                    (current_user.email,),
+                ).fetchone()
+
+                if user is None:
+                    raise HTTPException(
+                        status_code=401,
+                        detail="User account not found or inactive.",
+                    )
+
+                resume = conn.execute(
+                    """
+                    SELECT storage_key
+                    FROM resumes
+                    WHERE id = %s AND user_id = %s
+                    """,
+                    (parsed_resume_id, user[0]),
+                ).fetchone()
+
+                if resume is None:
+                    raise HTTPException(
+                        status_code=404,
+                        detail="Resume not found.",
+                    )
+
+                storage_key = resume[0]
+
+                if Path(storage_key).name != storage_key:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="Invalid resume storage path.",
+                    )
+
+                stored_path = STORAGE_DIR / storage_key
+
+                if stored_path.is_file():
+                    pending_path = stored_path.with_name(
+                        stored_path.name + ".deletion_pending"
+                    )
+
+                    if pending_path.exists():
+                        raise HTTPException(
+                            status_code=409,
+                            detail="Resume deletion is already pending.",
+                        )
+
+                    stored_path.replace(pending_path)
+
+                conn.execute(
+                    "DELETE FROM resume_sections WHERE resume_id = %s",
+                    (parsed_resume_id,),
+                )
+
+                conn.execute(
+                    "DELETE FROM resume_skills WHERE resume_id = %s",
+                    (parsed_resume_id,),
+                )
+
+                conn.execute(
+                    """
+                    DELETE FROM resumes
+                    WHERE id = %s AND user_id = %s
+                    """,
+                    (parsed_resume_id, user[0]),
+                )
+
+        database_committed = True
+
+        if pending_path is not None:
+            try:
+                pending_path.unlink(missing_ok=True)
+            except OSError:
+                logger.exception(
+                    "Resume database record deleted, but pending file cleanup failed."
+                )
+                raise HTTPException(
+                    status_code=500,
+                    detail="Resume record deleted, but file cleanup is pending.",
+                )
+
+        return {
+            "message": "Resume erased successfully.",
+            "resume_id": str(parsed_resume_id),
+            "status": "success",
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception as exc:
+        if not database_committed and pending_path is not None:
+            try:
+                original_path = pending_path.with_name(
+                    pending_path.name.removesuffix(".deletion_pending")
+                )
+                if pending_path.exists():
+                    pending_path.replace(original_path)
+            except OSError:
+                logger.exception(
+                    "Could not restore resume file after failed deletion."
+                )
+
+        logger.exception("Resume erasure failed.")
+
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to erase resume. Please try again.",
         ) from exc
