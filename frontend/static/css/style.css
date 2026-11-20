@@ -600,3 +600,21 @@ a.list-row:hover { background: var(--fill-2); text-decoration: none; }
     min-height: auto;
   }
 }
+/* Sprint 4: job matching */
+.matching-page { max-width: 1060px; }
+.match-form-card { padding: clamp(22px, 4vw, 38px); }
+.match-form { display: grid; gap: 11px; max-width: 760px; }
+.match-form select, .match-form textarea { width: 100%; border: 1px solid var(--line, #d9dfdc); border-radius: 12px; padding: 13px 15px; color: inherit; background: var(--surface, #fff); font: inherit; }
+.match-form textarea { resize: vertical; min-height: 150px; }
+.match-form .btn { justify-self: start; margin-top: 5px; }
+.match-result { display: grid; grid-template-columns: auto 1fr 1fr; gap: 22px; align-items: start; border-top: 1px solid var(--line, #e5e9e7); margin-top: 28px; padding-top: 24px; }
+.match-result h3, .opportunity-card h3 { margin: 0 0 10px; }
+.match-score { width: 112px; height: 112px; border-radius: 50%; background: #edf7f1; color: #16754c; display: grid; place-content: center; text-align: center; }
+.match-score strong { font-size: 30px; line-height: 1.1; }.match-score span { font-size: 12px; }
+.skill-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.skill-chip { border-radius: 999px; padding: 6px 11px; font-size: 13px; background: #f1f3f2; }
+.skill-chip.matched { color: #176b49; background: #e6f4ec; }.skill-chip.missing { color: #8a5a18; background: #fff3dd; }
+.opportunities-section { margin-top: 42px; }.opportunity-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.opportunity-card { padding: 22px; }.opportunity-top { display: flex; justify-content: space-between; gap: 16px; }.opportunity-top p { margin-top: 0; }.opportunity-score { color: #16754c; font-size: 22px; white-space: nowrap; }
+.opportunity-card details { margin-top: 14px; font-size: 14px; }.opportunity-card summary { cursor: pointer; font-weight: 600; }
+@media (max-width: 700px) { .match-result { grid-template-columns: 1fr; }.opportunity-list { grid-template-columns: 1fr; } }
