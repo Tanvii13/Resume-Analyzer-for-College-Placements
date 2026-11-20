@@ -1,0 +1,24 @@
+Machine Learning Research Intern
+Company: Sarvam AI
+Location: Remote
+Job Type: Internship (6 months)
+
+Responsibilities
+- Train and evaluate deep learning models for Indian-language speech and text.
+- Run experiments and report results.
+
+Required Skills
+- Python
+- PyTorch or TensorFlow
+- Machine Learning fundamentals
+- NumPy
+
+Preferred Skills
+- Natural Language Processing
+- Hugging Face Transformers
+- Docker
+
+Eligibility
+- B.Tech / M.Tech in Computer Science, AI/ML or related fields
+- 2026 or 2027 graduating batch
+- Minimum CGPA of 8.0/10

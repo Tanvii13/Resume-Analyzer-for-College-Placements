@@ -16,6 +16,20 @@ from app.nlp.job_matching.matcher_schemas import (
     RequirementMatch,
     RequirementType,
 )
+from app.nlp.job_matching.opportunity_ranker import (
+    OpportunityRanker,
+    rank_opportunities,
+)
+from app.nlp.job_matching.ranking_schemas import (
+    RANKER_VERSION,
+    CommonGap,
+    FilteredOpportunity,
+    FitTier,
+    JobOpportunity,
+    OpportunityRankingReport,
+    RankedOpportunity,
+    RankingPreferences,
+)
 from app.nlp.job_matching.resume_job_matcher import (
     ResumeJobMatcher,
     calculate_text_similarity,
@@ -46,6 +60,19 @@ from app.nlp.job_matching.skill_engine import (
     get_skill_normalizer,
     normalize_skill,
 )
+from app.nlp.job_matching.skill_gap_analyzer import SkillGapAnalyzer, analyze_skill_gap
+from app.nlp.job_matching.skill_gap_schemas import (
+    SKILL_GAP_ANALYZER_VERSION,
+    AlternativeGroup,
+    EligibilityCheck,
+    EligibilityStatus,
+    GapImportance,
+    SkillCoverage,
+    SkillGapItem,
+    SkillGapReport,
+    SkillGapStatus,
+    SkillRequirementLevel,
+)
 from app.nlp.job_matching.skill_normalization_schemas import (
     EquivalenceEvaluation,
     EquivalenceRule,
@@ -53,6 +80,14 @@ from app.nlp.job_matching.skill_normalization_schemas import (
     SkillMatchMethod,
     SkillRelationshipType,
     SkillSetComparison,
+)
+from app.nlp.job_matching.workflow import (
+    WORKFLOW_VERSION,
+    JobFitReport,
+    JobMatchingWorkflow,
+    WorkflowError,
+    WorkflowMetadata,
+    get_job_matching_workflow,
 )
 
 
@@ -127,4 +162,35 @@ __all__ = [  # noqa: RUF022
     "ResumeJobMatcher",
     "match_resume_to_job",
     "calculate_text_similarity",
+    # Module D: Skill Gap Analysis
+    "SKILL_GAP_ANALYZER_VERSION",
+    "SkillGapAnalyzer",
+    "analyze_skill_gap",
+    "SkillGapReport",
+    "SkillGapItem",
+    "SkillGapStatus",
+    "SkillRequirementLevel",
+    "GapImportance",
+    "AlternativeGroup",
+    "EligibilityCheck",
+    "EligibilityStatus",
+    "SkillCoverage",
+    # Module E: Job/Internship Relevance Ranking
+    "RANKER_VERSION",
+    "OpportunityRanker",
+    "rank_opportunities",
+    "JobOpportunity",
+    "RankingPreferences",
+    "RankedOpportunity",
+    "OpportunityRankingReport",
+    "FitTier",
+    "CommonGap",
+    "FilteredOpportunity",
+    # Module F: Integrated workflow
+    "WORKFLOW_VERSION",
+    "JobMatchingWorkflow",
+    "get_job_matching_workflow",
+    "JobFitReport",
+    "WorkflowMetadata",
+    "WorkflowError",
 ]
