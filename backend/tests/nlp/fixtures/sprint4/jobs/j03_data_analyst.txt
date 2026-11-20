@@ -1,0 +1,24 @@
+Data Analyst - Graduate Trainee
+Company: Mu Sigma
+Location: Bengaluru, India
+Job Type: Full-time
+
+About the role
+Analyse business data and build dashboards for clients.
+
+Required Skills
+- Python
+- SQL
+- Microsoft Excel
+- Statistics
+
+Preferred Skills
+- Power BI or Tableau
+- Pandas
+
+Eligibility
+- B.Tech / B.E. / B.Sc in any discipline
+- 2026 graduating batch
+- Minimum 60% throughout academics
+
+Freshers are welcome to apply.

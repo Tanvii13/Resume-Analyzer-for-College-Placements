@@ -1,0 +1,18 @@
+Software Engineer - Full Stack
+Company: Infosys
+Location: Pune, India
+Job Type: Full-time
+
+Requirements
+- 2+ years of professional experience in web development
+- Java and Spring Boot
+- Angular or React
+- SQL databases
+
+Preferred Skills
+- AWS
+- Jenkins
+- Microservices
+
+Qualification
+- B.E. / B.Tech in Computer Science or IT
