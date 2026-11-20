@@ -964,3 +964,144 @@ def mask_resume_text_directly(
             status_code=500,
             detail="Unable to mask text.",
         ) from exc
+
+# ==================================================
+# 10. SECURE RESUME ERASURE API - US-17
+# ==================================================
+
+@router.delete("/{resume_id}/erase")
+def erase_resume(
+    resume_id: str,
+    current_user: UserResponse = Depends(get_current_user),
+):
+    """Erase a resume owned by the authenticated student."""
+
+    try:
+        parsed_resume_id = UUID(resume_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid resume ID format.",
+        )
+
+    pending_path = None
+    database_committed = False
+
+    try:
+        with get_connection() as conn:
+            with conn.transaction():
+                user = conn.execute(
+                    """
+                    SELECT id
+                    FROM users
+                    WHERE email = %s
+                    AND is_active = TRUE
+                    """,
+                    (current_user.email,),
+                ).fetchone()
+
+                if user is None:
+                    raise HTTPException(
+                        status_code=401,
+                        detail="User account not found or inactive.",
+                    )
+
+                resume = conn.execute(
+                    """
+                    SELECT storage_key
+                    FROM resumes
+                    WHERE id = %s AND user_id = %s
+                    """,
+                    (parsed_resume_id, user[0]),
+                ).fetchone()
+
+                if resume is None:
+                    raise HTTPException(
+                        status_code=404,
+                        detail="Resume not found.",
+                    )
+
+                storage_key = resume[0]
+
+                if Path(storage_key).name != storage_key:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="Invalid resume storage path.",
+                    )
+
+                stored_path = STORAGE_DIR / storage_key
+
+                if stored_path.is_file():
+                    pending_path = stored_path.with_name(
+                        stored_path.name + ".deletion_pending"
+                    )
+
+                    if pending_path.exists():
+                        raise HTTPException(
+                            status_code=409,
+                            detail="Resume deletion is already pending.",
+                        )
+
+                    stored_path.replace(pending_path)
+
+                conn.execute(
+                    "DELETE FROM resume_sections WHERE resume_id = %s",
+                    (parsed_resume_id,),
+                )
+
+                conn.execute(
+                    "DELETE FROM resume_skills WHERE resume_id = %s",
+                    (parsed_resume_id,),
+                )
+
+                conn.execute(
+                    """
+                    DELETE FROM resumes
+                    WHERE id = %s AND user_id = %s
+                    """,
+                    (parsed_resume_id, user[0]),
+                )
+
+        database_committed = True
+
+        if pending_path is not None:
+            try:
+                pending_path.unlink(missing_ok=True)
+            except OSError:
+                logger.exception(
+                    "Resume database record deleted, but pending file cleanup failed."
+                )
+                raise HTTPException(
+                    status_code=500,
+                    detail="Resume record deleted, but file cleanup is pending.",
+                )
+
+        return {
+            "message": "Resume erased successfully.",
+            "resume_id": str(parsed_resume_id),
+            "status": "success",
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception as exc:
+        if not database_committed and pending_path is not None:
+            try:
+                original_path = pending_path.with_name(
+                    pending_path.name.removesuffix(".deletion_pending")
+                )
+                if pending_path.exists():
+                    pending_path.replace(original_path)
+            except OSError:
+                logger.exception(
+                    "Could not restore resume file after failed deletion."
+                )
+
+        logger.exception("Resume erasure failed.")
+
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to erase resume. Please try again.",
+        ) from exc
+
