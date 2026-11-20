@@ -1,7 +1,7 @@
 """
 Placement officer and career counselor endpoints for US-14.
 """
-
+from app.services.persistence_service import log_staff_resume_access
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
@@ -81,3 +81,9 @@ def get_student_review_history(
             resume_id=resume_id,
         ),
     }
+log_staff_resume_access(
+    staff_email=current_user.email,
+    student_email=student_email,
+    resume_id=resume_id,
+    access_type="view_resume",
+)
