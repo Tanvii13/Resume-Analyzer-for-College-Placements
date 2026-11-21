@@ -1,9 +1,10 @@
 # Resume Analyser for College Placements
-**Upload it, understand it, improve it, get placed!**
 
 **Subject:** IT314 – Software Engineering  
 **Instructor:** Prof. Saurabh Tiwari  
 **Mentor:** Dhruvil Mehta
+
+**Upload it, understand it, improve it, get placed!**
 
 ## Team Members
 
@@ -79,6 +80,26 @@ flowchart TD
 
 Resume extraction may not always be completely accurate, so the system should provide a way to report or review unreadable or incorrectly extracted information.
 
+## 6. Proposed System Architecture
+
+The proposed architecture separates the user interface, backend services, resume-processing components, and data storage. This separation is intended to make the components easier to develop, test, and maintain.
+
+```mermaid
+flowchart TB
+    U[Student / Placement Staff] --> UI[Frontend Interface]
+    UI --> API[Backend API and Authentication]
+    API --> V[Resume Validation]
+    V --> P[Resume Parsing and Information Extraction]
+    P --> S[Skill Extraction and Normalisation]
+    S --> A[Resume Scoring and Feedback]
+    S --> M[Job and Internship Matching]
+    A --> R[Analysis Results and Suggestions]
+    M --> R
+    R --> API
+    API --> UI
+    API <--> DB[(Application Database)]
+    API --> SEC[Role-Based Access and Privacy Controls]
+```
 
 ### Component Responsibilities
 
@@ -101,103 +122,23 @@ The technology stack is tentative and may change as the project develops. The fi
 
 | Layer | Proposed Technology | Purpose |
 |---|---|---|
-| Frontend | Python, Javascript, CSS, HTML | User interface for resume upload, feedback, and job matching. |
-| Backend | FastAPI, Python 3.10+, Uvicorn | REST API, authentication, validation, and resume management. |
-| Resume Processing | `pypdf`, `python-docx` | Structured text extraction, document validation, and metadata processing. |
-| NLP and Profile Matching | Python NLP tooling | Parsing, skill extraction, and scoring in subsequent sprints. |
-| Database | PostgreSQL (`psycopg`) | Persistent storage for users, resume metadata, and analysis results. |
+| Frontend | 
+| Backend | 
+| Resume Processing |
+| NLP and Profile Matching |
+| Database |
 | Version Control | Git and GitHub | Manage source code and support team collaboration. |
-| Testing | `pytest`, `httpx` | Automated backend testing and parser verification. |
-| Deployment | Container / Cloud (Planned) | Production deployment. |
+| Testing |
+| Deployment |
 
 Any library or service adopted should be evaluated for accuracy, compatibility, privacy, and maintainability.
 
-## 8. Backend & NLP Sprint 1: Resume Parsing, Validation & Running Locally
-
-### 8.1 Scope & Implemented Features (Sprint 1)
-
-Sprint 1 delivers the core document parsing, validation, and structured error handling for the Resume Analyser:
-
-- **Supported Formats:** PDF (`.pdf`) and Microsoft Word (`.docx`).
-- **File Validation Rules:**
-  - Maximum upload file size: **5 MB** (`MAX_FILE_SIZE = 5 * 1024 * 1024`).
-  - Empty or zero-byte document detection (`EMPTY_FILE`).
-  - Extension and magic byte verification (`%PDF-` for PDF, `PK\x03\x04` for DOCX) preventing file-extension/content mismatches.
-  - Verification that `.docx` files are valid OpenXML Word documents containing `word/document.xml`, rejecting arbitrary renamed ZIP archives.
-  - Detection of encrypted/password-protected PDFs (`ENCRYPTED_FILE`).
-  - Detection of corrupt or structurally invalid documents (`CORRUPTED_FILE`).
-  - Verification that extractable text contains readable alphanumeric content (`NO_READABLE_TEXT`).
-- **Text Extraction:**
-  - **PDF (`pypdf`):** Iterates over document pages, extracts page text, joins logical pages with clean paragraph separation, and records page count.
-  - **DOCX (`python-docx`):** Extracts section headers (where candidate contact details commonly reside), paragraphs, Content Controls (`w:sdt`), and tables in document order, deduplicating merged table cells and preserving tabular reading flow.
-  - **Whitespace Normalization:** Normalizes Unicode whitespace (NFKC), removes zero-width characters and soft hyphens, collapses excessive blank lines (`\n\n\n+` to `\n\n`), and cleans intra-line spacing while preserving meaningful structure.
-- **Known Limitations:**
-  - **No OCR:** Image-only or scanned PDFs without text layers are detected and returned as `NO_READABLE_TEXT`. Optical Character Recognition (OCR) is explicitly outside Sprint 1 scope.
-  - **No fabricated page count for DOCX:** Word documents do not store fixed page counts internally; `page_count` is set to `None` for DOCX.
-  - **No AI scoring/skill matching:** Resume analysis and scoring belong to Sprint 2+.
-
-### 8.2 Parser Interface & Error Codes
-
-The parser provides a reusable, pure-Python interface callable independently of FastAPI:
-
-```python
-from app.services.resume_parser import parse_resume, ResumeParseResult
-
-result: ResumeParseResult = parse_resume(file_bytes=content, filename="resume.pdf")
-print(result.filename)    # "resume.pdf"
-print(result.file_type)   # ".pdf"
-print(result.text)        # Extracted and normalized text
-print(result.page_count)  # 2 (for PDF) or None (for DOCX)
-print(result.word_count)  # Total word count
-print(result.char_count)  # Total character count
-```
-
-**Stable Error Codes:**
-- `EMPTY_FILE`: File is empty (0 bytes).
-- `UNSUPPORTED_FORMAT`: Extension is not `.pdf` or `.docx`.
-- `FILE_TOO_LARGE`: Exceeds the 5 MB limit.
-- `INVALID_FILE`: Missing filename, mismatched signature, or non-DOCX ZIP archive.
-- `CORRUPTED_FILE`: Structurally corrupt or unreadable archive/stream.
-- `ENCRYPTED_FILE`: Password-protected PDF or DOCX file.
-- `NO_READABLE_TEXT`: Document contains no readable/alphanumeric text.
-- `PARSER_ERROR`: Unexpected parsing/extraction failure.
-
-### 8.3 Backend Integration Endpoints
-
-The parser integrates cleanly with the existing FastAPI backend routes in `app/routers/resumes.py`:
-
-- `POST /resumes/upload`: Uploads and stores the resume document, creates a database record with `status: "uploaded"`, and preserves the existing backend contract.
-- `POST /resumes/{resume_id}/parse`: Parses a previously uploaded resume for the authenticated student, updates database status to `status: "parsed"` and sets `processed_at`, or marks `status: "failed"` upon error.
-- `POST /resumes/parse`: Direct multipart upload endpoint to validate and parse a resume file immediately.
-
-### 8.4 Setup & Testing Instructions
-
-1. **Install Dependencies:**
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   ```
-
-2. **Run Tests:**
-   ```bash
-   cd backend
-   pytest tests/test_resume_parser.py -v
-   ```
-   To run the full backend test suite:
-   ```bash
-   pytest tests/ -v
-   ```
-
-3. **Run Backend Server:**
-   ```bash
-   cd backend
-   uvicorn main:app --reload --port 8000
-   ```
+## 8. How to Run Locally
 
 
 ## 9. Team Contributions
 
-See [documents/contributions.md](Documents/Contributions.md) for details of individual team contributions.
+See [documents/contributions.md](documents/contributions.md) for details of individual team contributions.
 
 ## 10. Future Scope
 
