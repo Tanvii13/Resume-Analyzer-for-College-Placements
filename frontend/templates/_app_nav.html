@@ -13,7 +13,7 @@
 
   <!-- Outside the blurred bar on purpose: a blurred parent would trap the phone tab bar at the top -->
   <nav class="nav-links" aria-label="Main">
-    {% if user.role in ['officer', 'admin'] %}
+    {% if user.role in ['placement_officer', 'career_counselor'] %}
 <a
   href="{{ url_for('staff_students') }}"
   class="{% if request.endpoint in ['staff_students', 'staff_resume_analysis'] %}active{% endif %}"
