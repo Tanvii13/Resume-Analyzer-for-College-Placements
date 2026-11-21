@@ -28,7 +28,7 @@ it from a route, a background job or a test in the same way:
     profile.model_dump_json()   # JSON string
 """
 
-from datetime import date
+from datetime import date, datetime
 import logging
 import time
 from typing import Any, Callable, List, Optional, TypeVar
@@ -56,6 +56,7 @@ from app.nlp.sections import (
     SectionMap,
     classify_sections,
 )
+from app.nlp.versioning import build_version_metadata
 
 logger = logging.getLogger(__name__)
 
@@ -115,7 +116,8 @@ class ResumeNLPPipeline:
 
     # -- public API --------------------------------------------------------
 
-    def process(self, text: Optional[str], filename: str, resume_id: Optional[str] = None) -> CandidateProfile:
+    def process(self, text: Optional[str], filename: str, resume_id: Optional[str] = None,
+                created_at: Optional[datetime] = None) -> CandidateProfile:
         """
         Turn extracted resume text into a CandidateProfile.
 
@@ -132,7 +134,7 @@ class ResumeNLPPipeline:
                            "projects", "skills", "lists"):
                 metadata.module_status[module] = "skipped"
             profile.section_summary = SectionSummary(missing_critical_sections=list(CRITICAL_SECTIONS))
-            return self._finish(profile, metadata, started)
+            return self._finish(profile, metadata, started, created_at)
 
         document: Optional[SegmentedDocument] = self._run(
             "preprocessing", metadata, lambda: segment_text(text), None)
@@ -174,7 +176,7 @@ class ResumeNLPPipeline:
             missing_critical_sections=[s for s in CRITICAL_SECTIONS if s not in identified],
         )
         self._add_quality_warnings(profile, metadata)
-        return self._finish(profile, metadata, started)
+        return self._finish(profile, metadata, started, created_at)
 
     def process_request(self, request: NLPProcessingRequest) -> CandidateProfile:
         """Process a validated NLPProcessingRequest."""
@@ -224,10 +226,14 @@ class ResumeNLPPipeline:
             scores.append(sum(s.confidence for s in profile.technical_skills) / len(profile.technical_skills))
         return round(sum(scores) / len(scores), 3) if scores else 0.0
 
-    def _finish(self, profile: CandidateProfile, metadata: PipelineMetadata, started: float) -> CandidateProfile:
+    def _finish(self, profile: CandidateProfile, metadata: PipelineMetadata, started: float,
+                created_at: Optional[datetime] = None) -> CandidateProfile:
         metadata.overall_confidence = self._overall_confidence(profile)
         metadata.confidence_level = ConfidenceLevel.from_score(metadata.overall_confidence)
         metadata.processing_time_ms = round((time.perf_counter() - started) * 1000, 2)
+        metadata.version_metadata = build_version_metadata(
+            ("resume_parser", "profile_extraction"), created_at=created_at
+        )
         profile.metadata = metadata
         return profile
 

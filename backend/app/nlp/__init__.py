@@ -148,6 +148,14 @@ from app.nlp.taxonomy import (
     load_skills_taxonomy,
     resolve_degree,
 )
+from app.nlp.versioning import (
+    NLP_PIPELINE_VERSION,
+    RESUME_PARSER_VERSION,
+    VERSION_METADATA_SCHEMA_VERSION,
+    NLPVersionMetadata,
+    build_version_metadata,
+    configuration_fingerprint,
+)
 
 __all__ = [  # noqa: RUF022
     # Preprocessing (Module A)
@@ -205,6 +213,13 @@ __all__ = [  # noqa: RUF022
     "get_all_canonical_skills",
     "get_all_categories",
     "resolve_degree",
+    # Shared provenance metadata (Sprint 5 Module B)
+    "NLP_PIPELINE_VERSION",
+    "RESUME_PARSER_VERSION",
+    "VERSION_METADATA_SCHEMA_VERSION",
+    "NLPVersionMetadata",
+    "build_version_metadata",
+    "configuration_fingerprint",
     # Scoring Engine (Sprint 3 Module A)
     "ResumeScoringEngine",
     "score_resume",

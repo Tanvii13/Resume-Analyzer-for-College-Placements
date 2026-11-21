@@ -16,6 +16,7 @@ from enum import Enum
 from typing import Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
+from app.nlp.versioning import NLPVersionMetadata
 
 PIPELINE_VERSION = "2.0.0"
 
@@ -135,6 +136,7 @@ class PipelineMetadata(_Model):
     warnings: List[str] = Field(default_factory=list)
     overall_confidence: float = Field(0.0, ge=0.0, le=1.0)
     confidence_level: ConfidenceLevel = ConfidenceLevel.LOW
+    version_metadata: Optional[NLPVersionMetadata] = None
 
 
 class CandidateProfile(_Model):

@@ -19,6 +19,7 @@ from docx.text.paragraph import Paragraph
 from pydantic import BaseModel
 from pypdf import PdfReader
 from pypdf.errors import FileNotDecryptedError, PdfReadError
+from app.nlp.versioning import NLPVersionMetadata, RESUME_PARSER_VERSION, build_version_metadata
 
 try:
     from docx.opc.exceptions import PackageNotFoundError
@@ -162,6 +163,8 @@ class ResumeParseResult(BaseModel):
     page_count: Optional[int] = None
     char_count: int = 0
     word_count: int = 0
+    parser_version: str = RESUME_PARSER_VERSION
+    version_metadata: Optional[NLPVersionMetadata] = None
 
     @classmethod
     def create(
@@ -180,6 +183,7 @@ class ResumeParseResult(BaseModel):
             page_count=page_count,
             char_count=char_count,
             word_count=word_count,
+            version_metadata=build_version_metadata(("resume_parser",)),
         )
 
 

@@ -17,6 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app.nlp.job_matching.schemas import ParsedJobDescription
 from app.nlp.schemas import ConfidenceLevel
+from app.nlp.versioning import NLPVersionMetadata
 
 MATCHER_ENGINE_VERSION = "4.0.0"
 
@@ -134,6 +135,7 @@ class JobMatchResult(_MatchModel):
     all_matches: list[RequirementMatch] = Field(default_factory=list, description="Complete list of requirement matches")
     scoring_explanations: list[str] = Field(default_factory=list, description="Explainability narratives for match score")
     matching_engine_version: str = MATCHER_ENGINE_VERSION
+    version_metadata: NLPVersionMetadata | None = None
 
 
 __all__ = [

@@ -21,6 +21,7 @@ from app.nlp.formatting import FormattingAnalysisResult
 from app.nlp.improvement import ImprovementAreasReport
 from app.nlp.recommendations import RecommendationReport
 from app.nlp.scoring import ComponentScore, ScoreLabel
+from app.nlp.versioning import NLPVersionMetadata
 
 SPRINT3_ANALYZER_VERSION = "3.0.0"
 
@@ -118,6 +119,7 @@ class AnalysisMetadata(_AnalysisModel):
     module_versions: Dict[str, str] = Field(default_factory=dict)
     extraction_confidence: Optional[float] = Field(None, ge=0.0, le=1.0)
     raw_text_available: bool = False
+    version_metadata: Optional[NLPVersionMetadata] = None
 
 
 class Sprint3AnalysisResult(_AnalysisModel):

@@ -29,6 +29,7 @@ Usage:
 
 import logging
 import time
+from datetime import datetime
 from typing import Any, Callable, Optional, TypeVar
 
 from pydantic import ValidationError
@@ -49,6 +50,7 @@ from app.nlp.recommendations import RECOMMENDATION_ENGINE_VERSION, Recommendatio
 from app.nlp.schemas import CandidateProfile
 from app.nlp.scoring import ResumeScoringEngine, ScoringWeights
 from app.nlp.scoring.weights import SCORING_RULE_VERSION
+from app.nlp.versioning import build_version_metadata
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +87,8 @@ class ResumeAnalysisPipeline:
         return self.analyze(profile, raw_text=text)
 
     def analyze(
-        self, profile: CandidateProfile, raw_text: Optional[str] = None
+        self, profile: CandidateProfile, raw_text: Optional[str] = None,
+        created_at: Optional[datetime] = None,
     ) -> Sprint3AnalysisResult:
         """Analyze an existing CandidateProfile. `raw_text` enables formatting analysis."""
         started = time.perf_counter()
@@ -100,6 +103,10 @@ class ResumeAnalysisPipeline:
                 "recommendations": RECOMMENDATION_ENGINE_VERSION,
                 "analysis": SPRINT3_ANALYZER_VERSION,
             },
+            version_metadata=build_version_metadata(
+                ("profile_extraction", "scoring", "formatting", "content", "improvement", "recommendations", "analysis"),
+                created_at=created_at, scoring_weights=self.scoring_engine.weights,
+            ),
         )
 
         if meta.raw_text_available:

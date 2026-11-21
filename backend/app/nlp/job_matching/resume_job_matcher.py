@@ -36,6 +36,7 @@ from app.nlp.job_matching.skill_engine import (
     get_equivalence_engine,
     get_skill_normalizer,
 )
+from app.nlp.versioning import build_version_metadata
 from app.nlp.job_matching.skill_normalization_schemas import (
     SkillRelationshipType,
 )
@@ -173,6 +174,7 @@ class ResumeJobMatcher:
             all_matches=all_matches,
             scoring_explanations=scoring_explanations,
             matching_engine_version=self.version,
+            version_metadata=build_version_metadata(("profile_extraction", "job_parser", "skill_matching", "job_matching")),
         )
 
     # ------------------------------------------------------------------------
