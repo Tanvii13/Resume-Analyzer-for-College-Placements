@@ -122,6 +122,13 @@ from app.nlp.scoring import (
     ScoringWeights,
     score_resume,
 )
+from app.nlp.staff_insights import (
+    STAFF_INSIGHTS_VERSION,
+    StaffAnalysisBuilder,
+    StaffAnalysisResult,
+    UnsupportedSchemaVersionError,
+    build_staff_analysis,
+)
 from app.nlp.sections import (
     CANONICAL_SECTIONS,
     ClassifiedSection,
@@ -206,6 +213,12 @@ __all__ = [  # noqa: RUF022
     "ComponentScore",
     "ScoreDeduction",
     "ScoreLabel",
+    # Staff Analysis Insights (Sprint 5 Module A)
+    "STAFF_INSIGHTS_VERSION",
+    "StaffAnalysisBuilder",
+    "StaffAnalysisResult",
+    "UnsupportedSchemaVersionError",
+    "build_staff_analysis",
     # Formatting Quality Analyzer (Sprint 3 Module B)
     "FormattingQualityAnalyzer",
     "analyze_formatting",
