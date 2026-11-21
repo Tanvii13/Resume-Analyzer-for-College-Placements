@@ -1,0 +1,27 @@
+Aarav Sharma
+aarav.sharma@dau.ac.in | +91 98250 12345 | Ahmedabad, India
+linkedin.com/in/aarav-sharma-cs | github.com/aaravsharma
+
+EDUCATION
+Degree | Institution | Year | CGPA
+B.Tech in ICT | DA-IICT | 2021 - 2025 | 8.74 / 10
+Class XII (CBSE) | Delhi Public School | 2021 | 94.6%
+
+TECHNICAL SKILLS
+• Programming Languages: Python, C++, Java, JavaScript, SQL
+• Frameworks & Libraries: FastAPI, React.js, Node.js
+• Cloud & DevOps: Docker, Kubernetes, Git, Linux
+
+EXPERIENCE
+Software Engineering Intern
+Credence Analytics | May 2024 – July 2024
+• Developed REST APIs using FastAPI and PostgreSQL.
+• Integrated Redis caching for session management.
+
+PROJECTS
+College Placement Portal & Resume Analyzer
+• Built a full-stack resume analysis platform using FastAPI and PostgreSQL.
+• Repository: https://github.com/Tanvii13/Resume-Analyzer-for-College-Placements
+
+ACHIEVEMENTS
+• Finalist, Smart India Hackathon 2024

@@ -1,0 +1,59 @@
+{
+  "contact": {
+    "full_name": "Rohan Mehta",
+    "email": "rohan.mehta@outlook.com",
+    "phone": "+91 99090 11223",
+    "github_url": "https://github.com/rohanm"
+  },
+  "education": [
+    {
+      "degree": "B.E.",
+      "institution": "L.D. College of Engineering",
+      "field_of_study": "Information Technology",
+      "start_year": 2021,
+      "graduation_year": 2025,
+      "cgpa": 8.2
+    }
+  ],
+  "experience": [],
+  "internships": [
+    {
+      "job_title": "Backend Developer Intern",
+      "company_name": "Razorpay",
+      "start_date": "2025-01",
+      "end_date": "2025-03",
+      "is_current": false
+    }
+  ],
+  "projects": [
+    {
+      "title": "Inventory Tracker",
+      "start_date": "2024-08",
+      "end_date": "2024-11",
+      "technologies_include": [
+        "Spring Boot",
+        "MySQL"
+      ]
+    }
+  ],
+  "technical_skills_include": [
+    "Java",
+    "Python",
+    "TypeScript",
+    "Docker",
+    "Git",
+    "Jenkins",
+    "Spring Boot",
+    "MySQL",
+    "Node.js",
+    "MongoDB"
+  ],
+  "skills_exclude": [
+    "C",
+    "Go",
+    "R"
+  ],
+  "achievements": [],
+  "certifications": [],
+  "missing_critical_sections": []
+}

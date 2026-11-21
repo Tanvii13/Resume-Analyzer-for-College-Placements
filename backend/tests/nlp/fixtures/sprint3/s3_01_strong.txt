@@ -1,0 +1,32 @@
+Meera Krishnan
+meera.krishnan@gmail.com | +91 98250 44110 | linkedin.com/in/meera-krishnan | github.com/meerak
+
+EDUCATION
+B.Tech in Computer Science and Engineering | Nirma University | 2022 - 2026 | CGPA: 9.12/10
+Class XII (CBSE) | Delhi Public School | 2022 | 95.4%
+
+TECHNICAL SKILLS
+Languages: Python, Java, C++, SQL
+Frameworks: FastAPI, React, Spring Boot
+Databases: PostgreSQL, MongoDB
+Tools: Docker, Git, AWS
+Soft Skills: Leadership, Communication, Teamwork
+
+EXPERIENCE
+Software Engineering Intern
+Zomato | Gurugram | May 2025 - Jul 2025
+- Built a FastAPI service that cut restaurant menu sync time from 40 minutes to 6 minutes.
+- Implemented Redis caching for 2 high-traffic endpoints, reducing p95 latency by 38%.
+- Wrote 120 pytest unit tests, raising module coverage from 54% to 91%.
+
+PROJECTS
+Campus Food Ordering System | FastAPI, React, PostgreSQL
+- Designed a REST API serving 1,200 daily orders across 6 campus canteens.
+- Implemented JWT authentication and role-based access for students and vendors.
+- Reduced average order wait time by 35% with a Redis-backed order queue.
+Plagiarism Checker | Python, scikit-learn
+- Developed a TF-IDF cosine-similarity checker that flagged 92% of copied lab submissions in testing.
+- Deployed it as a Docker container used by 3 course TAs.
+
+ACHIEVEMENTS
+- Winner, Smart India Hackathon 2024 (software edition)

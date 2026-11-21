@@ -1,0 +1,18 @@
+Harsh Pandya
+harsh.pandya@gmail.com | +91 98250 66778 | github.com/harshp
+
+EDUCATION
+B.Tech in Computer Engineering, Charusat, 2022 - 2026, CGPA 8.0/10
+
+TECHNICAL SKILLS
+Languages: Python, JavaScript
+Frameworks: Django, React
+Tools: Git, Docker
+
+PROJECTS
+Hostel Complaint Portal | Django, React
+- Developed REST APIs using Django REST Framework for the application.
+- Designed the database schema and wrote unit tests.
+Alumni Connect | Django, React
+- Developed REST APIs using Django REST Framework for the application.
+- Designed the database schema and wrote unit tests.
