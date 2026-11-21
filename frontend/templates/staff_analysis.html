@@ -1,0 +1,80 @@
+
+{% extends "base.html" %}
+
+{% block title %}Student Analysis{% endblock %}
+
+{% block nav %}
+{% include "_app_nav.html" %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container page">
+
+  <section class="page-head">
+    <a
+      href="{{ url_for('staff_students') }}"
+      class="btn btn-gray btn-sm"
+    >
+      Back to Students
+    </a>
+
+    <h1>Resume Analysis</h1>
+    <p>{{ student.name }} — {{ student.email }}</p>
+  </section>
+
+  <section class="card staff-panel">
+    <h2>{{ resume.filename }}</h2>
+    <p class="muted">Uploaded: {{ resume.uploaded }}</p>
+
+    <div class="staff-score">
+      <span class="staff-score-number">
+        {{ analysis.score }}/100
+      </span>
+      <span>{{ analysis.summary }}</span>
+    </div>
+
+    <p class="muted">
+      {{ analysis.method_note }}
+    </p>
+  </section>
+
+  <section class="card staff-panel">
+    <h2>Skills Identified</h2>
+
+    {% if analysis.skills %}
+      {% for group in analysis.skills %}
+        <h3>{{ group.name }}</h3>
+        <div class="staff-skill-list">
+          {% for skill in group.skills %}
+            <span class="staff-skill">{{ skill }}</span>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="muted">No recognizable skills found.</p>
+    {% endif %}
+  </section>
+
+  <section class="card staff-panel">
+    <h2>Analysis and Recommendations</h2>
+
+    {% for criterion in analysis.criteria %}
+      <div class="staff-criterion">
+        <strong>{{ criterion.title }}</strong>
+
+        {% if criterion.passed %}
+          <span class="staff-passed">Passed</span>
+        {% else %}
+          <span class="staff-needs-work">Needs improvement</span>
+        {% endif %}
+
+        <p>{{ criterion.detail }}</p>
+      </div>
+    {% endfor %}
+
+  </section>
+
+</div>
+
+{% endblock %}
