@@ -1,5 +1,5 @@
 """
-Sprint 1 acceptance tests — one test group per user story.
+Sprint 1 acceptance tests â€” one test group per user story.
 Run with:  pytest -v
 """
 
@@ -123,7 +123,7 @@ class TestUS02Upload:
         assert client.get(f"/uploads/{stored}").status_code == 404   # not publicly served
 
     def test_officer_cannot_upload(self, client):
-        login(client, email="officer@dau.ac.in", role="officer")
+        login(client, email="officer@dau.ac.in", role="placement_officer")
         assert upload(client, "sample_resume.pdf").status_code == 403
 
 
@@ -179,7 +179,7 @@ class TestUS04Invalid:
         ("scanned_resume.pdf", None, "ERR_NO_TEXT"),
         ("protected_resume.pdf", None, "ERR_PASSWORD_PROTECTED"),
         ("broken.pdf", b"%PDF-1.4\n" + b"\x00garbage" * 50, None),   # damaged PDF
-        ("big.pdf", b"%PDF-" + b"0" * (6 * 1024 * 1024), "ERR_FILE_TOO_LARGE"),
+        pytest.param("big.pdf", b"%PDF-" + b"0" * (6 * 1024 * 1024), "ERR_FILE_TOO_LARGE", id="oversized-pdf"),
     ])
     def test_invalid_file_explained_and_recorded(self, client, filename, data, code):
         login(client)

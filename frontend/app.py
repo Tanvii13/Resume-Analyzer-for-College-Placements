@@ -45,7 +45,12 @@ app.config.update(
 )
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
-ROLES = {"student": "Student", "officer": "Placement Officer", "admin": "Admin"}
+ROLES = {
+    "student": "Student",
+    "placement_officer": "Placement Officer",
+    "career_counselor": "Career Counselor",
+    "admin": "Admin",
+}
 
 
 # ---------------------------------------------------------------------------
@@ -60,10 +65,10 @@ USERS = {
         "role": "student",
     },
     "officer@dau.ac.in": {
-        "name": "Priya Shah",
+        "name": "xyz",
         "email": "officer@dau.ac.in",
         "password_hash": generate_password_hash("Password@123"),
-        "role": "officer",
+        "role": "placement_officer",
     },
 }
 
@@ -71,9 +76,9 @@ RESUMES = {}  # email -> list of resume records (newest first)
 
 # Curated sample opportunities for the Sprint 4 prototype. Replace with a verified feed later.
 OPPORTUNITIES = [
-    {"id": "intern-python", "title": "Software Engineering Intern", "company": "Campus Technology Lab", "type": "Internship", "location": "Hybrid · Ahmedabad", "description": "Build Python services and REST APIs. Work with SQL, Git, testing, and a small collaborative team. JavaScript experience is a plus."},
-    {"id": "analyst-data", "title": "Junior Data Analyst", "company": "Student Analytics Co.", "type": "Full-time", "location": "On-site · Ahmedabad", "description": "Use Python, SQL, pandas, Excel, and Power BI to clean data and communicate insights. Strong problem solving and teamwork required."},
-    {"id": "frontend-intern", "title": "Frontend Developer Intern", "company": "BrightWeb Studio", "type": "Internship", "location": "Remote · India", "description": "Create accessible web interfaces using JavaScript, TypeScript, React, HTML, CSS, and Git. Collaborate with designers and backend engineers."},
+    {"id": "intern-python", "title": "Software Engineering Intern", "company": "Campus Technology Lab", "type": "Internship", "location": "Hybrid Â· Ahmedabad", "description": "Build Python services and REST APIs. Work with SQL, Git, testing, and a small collaborative team. JavaScript experience is a plus."},
+    {"id": "analyst-data", "title": "Junior Data Analyst", "company": "Student Analytics Co.", "type": "Full-time", "location": "On-site Â· Ahmedabad", "description": "Use Python, SQL, pandas, Excel, and Power BI to clean data and communicate insights. Strong problem solving and teamwork required."},
+    {"id": "frontend-intern", "title": "Frontend Developer Intern", "company": "BrightWeb Studio", "type": "Internship", "location": "Remote Â· India", "description": "Create accessible web interfaces using JavaScript, TypeScript, React, HTML, CSS, and Git. Collaborate with designers and backend engineers."},
 ]
 
 
@@ -114,7 +119,7 @@ def staff_required(view):
             flash("Please log in to continue.", "error")
             return redirect(url_for("login"))
 
-        if user["role"] not in ("officer", "admin"):
+        if user["role"] not in ("placement_officer", "career_counselor"):
             abort(403)
 
         return view(*args, **kwargs)
@@ -175,7 +180,7 @@ def upload_failed(original_name, error):
         "id": uuid.uuid4().hex[:10],
         "filename": original_name or "Unnamed file",
         "size": None,
-        "uploaded": datetime.now().strftime("%b %d, %Y · %H:%M"),
+        "uploaded": datetime.now().strftime("%b %d, %Y Â· %H:%M"),
         "status": "Failed",
         "error_code": error.code,
         "error_message": error.message,
@@ -286,7 +291,7 @@ def logout():
 def dashboard():
     user = current_user()
 
-    if user["role"] in ("officer", "admin"):
+    if user["role"] in ("placement_officer", "career_counselor"):
         return redirect(url_for("staff_dashboard"))
 
     resumes = RESUMES.get(session["user_email"], [])
@@ -311,19 +316,19 @@ def upload():
     original = secure_filename(file.filename) if file and file.filename else ""
     data = file.read() if file else b""
 
-    # Step 1 — validate (type, size, empty, real file signature)
+    # Step 1 â€” validate (type, size, empty, real file signature)
     try:
         ext = validate_file(original, data)
     except ResumeParseError as e:
         return upload_failed(original, e)
 
-    # Step 2 — save privately under a random name
+    # Step 2 â€” save privately under a random name
     stored_name = f"{uuid.uuid4().hex}.{ext}"
     path = os.path.join(app.config["UPLOAD_FOLDER"], stored_name)
     with open(path, "wb") as f:
         f.write(data)
 
-    # Step 3 — parse into sections
+    # Step 3 â€” parse into sections
     try:
         parsed = parse_resume(path, ext)
     except ResumeParseError as e:
@@ -335,7 +340,7 @@ def upload():
         "filename": original,
         "stored_name": stored_name,
         "size": f"{max(1, len(data) // 1024)} KB",
-        "uploaded": datetime.now().strftime("%b %d, %Y · %H:%M"),
+        "uploaded": datetime.now().strftime("%b %d, %Y Â· %H:%M"),
         "status": "Parsed",
         "parsed": parsed,
     }
@@ -556,7 +561,7 @@ DESIGN_VERSION = "Liquid Glass design (v8, highlighter)"
 if __name__ == "__main__":
     # Printed once at startup so you can see exactly which copy of the project is running.
     if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
-        print(f"\n  Resume Analyzer · {DESIGN_VERSION}")
+        print(f"\n  Resume Analyzer Â· {DESIGN_VERSION}")
         print(f"  Running from: {app.root_path}")
         print("  Open http://127.0.0.1:5000  (stop with Ctrl+C)\n")
     app.run(debug=True)   # if port 5000 is busy, another copy is still running: close it first
