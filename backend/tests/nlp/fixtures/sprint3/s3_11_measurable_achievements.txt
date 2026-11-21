@@ -1,0 +1,21 @@
+Nikhil Joshi
+nikhil.joshi@gmail.com | +91 97370 55443 | github.com/nikhilj | linkedin.com/in/nikhil-joshi
+
+EDUCATION
+B.Tech in ICT, DA-IICT, 2022 - 2026, CPI 8.7/10
+
+TECHNICAL SKILLS
+Languages: Go, Python, SQL
+Tools: Kubernetes, Docker, Prometheus, Git
+Soft Skills: Communication, Leadership
+
+EXPERIENCE
+Backend Intern
+Razorpay | Bengaluru | May 2025 - Jul 2025
+- Optimized a payment reconciliation job in Go, reducing runtime by 62% on 3 million records.
+- Added Prometheus alerts that cut incident detection time from 15 minutes to 2 minutes.
+
+PROJECTS
+URL Shortener | Go, Redis, PostgreSQL
+- Designed a URL shortener handling 5,000 requests per second in load tests.
+- Achieved 99.9% uptime over a 30-day deployment on Kubernetes.

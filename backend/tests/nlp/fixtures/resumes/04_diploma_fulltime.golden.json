@@ -1,0 +1,55 @@
+{
+  "contact": {
+    "full_name": "Kavya Iyer",
+    "email": "kavya.iyer@yahoo.com",
+    "phone": "+91 90123 45678",
+    "linkedin_url": "https://linkedin.com/in/kavya-iyer"
+  },
+  "education": [
+    {
+      "degree": "B.E.",
+      "institution": "Government Engineering College",
+      "field_of_study": "Computer Engineering",
+      "start_year": 2020,
+      "graduation_year": 2023,
+      "cgpa": 8.1
+    },
+    {
+      "degree": "Diploma",
+      "institution": "Government Polytechnic",
+      "start_year": 2017,
+      "graduation_year": 2020,
+      "percentage": 85.6
+    }
+  ],
+  "experience": [
+    {
+      "job_title": "Systems Engineer",
+      "company_name": "Infosys Ltd.",
+      "location": "Pune",
+      "start_date": "2023-06",
+      "end_date": null,
+      "is_current": true
+    }
+  ],
+  "internships": [],
+  "projects": [],
+  "technical_skills_include": [
+    "Java",
+    "Spring Boot",
+    "Selenium",
+    "SQL"
+  ],
+  "skills_exclude": [
+    "C",
+    "Go",
+    "R"
+  ],
+  "achievements": [],
+  "certifications": [
+    "AWS Certified Cloud Practitioner (2024)"
+  ],
+  "missing_critical_sections": [
+    "projects"
+  ]
+}
