@@ -156,6 +156,13 @@ from app.nlp.versioning import (
     build_version_metadata,
     configuration_fingerprint,
 )
+from app.nlp.reprocessing import (
+    ReprocessedJobMatching,
+    ReprocessedResumeAnalysis,
+    UnsupportedHistoricalVersionError,
+    reprocess_job_matching,
+    reprocess_resume_analysis,
+)
 
 __all__ = [  # noqa: RUF022
     # Preprocessing (Module A)
@@ -220,6 +227,12 @@ __all__ = [  # noqa: RUF022
     "NLPVersionMetadata",
     "build_version_metadata",
     "configuration_fingerprint",
+    # Historical reprocessing (Sprint 5 Module C)
+    "ReprocessedJobMatching",
+    "ReprocessedResumeAnalysis",
+    "UnsupportedHistoricalVersionError",
+    "reprocess_job_matching",
+    "reprocess_resume_analysis",
     # Scoring Engine (Sprint 3 Module A)
     "ResumeScoringEngine",
     "score_resume",
