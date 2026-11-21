@@ -104,6 +104,23 @@ def student_required(view):
         return view(*args, **kwargs)
     return wrapped
 
+def staff_required(view):
+    """Allow placement officers and admins to access staff pages."""
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        user = current_user()
+
+        if user is None:
+            flash("Please log in to continue.", "error")
+            return redirect(url_for("login"))
+
+        if user["role"] not in ("officer", "admin"):
+            abort(403)
+
+        return view(*args, **kwargs)
+
+    return wrapped
+
 
 def find_resume(resume_id):
     """Look only inside the logged-in user's own resumes, so nobody can open someone else's."""
@@ -267,9 +284,22 @@ def logout():
 @app.route("/dashboard")
 @login_required
 def dashboard():
+    user = current_user()
+
+    if user["role"] in ("officer", "admin"):
+        return redirect(url_for("staff_dashboard"))
+
     resumes = RESUMES.get(session["user_email"], [])
-    latest = next((r for r in resumes if r["status"] == "Parsed"), None)
-    return render_template("dashboard.html", resumes=resumes, latest=latest)
+    latest = next(
+        (r for r in resumes if r["status"] == "Parsed"),
+        None
+    )
+
+    return render_template(
+        "dashboard.html",
+        resumes=resumes,
+        latest=latest
+    )
 
 
 # ----- US-02, US-03, US-04: upload, parse, handle invalid files -------------
@@ -359,6 +389,145 @@ def view_resume(resume_id):
         abort(404)
     analysis = analyze_resume(resume["parsed"])
     return render_template("resume.html", resume=resume, p=resume["parsed"], analysis=analysis)
+# ---------------------------------------------------------
+# Sprint 5 - US-15: Placement Dashboard and Reports
+# ---------------------------------------------------------
+
+@app.route("/staff/dashboard")
+@staff_required
+def staff_dashboard():
+    students = [
+        student for student in USERS.values()
+        if student["role"] == "student"
+    ]
+
+    total_resumes = 0
+    students_with_resumes = 0
+    scores = []
+    skill_counts = {}
+    improvement_counts = {}
+
+    for student in students:
+        email = student["email"]
+
+        parsed_resumes = [
+            resume for resume in RESUMES.get(email, [])
+            if resume["status"] == "Parsed"
+            and resume.get("parsed") is not None
+        ]
+
+        total_resumes += len(parsed_resumes)
+
+        if not parsed_resumes:
+            continue
+
+        students_with_resumes += 1
+
+        # Use the student's latest successfully parsed resume
+        latest = parsed_resumes[0]
+        analysis = analyze_resume(latest["parsed"])
+
+        scores.append(analysis["score"])
+
+        for group in analysis["skills"]:
+            for skill in set(group["skills"]):
+                skill_counts[skill] = skill_counts.get(skill, 0) + 1
+
+        for criterion in analysis["criteria"]:
+            if not criterion["passed"]:
+                area = criterion["title"]
+                improvement_counts[area] = (
+                    improvement_counts.get(area, 0) + 1
+                )
+
+    metrics = {
+        "total_students": len(students),
+        "students_with_resumes": students_with_resumes,
+        "total_resumes": total_resumes,
+        "average_score": (
+            round(sum(scores) / len(scores), 1)
+            if scores else None
+        ),
+    }
+
+    common_skills = sorted(
+        skill_counts.items(),
+        key=lambda item: (-item[1], item[0])
+    )[:10]
+
+    improvement_areas = sorted(
+        improvement_counts.items(),
+        key=lambda item: (-item[1], item[0])
+    )[:10]
+
+    return render_template(
+        "staff_dashboard.html",
+        metrics=metrics,
+        common_skills=common_skills,
+        improvement_areas=improvement_areas
+    )
+
+@app.route("/staff/students")
+@staff_required
+def staff_students():
+    students = []
+
+    for email, student in USERS.items():
+        if student["role"] != "student":
+            continue
+
+        parsed_resumes = [
+            r for r in RESUMES.get(email, [])
+            if r["status"] == "Parsed"
+            and r.get("parsed") is not None
+        ]
+
+        latest = parsed_resumes[0] if parsed_resumes else None
+
+        students.append({
+            "name": student["name"],
+            "email": email,
+            "resume_count": len(parsed_resumes),
+            "latest": latest,
+            "score": analyze_resume(latest["parsed"])["score"]
+                     if latest else None,
+        })
+
+    students.sort(key=lambda s: s["name"].lower())
+
+    return render_template(
+        "staff_students.html",
+        students=students
+    )
+
+
+@app.route("/staff/students/<student_email>/resumes/<resume_id>")
+@staff_required
+def staff_resume_analysis(student_email, resume_id):
+    student = USERS.get(student_email)
+
+    if student is None or student["role"] != "student":
+        abort(404)
+
+    resume = next(
+        (
+            r for r in RESUMES.get(student_email, [])
+            if r["id"] == resume_id
+            and r["status"] == "Parsed"
+            and r.get("parsed") is not None
+        ),
+        None
+    )
+
+    if resume is None:
+        abort(404)
+
+    return render_template(
+        "staff_analysis.html",
+        student=student,
+        resume=resume,
+        analysis=analyze_resume(resume["parsed"])
+    )
 
 
 # ----- Error pages ----------------------------------------------------------
@@ -391,3 +560,8 @@ if __name__ == "__main__":
         print(f"  Running from: {app.root_path}")
         print("  Open http://127.0.0.1:5000  (stop with Ctrl+C)\n")
     app.run(debug=True)   # if port 5000 is busy, another copy is still running: close it first
+
+
+
+
+ 

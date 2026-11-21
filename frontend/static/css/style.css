@@ -618,3 +618,121 @@ a.list-row:hover { background: var(--fill-2); text-decoration: none; }
 .opportunity-card { padding: 22px; }.opportunity-top { display: flex; justify-content: space-between; gap: 16px; }.opportunity-top p { margin-top: 0; }.opportunity-score { color: #16754c; font-size: 22px; white-space: nowrap; }
 .opportunity-card details { margin-top: 14px; font-size: 14px; }.opportunity-card summary { cursor: pointer; font-weight: 600; }
 @media (max-width: 700px) { .match-result { grid-template-columns: 1fr; }.opportunity-list { grid-template-columns: 1fr; } }
+
+
+/* Sprint 5 - Placement Staff Pages */
+
+.staff-panel {
+    padding: 28px;
+    margin-bottom: 24px;
+}
+
+.staff-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.staff-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    text-align: left;
+}
+
+.staff-table th,
+.staff-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+}
+
+.staff-table th {
+    font-weight: 600;
+}
+
+.staff-score {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.staff-score-number {
+    font-size: 40px;
+    font-weight: 700;
+}
+
+.staff-skill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0 24px;
+}
+
+.staff-skill {
+    padding: 7px 12px;
+    border-radius: 20px;
+    background: var(--surface-secondary, #f1f5f9);
+    color: var(--text, #1e293b);
+    font-size: 14px;
+}
+
+.staff-criterion {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+}
+
+.staff-criterion p {
+    margin: 8px 0 0;
+}
+
+.staff-passed {
+    color: #15803d;
+    margin-left: 12px;
+}
+
+.staff-needs-work {
+    color: #b45309;
+    margin-left: 12px;
+}
+
+@media (max-width: 600px) {
+    .staff-panel {
+        padding: 18px;
+    }
+
+    .staff-score {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+}
+
+/* Sprint 5 - Staff Dashboard */
+
+.staff-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.staff-metric {
+    padding: 24px;
+}
+
+.staff-metric h2 {
+    font-size: 32px;
+    margin-top: 12px;
+}
+
+@media (max-width: 900px) {
+    .staff-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 550px) {
+    .staff-metrics {
+        grid-template-columns: 1fr;
+    }
+}
