@@ -163,6 +163,17 @@ from app.nlp.reprocessing import (
     reprocess_job_matching,
     reprocess_resume_analysis,
 )
+from app.nlp.placement_reports import (
+    PLACEMENT_REPORT_VERSION,
+    SPRINT5_WORKFLOW_VERSION,
+    PlacementReport,
+    PlacementReportBuilder,
+    PrivacyViolationError,
+    Sprint5Workflow,
+    StudentAnalysis,
+    StudentRecord,
+    build_placement_report,
+)
 
 __all__ = [  # noqa: RUF022
     # Preprocessing (Module A)
@@ -233,6 +244,16 @@ __all__ = [  # noqa: RUF022
     "UnsupportedHistoricalVersionError",
     "reprocess_job_matching",
     "reprocess_resume_analysis",
+    # Placement reports and Sprint 5 integration (Sprint 5 Modules D-E)
+    "PLACEMENT_REPORT_VERSION",
+    "SPRINT5_WORKFLOW_VERSION",
+    "PlacementReport",
+    "PlacementReportBuilder",
+    "PrivacyViolationError",
+    "Sprint5Workflow",
+    "StudentAnalysis",
+    "StudentRecord",
+    "build_placement_report",
     # Scoring Engine (Sprint 3 Module A)
     "ResumeScoringEngine",
     "score_resume",
