@@ -132,3 +132,4 @@ class StaffAnalysisResult(_StaffModel):
     summary: StaffFriendlySummary
     source_versions: dict[str, Optional[str]] = Field(default_factory=dict)
     adapter_version: str = STAFF_INSIGHTS_VERSION
+
