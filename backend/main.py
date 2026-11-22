@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 
 from app.routers.auth import router as auth_router
 from app.routers.resumes import router as resumes_router
+from app.routers.admin_audit import router as admin_audit_router
 from app.routers.resume_insights import router as resume_insights_router
 from app.routers.officer import router as officer_router
 from app.routers.admin import router as admin_router
@@ -36,6 +37,7 @@ async def resume_parsing_exception_handler(
 # Register API routers
 app.include_router(auth_router)
 app.include_router(resumes_router)
+app.include_router(admin_audit_router)
 app.include_router(resume_insights_router)
 app.include_router(officer_router)
 app.include_router(admin_router)
