@@ -1,0 +1,91 @@
+
+{% extends "base.html" %}
+
+{% block title %}Student Resume Analysis{% endblock %}
+
+{% block nav %}
+{% include "_app_nav.html" %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container page">
+
+  <section class="page-head">
+    <h1>Student Resume Analysis</h1>
+    <p>
+      Review student resumes, analysis scores,
+      and placement readiness information.
+    </p>
+  </section>
+
+  <section class="card staff-panel">
+    <h2>Registered Students</h2>
+    <p class="muted">
+      Select a resume to view its analysis.
+    </p>
+
+    {% if students %}
+
+      <div class="staff-table-wrap">
+        <table class="staff-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Email</th>
+              <th>Resumes</th>
+              <th>Latest Score</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for student in students %}
+            <tr>
+              <td>{{ student.name }}</td>
+              <td>{{ student.email }}</td>
+              <td>{{ student.resume_count }}</td>
+
+              <td>
+                {% if student.score is not none %}
+                  {{ student.score }}/100
+                {% else %}
+                  Not available
+                {% endif %}
+              </td>
+
+              <td>
+                {% if student.latest %}
+                  <a
+                    class="btn btn-primary btn-sm"
+                    href="{{ url_for(
+                      'staff_resume_analysis',
+                      student_email=student.email,
+                      resume_id=student.latest.id
+                    ) }}"
+                  >
+                    View Analysis
+                  </a>
+                {% else %}
+                  <span class="muted">No resume</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    {% else %}
+
+      <div class="empty-state">
+        <h3>No students found</h3>
+        <p>No student accounts are currently available.</p>
+      </div>
+
+    {% endif %}
+  </section>
+
+</div>
+
+{% endblock %}

@@ -548,5 +548,3 @@ def test_practical_work_four_scenarios_deduplication(high_quality_candidate_prof
     assert "SEC_MISSING_PROJECTS" not in rule_ids4
     assert "SEC_NO_STANDALONE_PROJECTS" not in rule_ids4
     assert "SEC_NO_PRACTICAL_WORK" not in rule_ids4
-
-

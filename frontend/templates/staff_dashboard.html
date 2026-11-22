@@ -1,0 +1,128 @@
+
+{% extends "base.html" %}
+
+{% block title %}Placement Dashboard{% endblock %}
+
+{% block nav %}
+{% include "_app_nav.html" %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container page">
+
+  <section class="page-head">
+    <h1>Placement Dashboard</h1>
+    <p>Student resume readiness and placement preparation reports.</p>
+  </section>
+
+  <div class="staff-metrics">
+
+    <div class="card staff-metric">
+      <p class="muted">Registered Students</p>
+      <h2>{{ metrics.total_students }}</h2>
+    </div>
+
+    <div class="card staff-metric">
+      <p class="muted">Students with Resumes</p>
+      <h2>{{ metrics.students_with_resumes }}</h2>
+    </div>
+
+    <div class="card staff-metric">
+      <p class="muted">Parsed Resumes</p>
+      <h2>{{ metrics.total_resumes }}</h2>
+    </div>
+
+    <div class="card staff-metric">
+      <p class="muted">Average Resume Score</p>
+      <h2>
+        {% if metrics.average_score is not none %}
+          {{ metrics.average_score }}/100
+        {% else %}
+          N/A
+        {% endif %}
+      </h2>
+    </div>
+
+  </div>
+
+  <section class="card staff-panel">
+    <h2>Common Student Skills</h2>
+    <p class="muted">
+      Most frequently identified skills in students' latest resumes.
+    </p>
+
+    {% if common_skills %}
+      <div class="staff-table-wrap">
+        <table class="staff-table">
+          <thead>
+            <tr>
+              <th>Skill</th>
+              <th>Students</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for skill, count in common_skills %}
+              <tr>
+                <td>{{ skill }}</td>
+                <td>{{ count }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="muted">No skill data available yet.</p>
+    {% endif %}
+  </section>
+
+  <section class="card staff-panel">
+    <h2>Common Improvement Areas</h2>
+    <p class="muted">
+      Resume criteria that students most frequently need to improve.
+    </p>
+
+    {% if improvement_areas %}
+      <div class="staff-table-wrap">
+        <table class="staff-table">
+          <thead>
+            <tr>
+              <th>Improvement Area</th>
+              <th>Students</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for area, count in improvement_areas %}
+              <tr>
+                <td>{{ area }}</td>
+                <td>{{ count }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="muted">No improvement data available yet.</p>
+    {% endif %}
+  </section>
+
+  <section class="card staff-panel">
+    <h2>Student Reports</h2>
+    <p>Review individual student resumes and analysis results.</p>
+
+    <a href="{{ url_for('staff_students') }}"
+       class="btn btn-primary btn-sm">
+      View Student Analysis
+    </a>
+  </section>
+
+  <p class="muted small">
+    Reports use in-memory prototype data and reset when the server restarts.
+    Resume scores are not placement predictions.
+  </p>
+
+</div>
+
+{% endblock %}
