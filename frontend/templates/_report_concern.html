@@ -1,0 +1,11 @@
+{# Sprint 6 · US-19: anyone can report a result that looks unfair. It is recorded for the admin to review. #}
+<details class="concern">
+  <summary>Does a result look unfair? Report it</summary>
+  <form method="POST" action="{{ url_for('report_concern') }}" class="concern-form">{{ csrf_field() }}
+    <input type="hidden" name="about" value="{{ concern_about }}">
+    <input type="hidden" name="next" value="{{ request.path }}">
+    <label for="concern">What looks wrong, and why?</label>
+    <textarea id="concern" name="concern" rows="3" maxlength="600" required placeholder="For example: my skills section lists React, but it wasn't counted."></textarea>
+    <button type="submit" class="btn btn-gray btn-sm">Send to the Admin</button>
+  </form>
+</details>

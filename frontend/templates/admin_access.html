@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{# Sprint 6 · US-16 Manage Role-Based Access (FR-15, NFR-07, DR-07) — admin only #}
+{% block title %}Access{% endblock %}
+{% block nav %}{% include "_app_nav.html" %}{% endblock %}
+
+{% block content %}
+<div class="container page">
+
+  <section class="page-head">
+    <h1>Access</h1>
+    <p>Who can use the system, with which role, and what each role is allowed to do.</p>
+  </section>
+
+  <!-- Criterion 3: changes apply on the person's very next click -->
+  <section class="card staff-panel">
+    <h2>Accounts</h2>
+    <p class="muted">Changing a role or turning an account off takes effect straight away, even if the person is logged in.</p>
+    <div class="staff-table-wrap">
+      <table class="staff-table access-users">
+        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Account</th><th></th></tr></thead>
+        <tbody>
+          {% for u in users %}
+            {% set me = u.email == user.email %}
+            <tr>
+              <td>{{ u.name }}{% if me %} <span class="muted small">(you)</span>{% endif %}</td>
+              <td>{{ u.email }}</td>
+              {% if me %}
+                <td>{{ roles[u.role] }}</td>
+                <td>On</td>
+                <td><span class="muted small">Ask another admin</span></td>
+              {% else %}
+                <td>
+                  <select name="role" form="f-{{ loop.index }}" aria-label="Role for {{ u.name }}" class="s6-select">
+                    {% for key, label in roles.items() %}<option value="{{ key }}" {% if u.role == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                  </select>
+                </td>
+                <td>
+                  <select name="active" form="f-{{ loop.index }}" aria-label="Account status for {{ u.name }}" class="s6-select">
+                    <option value="on" {% if u.get('active', True) %}selected{% endif %}>On</option>
+                    <option value="off" {% if not u.get('active', True) %}selected{% endif %}>Off</option>
+                  </select>
+                </td>
+                <td>
+                  <form method="POST" action="{{ url_for('admin_update_user', email=u.email) }}" id="f-{{ loop.index }}">{{ csrf_field() }}
+                    <button type="submit" class="btn btn-gray btn-sm">Save</button>
+                  </form>
+                </td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Criterion 1: different access levels for different roles -->
+  <section class="card staff-panel">
+    <h2>What each role can do</h2>
+    <p class="muted">Checked on the server for every page and action, not just hidden in the menus. A test logs in as every role and tries every row.</p>
+    <div class="staff-table-wrap">
+      <table class="staff-table perm-table">
+        <thead><tr><th>Permission</th>{% for key, label in roles.items() %}<th>{{ label }}</th>{% endfor %}</tr></thead>
+        <tbody>
+          {% for key, (label, allowed) in permissions.items() %}
+            <tr>
+              <td>{{ label }}</td>
+              {% for role_key in roles %}
+                <td>{% if role_key in allowed %}<span class="perm-yes" role="img" aria-label="Allowed">✓</span>{% else %}<span class="perm-no" role="img" aria-label="Not allowed">–</span>{% endif %}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <ul class="s6-facts">
+      <li>Passwords are stored only as salted hashes. Forms from other websites are refused (CSRF token).</li>
+      <li>After 5 wrong passwords, logging in to that account waits 10 minutes.</li>
+      <li>Without "Remember this device", people are logged out after 30 minutes without activity.</li>
+      <li>There is always at least one active admin, and admins can't change their own access.</li>
+    </ul>
+  </section>
+
+  <section class="card staff-panel">
+    <h2>Recent access changes</h2>
+    {% if audit_log %}
+      <div class="staff-table-wrap">
+        <table class="staff-table">
+          <thead><tr><th>When</th><th>Who</th><th>Change</th></tr></thead>
+          <tbody>{% for a in audit_log %}<tr><td>{{ a.when }}</td><td>{{ a.who }}</td><td>{{ a.action }}: {{ a.detail }}</td></tr>{% endfor %}</tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="muted">No changes yet.</p>
+    {% endif %}
+  </section>
+
+</div>
+{% endblock %}

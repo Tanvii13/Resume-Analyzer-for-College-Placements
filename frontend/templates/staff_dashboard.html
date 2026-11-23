@@ -118,8 +118,9 @@
     </a>
   </section>
 
+  {% with assist_text = "Scores and checks are worked out automatically and can be wrong. Use them as one input alongside the resume and the student. The final decision is yours: the tool never rejects anyone." %}{% include "_assist_note.html" %}{% endwith %}
+
   <p class="muted small">
-    Reports use in-memory prototype data and reset when the server restarts.
     Resume scores are not placement predictions.
   </p>
 

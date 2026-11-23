@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{# Sprint 6 · US-17 Protect Student Resume Data (NFR-03, NFR-09, DR-08) — admin only #}
+{% block title %}Data{% endblock %}
+{% block nav %}{% include "_app_nav.html" %}{% endblock %}
+
+{% block content %}
+<div class="container page">
+
+  <section class="page-head">
+    <h1>Data</h1>
+    <p>How student resume data is kept, who has opened it, and what admins have changed.</p>
+  </section>
+
+  <div class="staff-metrics">
+    <div class="card staff-metric"><p class="muted">Uploads Stored</p><h2>{{ uploads }}</h2></div>
+    <div class="card staff-metric"><p class="muted">Students Who Agreed</p><h2>{{ consented }}/{{ students }}</h2></div>
+    <div class="card staff-metric"><p class="muted">Staff Views Logged</p><h2>{{ access_log|length }}</h2></div>
+    <div class="card staff-metric"><p class="muted">Days Uploads Are Kept</p><h2>{{ retention_days }}</h2></div>
+  </div>
+
+  <section class="card staff-panel">
+    <h2>Privacy rules</h2>
+    <ul class="s6-facts">
+      <li>Students agree to the <a href="{{ url_for('privacy') }}">privacy notice</a> before their first upload.</li>
+      <li>Files are stored privately under random names, never at a public address. No one can download another person's file.</li>
+      <li>Staff see the analysis only, not the phone number, links or full resume text.</li>
+      <li>Every time staff open a student's analysis it's logged, and the student sees it on their dashboard. Logs hold names and file names, never resume text.</li>
+      <li>Students can download everything stored about them and delete any resume.</li>
+      <li>Uploads older than {{ retention_days }} days are deleted automatically (checked every hour).</li>
+    </ul>
+    <form method="POST" action="{{ url_for('admin_purge') }}" class="s6-action" onsubmit="return confirm('Delete every upload older than {{ retention_days }} days? This can\'t be undone.')">{{ csrf_field() }}
+      <span class="muted small">{{ expired }} upload{{ 's' if expired != 1 }} past the retention period right now.</span>
+      <button type="submit" class="btn btn-gray btn-sm">Delete Expired Uploads Now</button>
+    </form>
+  </section>
+
+  <section class="card staff-panel">
+    <h2>Who opened which analysis</h2>
+    {% if access_log %}
+      <div class="staff-table-wrap">
+        <table class="staff-table">
+          <thead><tr><th>When</th><th>Staff</th><th>Student</th><th>Resume</th></tr></thead>
+          <tbody>{% for a in access_log %}<tr><td>{{ a.when }}</td><td>{{ a.who }} · {{ a.role }}</td><td>{{ a.student_name }}</td><td>{{ a.file }}</td></tr>{% endfor %}</tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="muted">No staff views yet.</p>
+    {% endif %}
+  </section>
+
+  <section class="card staff-panel">
+    <h2>Admin actions</h2>
+    {% if audit_log %}
+      <div class="staff-table-wrap">
+        <table class="staff-table">
+          <thead><tr><th>When</th><th>Who</th><th>Action</th></tr></thead>
+          <tbody>{% for a in audit_log %}<tr><td>{{ a.when }}</td><td>{{ a.who }}</td><td>{{ a.action }}{% if a.detail %}: {{ a.detail }}{% endif %}</td></tr>{% endfor %}</tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="muted">No admin actions yet.</p>
+    {% endif %}
+  </section>
+
+</div>
+{% endblock %}

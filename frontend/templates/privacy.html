@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{# Sprint 6 · Privacy notice (US-17), how results are made (US-18, US-19). Public page. #}
+{% block title %}Privacy{% endblock %}
+{% block nav %}{% if user %}{% include "_app_nav.html" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container page privacy-page">
+  {% if not user %}<a href="{{ url_for('index') }}" class="back-link">Home</a>{% endif %}
+
+  <section class="page-head">
+    <h1>Privacy</h1>
+    <p>What we store, why, who can see it, how long it's kept, and how results are worked out.</p>
+  </section>
+
+  <section class="card staff-panel">
+    <h2>What we store, and why</h2>
+    <ul class="s6-facts">
+      <li><strong>Your account:</strong> name, college email, role, and your password as a salted hash (never the password itself).</li>
+      <li><strong>Your resumes:</strong> the file, its text, and the analysis made from it.</li>
+      <li><strong>Logs:</strong> when placement staff open your analysis, and changes admins make. Logs never hold resume text.</li>
+      <li>It's used only to help you prepare for placements and to help the placement cell support students. It isn't sold, shared outside the college, or used to train AI models.</li>
+    </ul>
+  </section>
+
+  <section class="card staff-panel">
+    <h2>Who can see it</h2>
+    <ul class="s6-facts">
+      <li><strong>You:</strong> everything about your own account.</li>
+      <li><strong>Placement officers, career counselors and admins:</strong> your analysis (score, checks, skills, sections found), not your phone number, links or full resume text. Each time they open it, it's recorded and you can see it on your dashboard.</li>
+      <li><strong>Admins</strong> also manage accounts and roles. Nobody else can see your data, and files are never at a public address.</li>
+    </ul>
+  </section>
+
+  <section class="card staff-panel">
+    <h2>How long it's kept</h2>
+    <p>Uploads are deleted automatically {{ retention_days }} days after you upload them. You can delete any resume yourself from its page, and download everything stored about you from your dashboard.</p>
+  </section>
+
+  <section class="card staff-panel" id="how-results">
+    <h2>How results are worked out</h2>
+    <p class="muted">Results are supporting information. The tool never accepts, rejects or selects anyone: placement decisions are made by people.</p>
+    <div class="staff-table-wrap">
+      <table class="staff-table">
+        <thead><tr><th>Score factor</th><th>Points</th><th>What is checked</th></tr></thead>
+        <tbody>{% for title, points, what in scoring %}<tr><td>{{ title }}</td><td>{{ points }}</td><td>{{ what }}</td></tr>{% endfor %}</tbody>
+      </table>
+    </div>
+    <div class="staff-table-wrap">
+      <table class="staff-table">
+        <thead><tr><th>Job match factor</th><th>What is counted</th></tr></thead>
+        <tbody>{% for title, what in matching_factors %}<tr><td>{{ title }}</td><td>{{ what }}</td></tr>{% endfor %}</tbody>
+      </table>
+    </div>
+    <h2 class="s6-subhead">Never used</h2>
+    <div class="staff-skill-list">{% for item in not_used %}<span class="staff-skill">{{ item }}</span>{% endfor %}</div>
+    <p class="muted small">If a result looks unfair, use "Does a result look unfair? Report it" under the result. The admin reviews every report.</p>
+  </section>
+</div>
+{% endblock %}

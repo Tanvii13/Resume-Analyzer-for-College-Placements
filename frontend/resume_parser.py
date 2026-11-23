@@ -165,6 +165,12 @@ def extract_contact(text, header_lines):
 def parse_resume(path, ext):
     """Full pipeline used by app.py. Returns a dictionary the templates can show."""
     text, page_count = extract_text(path, ext)
+    return parse_text(text, page_count)
+
+
+def parse_text(text, page_count=None):
+    """Steps 3–4 on text that is already extracted. Also used by the Sprint 6 fairness check,
+    which re-runs the same pipeline on edited copies of a resume's text."""
     header_lines, sections = split_sections(text)
 
     return {
@@ -176,4 +182,5 @@ def parse_resume(path, ext):
         "missing": [SECTION_TITLES[k] for k in EXPECTED_SECTIONS if k not in sections],
         "word_count": len(text.split()),
         "pages": page_count,
+        "text": text,   # kept so the Sprint 6 fairness check can re-run a resume with details changed
     }

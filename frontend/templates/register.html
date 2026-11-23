@@ -12,7 +12,7 @@
 
 {% block content %}
 <section class="auth-wrap">
-  <form class="auth-card glass glass-thick" method="POST" action="{{ url_for('register') }}" id="register-form" novalidate>
+  <form class="auth-card glass glass-thick" method="POST" action="{{ url_for('register') }}" id="register-form" novalidate>{{ csrf_field() }}
     <div class="auth-heading center">
       <h1 class="display-title">Create your account</h1>
       <p>Build your verified campus resume profile.</p>

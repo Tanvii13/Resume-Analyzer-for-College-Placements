@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{# Sprint 6 · US-19 Check Scoring and Matching for Fairness (DR-09) — admin only #}
+{% block title %}Fairness{% endblock %}
+{% block nav %}{% include "_app_nav.html" %}{% endblock %}
+
+{% block content %}
+<div class="container page">
+
+  <section class="page-head">
+    <h1>Fairness</h1>
+    <p>What the score and job match are based on, a check that personal details never change them, and every issue recorded for review.</p>
+  </section>
+
+  <!-- Criterion 1: the main factors are identifiable -->
+  <section class="card staff-panel">
+    <h2>What the score is based on</h2>
+    <div class="staff-table-wrap">
+      <table class="staff-table">
+        <thead><tr><th>Factor</th><th>Points</th><th>What is checked</th></tr></thead>
+        <tbody>{% for title, points, what in scoring %}<tr><td>{{ title }}</td><td>{{ points }}</td><td>{{ what }}</td></tr>{% endfor %}</tbody>
+      </table>
+    </div>
+    <h2 class="s6-subhead">What the job match is based on</h2>
+    <div class="staff-table-wrap">
+      <table class="staff-table">
+        <thead><tr><th>Factor</th><th>What is counted</th></tr></thead>
+        <tbody>{% for title, what in matching_factors %}<tr><td>{{ title }}</td><td>{{ what }}</td></tr>{% endfor %}</tbody>
+      </table>
+    </div>
+    <h2 class="s6-subhead">Never used for the score or the match</h2>
+    <div class="staff-skill-list">{% for item in not_used %}<span class="staff-skill">{{ item }}</span>{% endfor %}</div>
+  </section>
+
+  <!-- Criterion 2: no unjustified differences -->
+  <section class="card staff-panel" id="check">
+    <h2>Fairness check</h2>
+    <p class="muted">Each resume is analysed again with only one personal detail changed: another name, a stated gender, date of birth and religion, a home address, another college, another email and phone. The score, the checklist, the skills and every job match must stay exactly the same.</p>
+    <form method="POST" action="{{ url_for('admin_run_fairness') }}">{{ csrf_field() }}
+      <button type="submit" class="btn btn-primary btn-sm">Run Fairness Check</button>
+      <span class="muted small">Runs on the 2 test resumes and every analysed upload.</span>
+    </form>
+    {% if run %}
+      <div class="staff-score">
+        <span class="staff-score-number">{{ run.passed }}/{{ run.checks }}</span>
+        <span>{{ 'All checks passed' if run.passed == run.checks else 'Some results changed: see the issues below' }} · {{ run.when }}</span>
+      </div>
+      <div class="staff-table-wrap">
+        <table class="staff-table">
+          <thead><tr><th>Resume</th><th>Owner</th><th>Checks passed</th></tr></thead>
+          <tbody>
+            {% for r in run.rows %}
+              <tr><td>{{ r.file }}</td><td>{{ r.owner }}</td>
+                <td>{% if r.passed == r.checks %}<span class="staff-passed">{{ r.passed }}/{{ r.checks }}</span>{% else %}<span class="staff-needs-work">{{ r.passed }}/{{ r.checks }}</span>{% endif %}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+    <p class="muted small">This shows the rules ignore these details. It doesn't prove fairness across groups of real students, which would need outcome data the system doesn't collect, so we don't claim that.</p>
+  </section>
+
+  <!-- Criterion 3: potential issues are recorded for review -->
+  <section class="card staff-panel" id="issues">
+    <h2>Issues for review <span class="count-pill">{{ issues|selectattr('status', 'equalto', 'Open')|list|length }} open</span></h2>
+    <p class="muted">Differences found by the check, and concerns students and staff report with "Does a result look unfair?".</p>
+    {% if issues %}
+      {% for issue in issues %}
+        <div class="staff-criterion">
+          <strong>{{ issue.about or 'General' }}</strong>
+          {% if issue.status == 'Open' %}<span class="staff-needs-work">Open</span>{% else %}<span class="staff-passed">Reviewed</span>{% endif %}
+          <p>{{ issue.detail }}</p>
+          <p class="muted small">{{ issue.source }} · {{ issue.when }}</p>
+          {% if issue.status == 'Open' %}
+            <form method="POST" action="{{ url_for('admin_resolve_issue', issue_id=issue.id) }}" class="resolve-form">{{ csrf_field() }}
+              <input type="text" name="resolution" class="s6-input" placeholder="What you found or changed" aria-label="Resolution for {{ issue.about }}" required>
+              <button type="submit" class="btn btn-gray btn-sm">Mark Reviewed</button>
+            </form>
+          {% else %}
+            <p class="small">Reviewed by {{ issue.reviewed_by }}: {{ issue.resolution }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="muted">No issues recorded.</p>
+    {% endif %}
+  </section>
+
+</div>
+{% endblock %}

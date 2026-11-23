@@ -377,7 +377,6 @@ a.list-row:hover { background: var(--fill-2); text-decoration: none; }
 .auth-heading h2 { font-size: 1.375rem; }
 .auth-heading p { font-size: 0.9375rem; color: var(--label-2); }
 .auth-switch { text-align: center; font-size: 0.9375rem; color: var(--label-2); }
-.demo-hint { text-align: center; font-size: 0.8125rem; color: var(--label-2); }
 
 /* Page header with a large title */
 .page-head { display: grid; gap: 6px; }
@@ -736,3 +735,44 @@ a.list-row:hover { background: var(--fill-2); text-decoration: none; }
         grid-template-columns: 1fr;
     }
 }
+
+/* Sprint 6 - Security, Privacy & Responsible Use
+   New parts only. They reuse the existing cards, tables, lists and colours. */
+
+.assist-note { display: flex; gap: 12px; align-items: flex-start; margin-top: 18px; padding: 14px 16px; border-radius: var(--r-field, 14px); background: var(--fill-2); font-size: 0.9375rem; }
+.assist-note svg { width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; color: var(--tint); }
+.assist-note p { margin: 0; color: var(--label-2); }
+.assist-note .assist-title { margin-bottom: 4px; font-weight: 600; color: var(--label); }
+.staff-panel + .assist-note, .page > .assist-note { margin: 0 0 24px; }
+
+.concern { margin-top: 14px; font-size: 0.9375rem; }
+.concern summary { cursor: pointer; color: var(--tint); font-weight: 500; }
+.concern-form, .review-form { display: grid; gap: 8px; max-width: 620px; margin-top: 12px; }
+.concern-form label, .review-form label { font-size: 0.875rem; font-weight: 600; }
+.concern-form textarea, .review-form textarea, .review-form select, .s6-select, .s6-input {
+  width: 100%; padding: 10px 12px; border: 0; border-radius: var(--r-field, 14px);
+  background: var(--fill); color: var(--label); font: inherit; box-shadow: inset 0 0 0 1px var(--separator); }
+.s6-select { width: auto; min-width: 9.5em; padding: 8px 10px; }
+.s6-select option, .review-form select option { color: #111; }
+.concern-form .btn, .review-form .btn { justify-self: start; }
+.review-saved { margin: 0 0 6px; }
+
+.consent { align-items: flex-start; margin: 14px 0 2px; font-size: 0.875rem; line-height: 1.45; color: var(--label-2); }
+.consent input { flex-shrink: 0; margin-top: 1px; }
+.privacy-section { margin-top: 32px; }
+.privacy-controls { margin: 10px 4px 0; }
+.delete-resume { margin-top: 18px; text-align: center; }
+.link-danger { border: 0; background: none; padding: 6px 8px; color: var(--red); font: inherit; font-size: 0.875rem; cursor: pointer; }
+.link-danger:hover { text-decoration: underline; }
+
+.s6-facts { margin: 12px 0 0; padding-left: 20px; display: grid; gap: 6px; color: var(--label-2); }
+.s6-subhead { margin-top: 26px; font-size: 1.125rem; }
+.s6-action { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--separator); }
+.perm-table td:not(:first-child), .perm-table th:not(:first-child) { text-align: center; }
+.perm-yes { color: var(--green); font-weight: 700; }
+.perm-no { color: var(--label-2); opacity: 0.6; }
+.resolve-form { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.resolve-form .s6-input { flex: 1 1 14em; width: auto; }
+.privacy-page { max-width: 980px; }
+.access-users td { vertical-align: middle; }
+.access-users td:nth-child(2) { overflow-wrap: anywhere; }
