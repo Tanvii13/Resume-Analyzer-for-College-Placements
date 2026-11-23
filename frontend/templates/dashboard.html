@@ -11,27 +11,13 @@
 
   <section class="page-head">
     <h1>Welcome, {{ user.name.split()[0] }}</h1>
-    <p>
-      {% if user.role == 'student' %}Upload your resume to extract structured sections and prepare for placement rounds.
-      {% else %}Placement staff tools are planned for a later sprint.{% endif %}
-    </p>
+    <p>Upload your resume to extract structured sections and prepare for placement rounds.</p>
   </section>
-
-  {% if user.role != 'student' %}
-    <!-- Officer/Admin: not part of Sprint 1 -->
-    <section class="card empty-state">
-      <div class="icon-chip" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M4 20h16M7 16V10M12 16V5M17 16v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </div>
-      <h3>Staff dashboard coming soon</h3>
-      <p>Student summaries and skill-gap reports for placement staff are planned for Sprints 4–5.</p>
-    </section>
-  {% else %}
 
   <div class="split">
     <!-- US-02: upload (content layer: a solid card) -->
     <section class="card" id="upload">
-      <form class="upload-left" method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data" id="upload-form">
+      <form class="upload-left" method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data" id="upload-form">{{ csrf_field() }}
         <h2>Upload a resume</h2>
         <p>PDF or DOCX. It's read and organised into education, skills, projects and experience.</p>
 
@@ -54,11 +40,16 @@
           <small>PDF or DOCX · up to {{ max_mb }} MB · text-based, not scanned</small>
         </label>
 
+        {% if not user.consent_at %}
+          <!-- Sprint 6 · US-17: agree once, before the first upload -->
+          <label class="checkbox consent"><input type="checkbox" name="consent" required>
+            <span>I agree that my resume is stored and analysed to help me prepare for placements, and that authorised placement staff can see the analysis. <a href="{{ url_for('privacy') }}" target="_blank" rel="noopener">How it's used</a></span></label>
+        {% endif %}
         <div class="upload-actions">
           <button type="submit" class="btn btn-primary" id="upload-btn" disabled>Upload &amp; Parse</button>
           <span class="status-dot">Parser ready</span>
         </div>
-        <p class="privacy-note">Your resume is stored privately and visible only to you and authorised placement staff.</p>
+        <p class="privacy-note">Your resume is stored privately and visible only to you and authorised placement staff. <a href="{{ url_for('privacy') }}">Privacy</a></p>
       </form>
     </section>
 
@@ -138,6 +129,27 @@
       </div>
     {% endif %}
   </section>
-  {% endif %}
+
+  <!-- Sprint 6 · US-17: who has seen your analysis, and your controls -->
+  <section id="privacy" class="privacy-section">
+    <div class="section-head">
+      <h2>Who has seen your analysis <span class="count-pill">{{ views|length }}</span></h2>
+      <span class="muted small">Placement staff who opened it, newest first</span>
+    </div>
+    {% if views %}
+      <div class="list">
+        {% for v in views %}
+          <div class="list-row">
+            <span class="grow"><span class="title">{{ v.who }} · {{ v.role }}</span><span class="sub">Opened the analysis of {{ v.file }}</span></span>
+            <span class="muted small">{{ v.when }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="list"><div class="list-row"><span class="grow"><span class="sub">Nobody yet. When placement staff open your analysis, it's listed here.</span></span></div></div>
+    {% endif %}
+    <p class="form-note privacy-controls">Uploads are deleted automatically after {{ retention_days }} days, and you can delete one any time from its page.
+      <a href="{{ url_for('download_my_data') }}" download>Download all my data</a> · <a href="{{ url_for('privacy') }}">Privacy</a></p>
+  </section>
 </div>
 {% endblock %}

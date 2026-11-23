@@ -13,7 +13,7 @@
 {% block content %}
 <section class="auth-wrap">
   <!-- A sheet floats above the wallpaper, so it uses the thicker glass Apple recommends for text-heavy surfaces -->
-  <form class="auth-card glass glass-thick" method="POST" action="{{ url_for('login') }}" novalidate>
+  <form class="auth-card glass glass-thick" method="POST" action="{{ url_for('login') }}" novalidate>{{ csrf_field() }}
     <h1 class="display-title">Welcome back</h1>
 
     {% include "_role_tabs.html" %}
@@ -61,7 +61,6 @@
     <button type="submit" class="btn btn-primary btn-block">Log In</button>
 
     <p class="auth-switch">Don't have an account? <a href="{{ url_for('register') }}">Sign Up</a></p>
-    <p class="demo-hint">Demo student: alex.rivera@dau.ac.in · Password@123</p>
   </form>
 </section>
 {% endblock %}

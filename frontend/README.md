@@ -22,8 +22,9 @@ Open http://127.0.0.1:5000 to see the landing page, then click **Get Started** o
 
 | Account | Email | Password | Role tab |
 |---|---|---|---|
-| Student | alex.rivera@dau.ac.in | Password@123 | Student |
 | Placement officer | officer@dau.ac.in | Password@123 | Placement Officer |
+
+Students create their own account with **Sign Up**.
 
 ## Run the tests
 
@@ -98,7 +99,7 @@ Used by the tests and for the live demo. Do not delete.
 
 1. Open `/dashboard` without logging in → redirected to login (**US-01**).
 2. Log in with a wrong password → "Invalid email or password" (**US-01**).
-3. Log in as `alex.rivera@dau.ac.in` / `Password@123`.
+3. Sign up as a student, then log in.
 4. Upload `sample_resumes/scanned_resume.pdf` → "No readable text" error with Retry (**US-04**).
 5. Upload `sample_resumes/fake_resume.pdf` → "corrupted or renamed" error (**US-04**).
 6. Click Retry, upload `sample_resumes/sample_resume.pdf` (**US-02**) → parsed sections and contact details (**US-03**).
@@ -190,7 +191,7 @@ Same as Sprint 1. No new dependencies.
 python app.py
 ```
 
-Log in as `alex.rivera@dau.ac.in` / `Password@123`, upload `sample_resumes/sample_resume.pdf`, and open the parsed resume page. Below the sections and contact details you will now see the skill groups, the readiness checklist and the score.
+Sign up and log in as a student, upload `sample_resumes/sample_resume.pdf`, and open the parsed resume page. Below the sections and contact details you will now see the skill groups, the readiness checklist and the score.
 
 ## Run the tests
 
@@ -233,7 +234,7 @@ These items and points are an example based on the Sprint 1 parser. **Check them
 
 ## Demo script (≈2 minutes)
 
-1. Log in as `alex.rivera@dau.ac.in` / `Password@123`.
+1. Sign up and log in as a student.
 2. Upload `sample_resumes/sample_resume.pdf` and open the parsed resume page.
 3. Point out the skill groups found in the resume (**US-05**).
 4. Point out the checklist: which items pass and which are missing (**US-06**).
@@ -275,3 +276,53 @@ These items and points are an example based on the Sprint 1 parser. **Check them
 ## Adding this project to another repository
 
 This is a standalone Flask project. To add it to another repository without replacing that repository's files, keep it in a subfolder and run it from that folder. If you are merging into an existing Flask app, integrate the analysis helper, the resume template section and the CSS into that application instead of copying files over blindly.
+
+
+---
+
+# Sprint 6 — Security, Privacy & Responsible Use
+
+**EPIC 6:** Security, Privacy & Responsible Use
+**Goal:** Address and verify security, privacy, responsible use and fairness requirements across the system.
+**User stories:** US-16 Manage role-based access · US-17 Protect student resume data · US-18 Keep automated results as supporting information · US-19 Check scoring and matching for fairness
+**Requirement IDs covered:** FR-15, NFR-03, NFR-07, NFR-09, DR-06, DR-07, DR-08, DR-09
+
+The look of the existing pages is unchanged. New parts reuse the same cards, tables, lists and colours.
+
+## Accounts
+
+| Account | Email | Password | Role tab |
+|---|---|---|---|
+| Student | create one with **Sign Up** | | Student |
+| Placement officer | officer@dau.ac.in | Password@123 | Placement Officer |
+| Admin (new) | admin@dau.ac.in | Password@123 | Admin |
+
+## Traceability: user story → code → tests
+
+| Story | What was built | Where in the code | Tests (`tests/test_sprint6.py`) |
+|---|---|---|---|
+| **US-16** Manage role-based access | One permissions table (`PERMISSIONS`) enforced on the server by `permission_required`, shown on the admin's **Access** page · each role sees only its own tabs · admin changes a role or turns an account off, and it applies on the person's next click · always one active admin · CSRF token on every form · 5 wrong passwords → 10-minute wait · logout after 30 idle minutes · security headers | `app.py`: `PERMISSIONS`, `can()`, `permission_required()`, `admin_access()`, `admin_update_user()`, `security_checks()`, `security_headers()`; `admin_access.html`, `_app_nav.html` | `TestUS16Access` (35) |
+| **US-17** Protect student resume data | Consent before the first upload · staff see the analysis only (no phone, links or full text) · every staff view is logged and shown to the student ("Who has seen your analysis") · delete a resume · download all my data · uploads deleted after `RETENTION_DAYS` (365) · admin **Data** page · public **Privacy** page | `app.py`: `upload()`, `log_access()`, `delete_resume()`, `download_my_data()`, `purge_expired()`, `admin_data()`, `privacy()`; `dashboard.html`, `admin_data.html`, `privacy.html` | `TestUS17Privacy` (11) |
+| **US-18** Automated results as supporting information | "Supporting information, not a decision" notice on the score, job match and every staff page · officers record their own review (decision + note, with their name) · no feature rejects, shortlists or filters out by score | `_assist_note.html`; `app.py`: `REVIEW_OPTIONS`, `save_review()`; `staff_analysis.html`, `staff_students.html` | `TestUS18Supporting` (6) |
+| **US-19** Check scoring and matching for fairness | Score and match factors listed (and tested against the code) · fairness check: each resume re-analysed with only a personal detail changed (name, gender, date of birth/religion, address, college, email/phone); score, checklist, skills and every job match must stay identical · differences and "Report it" concerns are recorded as issues the admin reviews | `fairness.py`; `app.py`: `admin_fairness()`, `admin_run_fairness()`, `report_concern()`, `admin_resolve_issue()`; `admin_fairness.html`, `_report_concern.html` | `TestUS19Fairness` (8) |
+
+Also for the final version: the demo student account and the "Demo student" login hint were removed (students sign up; the tests create their own test student), and "Sprint N" labels, the "IT314 · Group 26" footer line, "coming soon" and "prototype data" notes were removed from the pages.
+
+Also fixed: `resume.html` had lost its `{% extends "base.html" %}` header in an earlier merge, so the resume page showed without styles or navigation. The header is restored; the page design is unchanged.
+
+## Run the tests
+
+```bash
+pytest -v
+```
+
+95 tests: 35 for Sprint 1 and 60 for Sprint 6. `tests/conftest.py` switches CSRF tokens off for the Sprint 1 tests (they post forms directly); the Sprint 6 tests switch them on to test them.
+
+## Sprint 6 demo script (≈3 minutes)
+
+1. Sign up and log in as a student → the upload panel asks for consent once (with a **Privacy** link). Upload `sample_resumes/sample_resume.pdf`.
+2. On the result: the "Supporting information, not a decision" notice and **Does a result look unfair? Report it** (**US-18**, **US-19**).
+3. Log in as `officer@dau.ac.in` → only Dashboard, Students and Privacy tabs. Open the student's analysis: no phone or links (**US-17**). Save a review (**US-18**).
+4. Log in as the student → **Who has seen your analysis** lists Priya Shah. Click **Download all my data** (**US-17**).
+5. Log in as `admin@dau.ac.in` → **Access**: change Priya to Student; her staff pages stop working at once (**US-16**). **Fairness → Run Fairness Check**: every check passes; the reported concern is listed for review (**US-19**). **Data**: who opened which analysis (**US-17**).
+6. Type a wrong password 5 times → the 6th try waits 10 minutes (**US-16**).

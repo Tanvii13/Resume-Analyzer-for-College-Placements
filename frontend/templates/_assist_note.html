@@ -1,0 +1,9 @@
+{# Sprint 6 · US-18: automated results are supporting information. The decision stays with a person. #}
+<aside class="assist-note" role="note">
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5.5M12 7.6v.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  <div>
+    <p class="assist-title">Supporting information, not a decision</p>
+    <p>{{ assist_text or "This score and these checks are worked out automatically from the text of the resume and can be wrong. Use them to improve your resume. The tool never accepts or rejects anyone: placement decisions are made by people." }}
+      <a href="{{ url_for('privacy') }}#how-results">How results are worked out</a></p>
+  </div>
+</aside>

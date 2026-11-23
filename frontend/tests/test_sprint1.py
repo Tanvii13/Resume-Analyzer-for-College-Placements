@@ -29,7 +29,7 @@ def upload(client, filename, data=None):
     if data is None:
         with open(os.path.join(SAMPLES, filename), "rb") as f:
             data = f.read()
-    return client.post("/upload", data={"resume": (io.BytesIO(data), filename)},
+    return client.post("/upload", data={"consent": "on", "resume": (io.BytesIO(data), filename)},
                        content_type="multipart/form-data")
 
 
@@ -179,7 +179,7 @@ class TestUS04Invalid:
         ("scanned_resume.pdf", None, "ERR_NO_TEXT"),
         ("protected_resume.pdf", None, "ERR_PASSWORD_PROTECTED"),
         ("broken.pdf", b"%PDF-1.4\n" + b"\x00garbage" * 50, None),   # damaged PDF
-        ("big.pdf", b"%PDF-" + b"0" * (6 * 1024 * 1024), "ERR_FILE_TOO_LARGE"),
+        pytest.param("big.pdf", b"%PDF-" + b"0" * (6 * 1024 * 1024), "ERR_FILE_TOO_LARGE", id="oversized-pdf"),
     ])
     def test_invalid_file_explained_and_recorded(self, client, filename, data, code):
         login(client)

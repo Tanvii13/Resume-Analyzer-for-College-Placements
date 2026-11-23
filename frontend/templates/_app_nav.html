@@ -13,15 +13,34 @@
 
   <!-- Outside the blurred bar on purpose: a blurred parent would trap the phone tab bar at the top -->
   <nav class="nav-links" aria-label="Main">
-    {% if user.role in ['officer', 'admin'] %}
-<a
-  href="{{ url_for('staff_students') }}"
-  class="{% if request.endpoint in ['staff_students', 'staff_resume_analysis'] %}active{% endif %}"
-  {% if request.endpoint in ['staff_students', 'staff_resume_analysis'] %}aria-current="page"{% endif %}
->
-  Student Analysis
-</a>
-{% endif %}
+    {# Sprint 6 (US-16): each role sees only the pages it is allowed to open (PERMISSIONS in app.py).
+       Students' tabs are unchanged; placement staff get their own. #}
+    {% if can('view_reports') %}
+      {% set staff_tabs = [
+        ('staff_dashboard', 'Dashboard', ['staff_dashboard'], 'view_reports',
+         '<path d="M4 20h16M7 16v-5M12 16V6M17 16v-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>'),
+        ('staff_students', 'Students', ['staff_students', 'staff_resume_analysis'], 'view_students',
+         '<circle cx="9" cy="8.5" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 19c.6-3 2.8-4.6 5.5-4.6s4.9 1.6 5.5 4.6M15.5 5.6a3 3 0 010 5.8M17.5 14.6c1.6.6 2.7 2 3 4.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>'),
+        ('admin_access', 'Access', ['admin_access'], 'manage_access',
+         '<circle cx="8" cy="15" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M11 12l8-8M16 7l2.5 2.5M14 9l2 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>'),
+        ('admin_fairness', 'Fairness', ['admin_fairness'], 'review_fairness',
+         '<path d="M12 4v16M7 20h10M5 7h14M5 7l-2.5 6a3 3 0 005 0L5 7zM19 7l-2.5 6a3 3 0 005 0L19 7z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'),
+        ('admin_data', 'Data', ['admin_data'], 'manage_data',
+         '<path d="M12 3.5l7 2.8v5.2c0 4.4-3 7.9-7 9-4-1.1-7-4.6-7-9V6.3l7-2.8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2.2 2.2L15.5 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'),
+      ] %}
+      {% for endpoint, label, active_on, permission, icon in staff_tabs if can(permission) %}
+        <a href="{{ url_for(endpoint) }}" class="{% if request.endpoint in active_on %}active{% endif %}" {% if request.endpoint in active_on %}aria-current="page"{% endif %}>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">{{ icon|safe }}</svg>
+          {{ label }}
+        </a>
+      {% endfor %}
+      {% if not can('manage_access') %}
+        <a href="{{ url_for('privacy') }}" class="{% if request.endpoint == 'privacy' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M9.6 9.6a2.5 2.5 0 114.1 1.9c-.9.7-1.7 1.2-1.7 2.4M12 16.8v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Privacy
+        </a>
+      {% endif %}
+    {% else %}
       <a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}" {% if request.endpoint == 'dashboard' %}aria-current="page"{% endif %}>
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10.5L12 4l8 6.5V19a1 1 0 01-1 1h-4.5v-5.5h-5V20H5a1 1 0 01-1-1v-8.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
         Dashboard
@@ -38,5 +57,6 @@
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M9.6 9.6a2.5 2.5 0 114.1 1.9c-.9.7-1.7 1.2-1.7 2.4M12 16.8v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         Help
       </a>
+    {% endif %}
     </nav>
 </header>
