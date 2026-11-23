@@ -9,7 +9,10 @@ from fastapi import (
     status,
 )
 
-from app.database import get_connection
+from app.repositories.opportunity_repository import (
+    OpportunityRepository,
+)
+
 from app.routers.auth import UserResponse, get_current_user
 from app.services.opportunity_matcher import OpportunityMatcherService
 from app.services.persistence_service import get_extraction
@@ -72,51 +75,36 @@ CAMPUS_OPPORTUNITIES_POOL: List[Dict[str, Any]] = [
 ]
 
 
-def get_student_resume_skills(current_user: UserResponse) -> List[str]:
-    """Helper to fetch the authenticated student's extracted skills."""
-    with get_connection() as conn:
-        user = conn.execute(
-            """
-            SELECT id
-            FROM users
-            WHERE email = %s
-            AND is_active = TRUE
-            """,
-            (current_user.email,),
-        ).fetchone()
-
-        if user is None:
-            raise HTTPException(
-                status_code=401,
-                detail="User account not found or inactive.",
-            )
-
-        user_id = user[0]
-
-        # Fetch latest resume
-        resume = conn.execute(
-            """
-            SELECT id
-            FROM resumes
-            WHERE user_id = %s
-            ORDER BY id DESC
-            LIMIT 1
-            """,
-            (user_id,),
-        ).fetchone()
-
-    if resume is None:
-        # If no resume uploaded yet, return empty list
-        return []
-
-    resume_id = resume[0]
-
+def get_student_resume_skills(current_user):
+    """
+    Get skills from the current student's latest resume.
+    Database lookups are handled by OpportunityRepository.
+    """
     try:
-        extracted = get_extraction(resume_id, user_id)
-        if isinstance(extracted, dict):
-            return extracted.get("skills", [])
-        return getattr(extracted, "skills", [])
+        resume_context = OpportunityRepository.get_student_resume_context(
+            current_user.email
+        )
+
+        if resume_context is None:
+            return []
+
+        extraction = get_extraction(
+            resume_context["resume_id"],
+            resume_context["user_id"],
+        )
+
+        if not extraction:
+            return []
+
+        skills = extraction.get("skills", [])
+
+        if not isinstance(skills, list):
+            return []
+
+        return skills
+
     except Exception:
+        logging.exception("Failed to retrieve student resume skills.")
         return []
 
 

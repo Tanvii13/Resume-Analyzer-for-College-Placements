@@ -11,7 +11,11 @@ from fastapi import (
     status,
 )
 
-from app.database import get_connection
+from app.repositories.resume_repository import (
+    ResumeRepository,
+    ResumeNotFoundError as RepositoryResumeNotFoundError,
+    UserNotFoundError,
+)
 from app.routers.auth import UserResponse, get_current_user
 
 from app.schemas.extraction import (
@@ -72,7 +76,6 @@ STORAGE_DIR = (
     / "resumes"
 )
 
-
 suggestion_service = SuggestionService()
 jd_matcher_service = JDMatcherService()
 skill_extractor_service = SkillExtractor()
@@ -90,49 +93,36 @@ def get_owned_resume_data(
 ):
     try:
         parsed_resume_id = UUID(resume_id)
-
     except ValueError:
         raise HTTPException(
             status_code=400,
             detail="Invalid resume ID format.",
         )
 
-    with get_connection() as conn:
-        user = conn.execute(
-            """
-            SELECT id
-            FROM users
-            WHERE email = %s
-            AND is_active = TRUE
-            """,
-            (current_user.email,),
-        ).fetchone()
+    try:
+        user_id = ResumeRepository.get_active_user_id(
+            current_user.email
+        )
 
-        if user is None:
-            raise HTTPException(
-                status_code=401,
-                detail="User account not found or inactive.",
-            )
+        resume = ResumeRepository.get_resume_file(
+            parsed_resume_id,
+            user_id,
+        )
 
-        user_id = user[0]
+    except UserNotFoundError:
+        raise HTTPException(
+            status_code=401,
+            detail="User account not found or inactive.",
+        )
 
-        resume = conn.execute(
-            """
-            SELECT storage_key, file_type
-            FROM resumes
-            WHERE id = %s
-            AND user_id = %s
-            """,
-            (parsed_resume_id, user_id),
-        ).fetchone()
-
-    if resume is None:
+    except RepositoryResumeNotFoundError:
         raise HTTPException(
             status_code=404,
             detail="Resume not found.",
         )
 
-    storage_key, file_type = resume
+    storage_key = resume["storage_key"]
+    file_type = resume["file_type"]
 
     if Path(storage_key).name != storage_key:
         raise HTTPException(
@@ -148,7 +138,6 @@ def get_owned_resume_data(
             detail="Uploaded resume file not found.",
         )
 
-    # Safe extraction retrieval with fallback
     try:
         extracted_data = get_extraction(
             parsed_resume_id,
@@ -194,56 +183,34 @@ async def upload_resume(
         with stored_path.open("xb") as stored_file:
             stored_file.write(validated_file["content"])
 
-        with get_connection() as conn:
-            with conn.transaction():
+        user_id = ResumeRepository.get_active_user_id(
+            current_user.email
+        )
 
-                user = conn.execute(
-                    """
-                    SELECT id
-                    FROM users
-                    WHERE email = %s
-                    AND is_active = TRUE
-                    """,
-                    (current_user.email,),
-                ).fetchone()
+        resume_id = ResumeRepository.create_resume(
+            user_id=user_id,
+            filename=validated_file["filename"],
+            storage_key=storage_key,
+            file_type=validated_file["extension"].lstrip("."),
+            file_size_bytes=validated_file["size_bytes"],
+        )
 
-                if user is None:
-                    raise HTTPException(
-                        status_code=401,
-                        detail="User account not found or inactive.",
-                    )
-
-                resume = conn.execute(
-                    """
-                    INSERT INTO resumes (
-                        user_id,
-                        original_filename,
-                        storage_key,
-                        file_type,
-                        file_size_bytes,
-                        status,
-                        processed_at
-                    )
-                    VALUES (%s, %s, %s, %s, %s, %s, NULL)
-                    RETURNING id
-                    """,
-                    (
-                        user[0],
-                        validated_file["filename"],
-                        storage_key,
-                        validated_file["extension"].lstrip("."),
-                        validated_file["size_bytes"],
-                        "uploaded",
-                    ),
-                ).fetchone()
-
-                resume_id = resume[0]
-
-    except Exception as exc:
-
+    except UserNotFoundError:
         try:
             stored_path.unlink(missing_ok=True)
+        except OSError:
+            logger.exception(
+                "Could not remove uploaded resume file."
+            )
 
+        raise HTTPException(
+            status_code=401,
+            detail="User account not found or inactive.",
+        )
+
+    except Exception as exc:
+        try:
+            stored_path.unlink(missing_ok=True)
         except OSError:
             logger.exception(
                 "Could not remove uploaded resume file."
@@ -294,7 +261,6 @@ async def extract_resume(
 
     try:
         resume_id = UUID(resume_id)
-
     except ValueError:
         raise HTTPException(
             status_code=400,
@@ -304,55 +270,24 @@ async def extract_resume(
     user_id = None
 
     try:
-        with get_connection() as conn:
-            with conn.transaction():
+        user_id = ResumeRepository.get_active_user_id(
+            current_user.email
+        )
 
-                user = conn.execute(
-                    """
-                    SELECT id
-                    FROM users
-                    WHERE email = %s
-                    AND is_active = TRUE
-                    """,
-                    (current_user.email,),
-                ).fetchone()
+        resume = ResumeRepository.get_resume_file(
+            resume_id,
+            user_id,
+        )
 
-                if user is None:
-                    raise HTTPException(
-                        status_code=401,
-                        detail="User account not found or inactive.",
-                    )
+        storage_key = resume["storage_key"]
+        file_type = resume["file_type"]
 
-                user_id = user[0]
-
-                resume = conn.execute(
-                    """
-                    SELECT storage_key, file_type
-                    FROM resumes
-                    WHERE id = %s
-                    AND user_id = %s
-                    """,
-                    (resume_id, user_id),
-                ).fetchone()
-
-                if resume is None:
-                    raise HTTPException(
-                        status_code=404,
-                        detail="Resume not found.",
-                    )
-
-                storage_key, file_type = resume
-
-                conn.execute(
-                    """
-                    UPDATE resumes
-                    SET status = 'processing',
-                        error_message = NULL
-                    WHERE id = %s
-                    AND user_id = %s
-                    """,
-                    (resume_id, user_id),
-                )
+        ResumeRepository.update_status(
+            resume_id=resume_id,
+            user_id=user_id,
+            new_status="processing",
+            error_message=None,
+        )
 
         if Path(storage_key).name != storage_key:
             raise ValueError(
@@ -411,25 +346,14 @@ async def extract_resume(
         )
 
     except HTTPException as exc:
-
         if user_id is not None:
             try:
-                with get_connection() as conn:
-                    conn.execute(
-                        """
-                        UPDATE resumes
-                        SET status = 'failed',
-                            error_message = %s
-                        WHERE id = %s
-                        AND user_id = %s
-                        """,
-                        (
-                            str(exc.detail)[:1000],
-                            resume_id,
-                            user_id,
-                        ),
-                    )
-
+                ResumeRepository.update_status(
+                    resume_id=resume_id,
+                    user_id=user_id,
+                    new_status="failed",
+                    error_message=str(exc.detail)[:1000],
+                )
             except Exception:
                 logger.exception(
                     "Could not update failed resume status."
@@ -437,30 +361,31 @@ async def extract_resume(
 
         raise
 
-    except Exception as exc:
+    except UserNotFoundError:
+        raise HTTPException(
+            status_code=401,
+            detail="User account not found or inactive.",
+        )
 
+    except RepositoryResumeNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail="Resume not found.",
+        )
+
+    except Exception as exc:
         logger.exception(
             "Resume extraction failed."
         )
 
         if user_id is not None:
             try:
-                with get_connection() as conn:
-                    conn.execute(
-                        """
-                        UPDATE resumes
-                        SET status = 'failed',
-                            error_message = %s
-                        WHERE id = %s
-                        AND user_id = %s
-                        """,
-                        (
-                            "Resume extraction failed.",
-                            resume_id,
-                            user_id,
-                        ),
-                    )
-
+                ResumeRepository.update_status(
+                    resume_id=resume_id,
+                    user_id=user_id,
+                    new_status="failed",
+                    error_message="Resume extraction failed.",
+                )
             except Exception:
                 logger.exception(
                     "Could not update failed resume status."
@@ -491,7 +416,6 @@ async def retrieve_extraction(
 
     try:
         resume_id = UUID(resume_id)
-
     except ValueError:
         raise HTTPException(
             status_code=400,
@@ -499,24 +423,9 @@ async def retrieve_extraction(
         )
 
     try:
-        with get_connection() as conn:
-            user = conn.execute(
-                """
-                SELECT id
-                FROM users
-                WHERE email = %s
-                AND is_active = TRUE
-                """,
-                (current_user.email,),
-            ).fetchone()
-
-        if user is None:
-            raise HTTPException(
-                status_code=401,
-                detail="User account not found or inactive.",
-            )
-
-        user_id = user[0]
+        user_id = ResumeRepository.get_active_user_id(
+            current_user.email
+        )
 
         extracted_data = get_extraction(
             resume_id,
@@ -535,6 +444,18 @@ async def retrieve_extraction(
         raise HTTPException(
             status_code=404,
             detail="Extraction data not found for this resume.",
+        )
+
+    except UserNotFoundError:
+        raise HTTPException(
+            status_code=401,
+            detail="User account not found or inactive.",
+        )
+
+    except RepositoryResumeNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail="Resume not found.",
         )
 
     except HTTPException:
@@ -965,6 +886,7 @@ def mask_resume_text_directly(
             detail="Unable to mask text.",
         ) from exc
 
+
 # ==================================================
 # 10. SECURE RESUME ERASURE API - US-17
 # ==================================================
@@ -988,79 +910,40 @@ def erase_resume(
     database_committed = False
 
     try:
-        with get_connection() as conn:
-            with conn.transaction():
-                user = conn.execute(
-                    """
-                    SELECT id
-                    FROM users
-                    WHERE email = %s
-                    AND is_active = TRUE
-                    """,
-                    (current_user.email,),
-                ).fetchone()
+        user_id = ResumeRepository.get_active_user_id(
+            current_user.email
+        )
 
-                if user is None:
-                    raise HTTPException(
-                        status_code=401,
-                        detail="User account not found or inactive.",
-                    )
+        storage_key = ResumeRepository.get_resume_storage_key(
+            parsed_resume_id,
+            user_id,
+        )
 
-                resume = conn.execute(
-                    """
-                    SELECT storage_key
-                    FROM resumes
-                    WHERE id = %s AND user_id = %s
-                    """,
-                    (parsed_resume_id, user[0]),
-                ).fetchone()
+        if Path(storage_key).name != storage_key:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid resume storage path.",
+            )
 
-                if resume is None:
-                    raise HTTPException(
-                        status_code=404,
-                        detail="Resume not found.",
-                    )
+        stored_path = STORAGE_DIR / storage_key
 
-                storage_key = resume[0]
+        if stored_path.is_file():
+            pending_path = stored_path.with_name(
+                stored_path.name + ".deletion_pending"
+            )
 
-                if Path(storage_key).name != storage_key:
-                    raise HTTPException(
-                        status_code=400,
-                        detail="Invalid resume storage path.",
-                    )
-
-                stored_path = STORAGE_DIR / storage_key
-
-                if stored_path.is_file():
-                    pending_path = stored_path.with_name(
-                        stored_path.name + ".deletion_pending"
-                    )
-
-                    if pending_path.exists():
-                        raise HTTPException(
-                            status_code=409,
-                            detail="Resume deletion is already pending.",
-                        )
-
-                    stored_path.replace(pending_path)
-
-                conn.execute(
-                    "DELETE FROM resume_sections WHERE resume_id = %s",
-                    (parsed_resume_id,),
+            if pending_path.exists():
+                raise HTTPException(
+                    status_code=409,
+                    detail="Resume deletion is already pending.",
                 )
 
-                conn.execute(
-                    "DELETE FROM resume_skills WHERE resume_id = %s",
-                    (parsed_resume_id,),
-                )
+            stored_path.replace(pending_path)
 
-                conn.execute(
-                    """
-                    DELETE FROM resumes
-                    WHERE id = %s AND user_id = %s
-                    """,
-                    (parsed_resume_id, user[0]),
-                )
+        ResumeRepository.delete_resume_records(
+            parsed_resume_id,
+            user_id,
+        )
 
         database_committed = True
 
@@ -1082,6 +965,18 @@ def erase_resume(
             "status": "success",
         }
 
+    except UserNotFoundError:
+        raise HTTPException(
+            status_code=401,
+            detail="User account not found or inactive.",
+        )
+
+    except RepositoryResumeNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail="Resume not found.",
+        )
+
     except HTTPException:
         raise
 
@@ -1091,8 +986,10 @@ def erase_resume(
                 original_path = pending_path.with_name(
                     pending_path.name.removesuffix(".deletion_pending")
                 )
+
                 if pending_path.exists():
                     pending_path.replace(original_path)
+
             except OSError:
                 logger.exception(
                     "Could not restore resume file after failed deletion."
@@ -1104,4 +1001,3 @@ def erase_resume(
             status_code=500,
             detail="Unable to erase resume. Please try again.",
         ) from exc
-
