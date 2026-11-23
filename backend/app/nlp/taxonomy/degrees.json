@@ -1,0 +1,207 @@
+{
+  "version": "1.0.0",
+  "levels": {
+    "bachelors": {
+      "canonical_name": "Bachelor's Degree",
+      "degrees": [
+        {
+          "name": "B.Tech",
+          "full_name": "Bachelor of Technology",
+          "aliases": [
+            "b.tech",
+            "btech",
+            "b. tech",
+            "b tech",
+            "bachelor of technology"
+          ]
+        },
+        {
+          "name": "B.E.",
+          "full_name": "Bachelor of Engineering",
+          "aliases": [
+            "b.e.",
+            "be",
+            "b. e.",
+            "b e",
+            "bachelor of engineering"
+          ]
+        },
+        {
+          "name": "B.Sc",
+          "full_name": "Bachelor of Science",
+          "aliases": [
+            "b.sc",
+            "bsc",
+            "b. sc",
+            "b sc",
+            "bachelor of science",
+            "bs",
+            "b.s."
+          ]
+        },
+        {
+          "name": "BCA",
+          "full_name": "Bachelor of Computer Applications",
+          "aliases": [
+            "bca",
+            "b.c.a.",
+            "bachelor of computer applications"
+          ]
+        },
+        {
+          "name": "BBA",
+          "full_name": "Bachelor of Business Administration",
+          "aliases": [
+            "bba",
+            "b.b.a.",
+            "bachelor of business administration"
+          ]
+        },
+        {
+          "name": "B.Com",
+          "full_name": "Bachelor of Commerce",
+          "aliases": [
+            "b.com",
+            "bcom",
+            "b. com",
+            "bachelor of commerce"
+          ]
+        }
+      ]
+    },
+    "masters": {
+      "canonical_name": "Master's Degree",
+      "degrees": [
+        {
+          "name": "M.Tech",
+          "full_name": "Master of Technology",
+          "aliases": [
+            "m.tech",
+            "mtech",
+            "m. tech",
+            "m tech",
+            "master of technology"
+          ]
+        },
+        {
+          "name": "M.E.",
+          "full_name": "Master of Engineering",
+          "aliases": [
+            "m.e.",
+            "me",
+            "m. e.",
+            "m e",
+            "master of engineering"
+          ]
+        },
+        {
+          "name": "M.S.",
+          "full_name": "Master of Science",
+          "aliases": [
+            "m.s.",
+            "ms",
+            "m. s.",
+            "m s",
+            "master of science"
+          ]
+        },
+        {
+          "name": "MCA",
+          "full_name": "Master of Computer Applications",
+          "aliases": [
+            "mca",
+            "m.c.a.",
+            "master of computer applications"
+          ]
+        },
+        {
+          "name": "M.Sc",
+          "full_name": "Master of Science",
+          "aliases": [
+            "m.sc",
+            "msc",
+            "m. sc",
+            "m sc"
+          ]
+        },
+        {
+          "name": "MBA",
+          "full_name": "Master of Business Administration",
+          "aliases": [
+            "mba",
+            "m.b.a.",
+            "master of business administration"
+          ]
+        }
+      ]
+    },
+    "doctorate": {
+      "canonical_name": "Doctorate",
+      "degrees": [
+        {
+          "name": "Ph.D.",
+          "full_name": "Doctor of Philosophy",
+          "aliases": [
+            "ph.d.",
+            "phd",
+            "ph.d",
+            "doctor of philosophy",
+            "doctorate"
+          ]
+        }
+      ]
+    },
+    "secondary": {
+      "canonical_name": "Senior Secondary / Higher Secondary",
+      "degrees": [
+        {
+          "name": "12th (HSC)",
+          "full_name": "Higher Secondary Certificate",
+          "aliases": [
+            "12th",
+            "class 12",
+            "class xii",
+            "xii",
+            "hsc",
+            "higher secondary",
+            "intermediate",
+            "senior secondary",
+            "10+2"
+          ]
+        },
+        {
+          "name": "10th (SSC)",
+          "full_name": "Secondary School Certificate",
+          "aliases": [
+            "10th",
+            "class 10",
+            "class x",
+            "x",
+            "ssc",
+            "secondary school",
+            "high school",
+            "matriculation"
+          ]
+        }
+      ]
+    },
+    "diploma": {
+      "canonical_name": "Diploma",
+      "degrees": [
+        {
+          "name": "Diploma",
+          "full_name": "Diploma in Engineering",
+          "aliases": [
+            "diploma",
+            "polytechnic",
+            "diploma in engineering",
+            "polytechnic diploma",
+            "diploma in computer engineering",
+            "diploma in information technology",
+            "diploma in it"
+          ]
+        }
+      ]
+    }
+  }
+}

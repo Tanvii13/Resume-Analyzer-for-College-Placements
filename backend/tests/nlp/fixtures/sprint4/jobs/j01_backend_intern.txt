@@ -1,0 +1,33 @@
+Software Development Engineer Intern - Backend
+Company: Razorpay
+Location: Bengaluru, India (Hybrid)
+Job Type: Internship (6 months)
+Stipend: INR 60,000 per month
+
+About the role
+We are looking for a backend intern to build reliable payment APIs.
+
+Responsibilities
+- Design and build REST APIs for merchant onboarding.
+- Write unit and integration tests.
+- Work with product and QA teams to ship features.
+
+Required Skills
+- Strong programming skills in Python or Java
+- Experience with SQL databases such as PostgreSQL or MySQL
+- Understanding of REST APIs
+- Git
+
+Preferred Skills
+- Docker
+- AWS
+- Redis
+- Experience with Spring Boot or Django
+
+Eligibility
+- B.Tech / B.E. in Computer Science, IT, ICT or ECE
+- 2026 or 2027 graduating batch
+- Minimum CGPA of 7.0/10
+- No active backlogs
+
+Soft skills: good communication and teamwork.

@@ -60,7 +60,12 @@ app.config.update(
 )
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
-ROLES = {"student": "Student", "officer": "Placement Officer", "admin": "Admin"}
+ROLES = {
+    "student": "Student",
+    "placement_officer": "Placement Officer",
+    "career_counselor": "Career Counselor",
+    "admin": "Admin",
+}
 
 
 # ---------------------------------------------------------------------------
@@ -73,7 +78,7 @@ USERS = {
         "name": "Priya Shah",
         "email": "officer@dau.ac.in",
         "password_hash": generate_password_hash("Password@123"),
-        "role": "officer",
+        "role": "placement_officer",
     },
     "admin@dau.ac.in": {                       # Sprint 6 (US-16): the system administrator
         "name": "Tanvi Nakum",
@@ -101,9 +106,9 @@ LAST_PURGE = {"at": datetime.min}
 PERMISSIONS = {
     "upload_resume":   ("Upload resumes and see their own analysis",   {"student"}),
     "job_match":       ("Compare their resume with jobs",              {"student"}),
-    "view_reports":    ("See the placement dashboard and reports",     {"officer", "admin"}),
-    "view_students":   ("See students' resume analysis",               {"officer", "admin"}),
-    "review_students": ("Record their own review of a student",        {"officer", "admin"}),
+    "view_reports":    ("See the placement dashboard and reports",     {"placement_officer", "career_counselor", "admin"}),
+    "view_students":   ("See students' resume analysis",               {"placement_officer", "career_counselor", "admin"}),
+    "review_students": ("Record their own review of a student",        {"placement_officer", "career_counselor", "admin"}),
     "manage_access":   ("Change roles and turn accounts on or off",    {"admin"}),
     "review_fairness": ("Run the fairness check and review issues",    {"admin"}),
     "manage_data":     ("See the access log and delete expired data",  {"admin"}),
@@ -773,7 +778,7 @@ def report_concern():
 @permission_required("manage_access")
 def admin_access():
     """US-16: every account, its role and status, and what each role may do."""
-    users = sorted(USERS.values(), key=lambda u: (u["role"] != "admin", u["role"] != "officer", u["name"].lower()))
+    users = sorted(USERS.values(), key=lambda u: (u["role"] != "admin", u["role"] == "student", u["name"].lower()))
     return render_template("admin_access.html", users=users, permissions=PERMISSIONS,
                            audit_log=[a for a in AUDIT_LOG if a["action"].startswith(("Changed", "Turned"))][:10])
 

@@ -1,0 +1,221 @@
+{
+  "_methodology": "Hand-labelled bullets. has_leading_action_verb: first word is a verb describing the candidate's action. has_impact_metric: contains a measured outcome or scale (%, counts of users/requests/records, time saved, accuracy). Dates, version numbers and counts of team members are not impact metrics. has_weak_opening: starts with 'worked on', 'responsible for', 'helped with', 'involved in', 'tasked with' or similar.",
+  "bullets": [
+    {
+      "text": "Built a FastAPI service that cut menu sync time from 40 minutes to 6 minutes.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": true,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Implemented Redis caching, reducing p95 latency by 38%.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": true,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Wrote 120 unit tests, raising coverage from 54% to 91%.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": true,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Designed a REST API serving 1,200 daily orders.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": true,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Developed a checker that flagged 92% of copied submissions.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": true,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Optimized a reconciliation job, reducing runtime by 62% on 3 million records.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": true,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Achieved 99.9% uptime over a 30-day deployment.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": true,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Reduced manual roll-call time by 10 minutes per lecture.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": true,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Automated deployments, cutting release time from 3 hours to 40 minutes.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": true,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Trained a model on 18,000 course ratings.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": true,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Implemented JWT authentication and role-based access.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Built a notes sharing app where students upload and search notes.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Developed pages for the company website using React.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Designed the database schema and wrote unit tests.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Created a responsive landing page with Tailwind CSS.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Integrated Razorpay payment gateway into the checkout flow.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Led a team of 4 to build a hackathon prototype.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Refactored the authentication module for readability.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Deployed the app on AWS EC2 with Nginx.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Analyzed survey data with Pandas and Matplotlib.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Worked on a chat application using modern technologies.",
+      "has_leading_action_verb": false,
+      "has_impact_metric": false,
+      "has_weak_opening": true
+    },
+    {
+      "text": "Responsible for the frontend.",
+      "has_leading_action_verb": false,
+      "has_impact_metric": false,
+      "has_weak_opening": true
+    },
+    {
+      "text": "Worked on the company website.",
+      "has_leading_action_verb": false,
+      "has_impact_metric": false,
+      "has_weak_opening": true
+    },
+    {
+      "text": "Helped with testing the mobile app.",
+      "has_leading_action_verb": false,
+      "has_impact_metric": false,
+      "has_weak_opening": true
+    },
+    {
+      "text": "Involved in database design for the project.",
+      "has_leading_action_verb": false,
+      "has_impact_metric": false,
+      "has_weak_opening": true
+    },
+    {
+      "text": "Responsible for handling 500 customer tickets per week.",
+      "has_leading_action_verb": false,
+      "has_impact_metric": true,
+      "has_weak_opening": true
+    },
+    {
+      "text": "Worked on improving page load time by 30%.",
+      "has_leading_action_verb": false,
+      "has_impact_metric": true,
+      "has_weak_opening": true
+    },
+    {
+      "text": "A quiz game.",
+      "has_leading_action_verb": false,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "My website.",
+      "has_leading_action_verb": false,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Chat app for college students.",
+      "has_leading_action_verb": false,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "The project uses Python and Flask.",
+      "has_leading_action_verb": false,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Frontend in React, backend in Node.js.",
+      "has_leading_action_verb": false,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Team of 3 students, 2023.",
+      "has_leading_action_verb": false,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Version 2.0 released in March 2024.",
+      "has_leading_action_verb": false,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Python 3.11 with Django 4.2.",
+      "has_leading_action_verb": false,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    },
+    {
+      "text": "Collaborated with 2 designers on the UI.",
+      "has_leading_action_verb": true,
+      "has_impact_metric": false,
+      "has_weak_opening": false
+    }
+  ]
+}

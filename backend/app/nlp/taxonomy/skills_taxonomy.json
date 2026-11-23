@@ -1,0 +1,2351 @@
+{
+  "version": "1.0.0",
+  "total_skills": 582,
+  "categories": [
+    "Programming Languages",
+    "Frontend Development",
+    "Backend Development",
+    "Databases",
+    "Cloud Computing",
+    "DevOps",
+    "Machine Learning",
+    "Artificial Intelligence",
+    "Data Science",
+    "Cybersecurity",
+    "Software Engineering",
+    "Testing & QA",
+    "Tools & Frameworks",
+    "Operating Systems",
+    "Soft Skills"
+  ],
+  "skills": [
+    {
+      "name": "Python",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "C++",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "C",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Java",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "JavaScript",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "TypeScript",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Go",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Rust",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "C#",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Kotlin",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Swift",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Scala",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Ruby",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "PHP",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "R",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Dart",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Julia",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Lua",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Perl",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Haskell",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Elixir",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Clojure",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Shell Scripting",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Bash",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Objective-C",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Assembly",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Fortran",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "COBOL",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "MATLAB",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Groovy",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Solidity",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "VHDL",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Verilog",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Erlang",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "F#",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Visual Basic",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Apex",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "SAS",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Scheme",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Lisp",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Ada",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Prolog",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "Racket",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "ABAP",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "SQL",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "PL/SQL",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "T-SQL",
+      "category": "Programming Languages"
+    },
+    {
+      "name": "HTML5",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "CSS3",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "SASS",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "SCSS",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "LESS",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "React",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Angular",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Vue.js",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Next.js",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Nuxt.js",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Svelte",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Gatsby",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Redux",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Zustand",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "MobX",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Tailwind CSS",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Bootstrap",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Material-UI",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Chakra UI",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Ant Design",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Webpack",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Vite",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Babel",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "jQuery",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Three.js",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "D3.js",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Chart.js",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "HTML",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "CSS",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Storybook",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Semantic UI",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Bulma",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "SolidJS",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Alpine.js",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Ember.js",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Backbone.js",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Grunt",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Gulp",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Web Components",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Responsive Web Design",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Flexbox",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "CSS Grid",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "WebAssembly",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Canvas API",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "RxJS",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Styled Components",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "Emotion",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "PostCSS",
+      "category": "Frontend Development"
+    },
+    {
+      "name": "FastAPI",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Flask",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Django",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Node.js",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Express.js",
+      "category": "Backend Development"
+    },
+    {
+      "name": "NestJS",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Spring Boot",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Spring Framework",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Ruby on Rails",
+      "category": "Backend Development"
+    },
+    {
+      "name": "ASP.NET",
+      "category": "Backend Development"
+    },
+    {
+      "name": "ASP.NET Core",
+      "category": "Backend Development"
+    },
+    {
+      "name": ".NET Core",
+      "category": "Backend Development"
+    },
+    {
+      "name": ".NET",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Laravel",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Symfony",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Gin",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Echo",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Fiber",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Actix Web",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Axum",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Ktor",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Micronaut",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Quarkus",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Phoenix",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Koa",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Hapi.js",
+      "category": "Backend Development"
+    },
+    {
+      "name": "AdonisJS",
+      "category": "Backend Development"
+    },
+    {
+      "name": "CakePHP",
+      "category": "Backend Development"
+    },
+    {
+      "name": "CodeIgniter",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Sinatra",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Tornado",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Celery",
+      "category": "Backend Development"
+    },
+    {
+      "name": "gRPC",
+      "category": "Backend Development"
+    },
+    {
+      "name": "RESTful APIs",
+      "category": "Backend Development"
+    },
+    {
+      "name": "GraphQL",
+      "category": "Backend Development"
+    },
+    {
+      "name": "WebSockets",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Socket.io",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Microservices",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Event-Driven Architecture",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Serverless Architecture",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Fastify",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Pyramid",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Sanic",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Bottle",
+      "category": "Backend Development"
+    },
+    {
+      "name": "Apache Thrift",
+      "category": "Backend Development"
+    },
+    {
+      "name": "SOAP",
+      "category": "Backend Development"
+    },
+    {
+      "name": "JSON-RPC",
+      "category": "Backend Development"
+    },
+    {
+      "name": "PostgreSQL",
+      "category": "Databases"
+    },
+    {
+      "name": "MySQL",
+      "category": "Databases"
+    },
+    {
+      "name": "SQLite",
+      "category": "Databases"
+    },
+    {
+      "name": "MariaDB",
+      "category": "Databases"
+    },
+    {
+      "name": "Oracle Database",
+      "category": "Databases"
+    },
+    {
+      "name": "Microsoft SQL Server",
+      "category": "Databases"
+    },
+    {
+      "name": "MongoDB",
+      "category": "Databases"
+    },
+    {
+      "name": "Redis",
+      "category": "Databases"
+    },
+    {
+      "name": "Cassandra",
+      "category": "Databases"
+    },
+    {
+      "name": "Neo4j",
+      "category": "Databases"
+    },
+    {
+      "name": "Couchbase",
+      "category": "Databases"
+    },
+    {
+      "name": "CouchDB",
+      "category": "Databases"
+    },
+    {
+      "name": "DynamoDB",
+      "category": "Databases"
+    },
+    {
+      "name": "Amazon Aurora",
+      "category": "Databases"
+    },
+    {
+      "name": "Amazon RDS",
+      "category": "Databases"
+    },
+    {
+      "name": "Google Cloud Spanner",
+      "category": "Databases"
+    },
+    {
+      "name": "Google Cloud Firestore",
+      "category": "Databases"
+    },
+    {
+      "name": "Firebase Realtime Database",
+      "category": "Databases"
+    },
+    {
+      "name": "Elasticsearch",
+      "category": "Databases"
+    },
+    {
+      "name": "Apache HBase",
+      "category": "Databases"
+    },
+    {
+      "name": "InfluxDB",
+      "category": "Databases"
+    },
+    {
+      "name": "TimescaleDB",
+      "category": "Databases"
+    },
+    {
+      "name": "ClickHouse",
+      "category": "Databases"
+    },
+    {
+      "name": "CockroachDB",
+      "category": "Databases"
+    },
+    {
+      "name": "ScyllaDB",
+      "category": "Databases"
+    },
+    {
+      "name": "Memcached",
+      "category": "Databases"
+    },
+    {
+      "name": "ArangoDB",
+      "category": "Databases"
+    },
+    {
+      "name": "Realm",
+      "category": "Databases"
+    },
+    {
+      "name": "Supabase",
+      "category": "Databases"
+    },
+    {
+      "name": "PlanetScale",
+      "category": "Databases"
+    },
+    {
+      "name": "Bigtable",
+      "category": "Databases"
+    },
+    {
+      "name": "RavenDB",
+      "category": "Databases"
+    },
+    {
+      "name": "RocksDB",
+      "category": "Databases"
+    },
+    {
+      "name": "H2 Database",
+      "category": "Databases"
+    },
+    {
+      "name": "DuckDB",
+      "category": "Databases"
+    },
+    {
+      "name": "Faiss",
+      "category": "Databases"
+    },
+    {
+      "name": "Milvus",
+      "category": "Databases"
+    },
+    {
+      "name": "ChromaDB",
+      "category": "Databases"
+    },
+    {
+      "name": "Qdrant",
+      "category": "Databases"
+    },
+    {
+      "name": "Pinecone",
+      "category": "Databases"
+    },
+    {
+      "name": "Amazon Web Services (AWS)",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Microsoft Azure",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Google Cloud Platform (GCP)",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "AWS EC2",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "AWS S3",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "AWS Lambda",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "AWS RDS",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "AWS ECS",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "AWS EKS",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "AWS CloudFront",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "AWS IAM",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "AWS DynamoDB",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "AWS CloudWatch",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "AWS SNS",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "AWS SQS",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "AWS Route 53",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "AWS VPC",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Azure Virtual Machines",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Azure Functions",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Azure Blob Storage",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Azure App Service",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Azure DevOps",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Azure SQL Database",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Google Compute Engine",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Google Cloud Storage",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Google Cloud Functions",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Google Kubernetes Engine (GKE)",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Google Cloud Run",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Google BigQuery",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Heroku",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "DigitalOcean",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Vercel",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Netlify",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Cloudflare",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Linode",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "OpenStack",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "IBM Cloud",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Oracle Cloud Infrastructure (OCI)",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Serverless Framework",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Terraform Cloud",
+      "category": "Cloud Computing"
+    },
+    {
+      "name": "Docker",
+      "category": "DevOps"
+    },
+    {
+      "name": "Kubernetes",
+      "category": "DevOps"
+    },
+    {
+      "name": "Git",
+      "category": "DevOps"
+    },
+    {
+      "name": "GitHub",
+      "category": "DevOps"
+    },
+    {
+      "name": "GitLab",
+      "category": "DevOps"
+    },
+    {
+      "name": "Bitbucket",
+      "category": "DevOps"
+    },
+    {
+      "name": "Jenkins",
+      "category": "DevOps"
+    },
+    {
+      "name": "GitHub Actions",
+      "category": "DevOps"
+    },
+    {
+      "name": "GitLab CI/CD",
+      "category": "DevOps"
+    },
+    {
+      "name": "CircleCI",
+      "category": "DevOps"
+    },
+    {
+      "name": "Travis CI",
+      "category": "DevOps"
+    },
+    {
+      "name": "ArgoCD",
+      "category": "DevOps"
+    },
+    {
+      "name": "Ansible",
+      "category": "DevOps"
+    },
+    {
+      "name": "Terraform",
+      "category": "DevOps"
+    },
+    {
+      "name": "Puppet",
+      "category": "DevOps"
+    },
+    {
+      "name": "Chef",
+      "category": "DevOps"
+    },
+    {
+      "name": "Vagrant",
+      "category": "DevOps"
+    },
+    {
+      "name": "Helm",
+      "category": "DevOps"
+    },
+    {
+      "name": "Prometheus",
+      "category": "DevOps"
+    },
+    {
+      "name": "Grafana",
+      "category": "DevOps"
+    },
+    {
+      "name": "ELK Stack",
+      "category": "DevOps"
+    },
+    {
+      "name": "Logstash",
+      "category": "DevOps"
+    },
+    {
+      "name": "Kibana",
+      "category": "DevOps"
+    },
+    {
+      "name": "Datadog",
+      "category": "DevOps"
+    },
+    {
+      "name": "Splunk",
+      "category": "DevOps"
+    },
+    {
+      "name": "New Relic",
+      "category": "DevOps"
+    },
+    {
+      "name": "Nagios",
+      "category": "DevOps"
+    },
+    {
+      "name": "Nginx",
+      "category": "DevOps"
+    },
+    {
+      "name": "Apache HTTP Server",
+      "category": "DevOps"
+    },
+    {
+      "name": "HAProxy",
+      "category": "DevOps"
+    },
+    {
+      "name": "Envoy",
+      "category": "DevOps"
+    },
+    {
+      "name": "Traefik",
+      "category": "DevOps"
+    },
+    {
+      "name": "Linux Containers (LXC)",
+      "category": "DevOps"
+    },
+    {
+      "name": "Podman",
+      "category": "DevOps"
+    },
+    {
+      "name": "OpenShift",
+      "category": "DevOps"
+    },
+    {
+      "name": "FluxCD",
+      "category": "DevOps"
+    },
+    {
+      "name": "SonarQube",
+      "category": "DevOps"
+    },
+    {
+      "name": "Snyk",
+      "category": "DevOps"
+    },
+    {
+      "name": "Nexus Repository",
+      "category": "DevOps"
+    },
+    {
+      "name": "Artifactory",
+      "category": "DevOps"
+    },
+    {
+      "name": "CI/CD",
+      "category": "DevOps"
+    },
+    {
+      "name": "Machine Learning",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Supervised Learning",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Unsupervised Learning",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Reinforcement Learning",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Scikit-learn",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "XGBoost",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "LightGBM",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "CatBoost",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Linear Regression",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Logistic Regression",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Decision Trees",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Random Forest",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Support Vector Machines (SVM)",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "K-Means Clustering",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Principal Component Analysis (PCA)",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Gradient Boosting",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Naive Bayes",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Ensemble Learning",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Time Series Analysis",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Feature Engineering",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Hyperparameter Tuning",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Cross-Validation",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Model Evaluation",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Transfer Learning",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Federated Learning",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Automated Machine Learning (AutoML)",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "MLflow",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Kubeflow",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "DVC",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Weights & Biases",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Optuna",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Ray",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "SHAP",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "LIME",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "H2O.ai",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Weka",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Fastai",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Imbalanced-learn",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Anomaly Detection",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Recommender Systems",
+      "category": "Machine Learning"
+    },
+    {
+      "name": "Artificial Intelligence",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Deep Learning",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Neural Networks",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Convolutional Neural Networks (CNN)",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Recurrent Neural Networks (RNN)",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Long Short-Term Memory (LSTM)",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Generative Adversarial Networks (GAN)",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Transformers",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Natural Language Processing (NLP)",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Computer Vision",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Large Language Models (LLMs)",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "BERT",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "GPT",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Attention Mechanism",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Hugging Face",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "LangChain",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "LlamaIndex",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "PyTorch",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "TensorFlow",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Keras",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "JAX",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "ONNX",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "OpenCV",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "spaCy",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "NLTK",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Gensim",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Tokenization",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Named Entity Recognition (NER)",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Sentiment Analysis",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Part-of-Speech Tagging",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Text Classification",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Speech Recognition",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Prompt Engineering",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Retrieval-Augmented Generation (RAG)",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Vector Embeddings",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Stable Diffusion",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "YOLO",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Image Segmentation",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Semantic Search",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Word2Vec",
+      "category": "Artificial Intelligence"
+    },
+    {
+      "name": "Data Science",
+      "category": "Data Science"
+    },
+    {
+      "name": "Data Analysis",
+      "category": "Data Science"
+    },
+    {
+      "name": "Exploratory Data Analysis (EDA)",
+      "category": "Data Science"
+    },
+    {
+      "name": "Data Cleaning",
+      "category": "Data Science"
+    },
+    {
+      "name": "Data Preprocessing",
+      "category": "Data Science"
+    },
+    {
+      "name": "Data Wrangling",
+      "category": "Data Science"
+    },
+    {
+      "name": "Data Visualization",
+      "category": "Data Science"
+    },
+    {
+      "name": "Pandas",
+      "category": "Data Science"
+    },
+    {
+      "name": "NumPy",
+      "category": "Data Science"
+    },
+    {
+      "name": "SciPy",
+      "category": "Data Science"
+    },
+    {
+      "name": "Matplotlib",
+      "category": "Data Science"
+    },
+    {
+      "name": "Seaborn",
+      "category": "Data Science"
+    },
+    {
+      "name": "Plotly",
+      "category": "Data Science"
+    },
+    {
+      "name": "Statistics",
+      "category": "Data Science"
+    },
+    {
+      "name": "Probability",
+      "category": "Data Science"
+    },
+    {
+      "name": "Hypothesis Testing",
+      "category": "Data Science"
+    },
+    {
+      "name": "A/B Testing",
+      "category": "Data Science"
+    },
+    {
+      "name": "Business Intelligence",
+      "category": "Data Science"
+    },
+    {
+      "name": "Tableau",
+      "category": "Data Science"
+    },
+    {
+      "name": "Power BI",
+      "category": "Data Science"
+    },
+    {
+      "name": "Apache Spark",
+      "category": "Data Science"
+    },
+    {
+      "name": "PySpark",
+      "category": "Data Science"
+    },
+    {
+      "name": "Apache Hadoop",
+      "category": "Data Science"
+    },
+    {
+      "name": "Apache Kafka",
+      "category": "Data Science"
+    },
+    {
+      "name": "Apache Flink",
+      "category": "Data Science"
+    },
+    {
+      "name": "Apache Airflow",
+      "category": "Data Science"
+    },
+    {
+      "name": "Apache Hive",
+      "category": "Data Science"
+    },
+    {
+      "name": "Apache Pig",
+      "category": "Data Science"
+    },
+    {
+      "name": "Big Data Analytics",
+      "category": "Data Science"
+    },
+    {
+      "name": "Snowflake",
+      "category": "Data Science"
+    },
+    {
+      "name": "Databricks",
+      "category": "Data Science"
+    },
+    {
+      "name": "Data Mining",
+      "category": "Data Science"
+    },
+    {
+      "name": "Statistical Modeling",
+      "category": "Data Science"
+    },
+    {
+      "name": "Data Pipelines",
+      "category": "Data Science"
+    },
+    {
+      "name": "ETL",
+      "category": "Data Science"
+    },
+    {
+      "name": "Cybersecurity",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Information Security",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Network Security",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Application Security",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Cryptography",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Public Key Infrastructure (PKI)",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Penetration Testing",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Ethical Hacking",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Vulnerability Assessment",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "OWASP Top 10",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Kali Linux",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Wireshark",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Metasploit",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Nmap",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Burp Suite",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Snort",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Firewalls",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Intrusion Detection Systems (IDS)",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Intrusion Prevention Systems (IPS)",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Security Information and Event Management (SIEM)",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Identity and Access Management (IAM)",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Multi-Factor Authentication (MFA)",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Zero Trust Architecture",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "SSL/TLS",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "OAuth",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "OpenID Connect",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Reverse Engineering",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Incident Response",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Digital Forensics",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Malware Analysis",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Threat Modeling",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "CISSP",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "CEH",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Security Auditing",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Cross-Site Scripting (XSS)",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "SQL Injection (SQLi)",
+      "category": "Cybersecurity"
+    },
+    {
+      "name": "Data Structures",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Algorithms",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "DBMS",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Operating Systems",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Computer Networks",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Object-Oriented Programming (OOP)",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Design Patterns",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "System Design",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Unified Modeling Language (UML)",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Agile Methodology",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Scrum",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Kanban",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Jira",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Confluence",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "SDLC",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Clean Code",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "SOLID Principles",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Test-Driven Development (TDD)",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Behavior-Driven Development (BDD)",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Domain-Driven Design (DDD)",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Refactoring",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Code Review",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Continuous Integration",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Continuous Delivery",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Software Architecture",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "MVC Architecture",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Monolithic Architecture",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Microservices Architecture",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Service-Oriented Architecture (SOA)",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "API Design",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Version Control",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Concurrency",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Multithreading",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Asynchronous Programming",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Distributed Systems",
+      "category": "Software Engineering"
+    },
+    {
+      "name": "Unit Testing",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Integration Testing",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "System Testing",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Acceptance Testing",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Regression Testing",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Performance Testing",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Load Testing",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Stress Testing",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Smoke Testing",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Automated Testing",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Manual Testing",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Quality Assurance",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Pytest",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Unittest",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "JUnit",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "TestNG",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Selenium",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Cypress",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Playwright",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Jest",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Mocha",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Chai",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Puppeteer",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Postman",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "JMeter",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Locust",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "K6",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "SoapUI",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Appium",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Robot Framework",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Cucumber",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "TestRail",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Bugzilla",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Black Box Testing",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "White Box Testing",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Mocking",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "Coverage Analysis",
+      "category": "Testing & QA"
+    },
+    {
+      "name": "VS Code",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "IntelliJ IDEA",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "PyCharm",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Eclipse",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "WebStorm",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Android Studio",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Xcode",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Vim",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Emacs",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Insomnia",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Swagger",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "OpenAPI",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Docker Compose",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Linux CLI",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Bash Scripting",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Make",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "CMake",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Gradle",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Maven",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "npm",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Yarn",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "pnpm",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "pip",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Poetry",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Conda",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Homebrew",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Git LFS",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Notion",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Trello",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Asana",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Slack",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Figma",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Adobe XD",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Canva",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "LaTeX",
+      "category": "Tools & Frameworks"
+    },
+    {
+      "name": "Linux",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Ubuntu",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Debian",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "CentOS",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Red Hat Enterprise Linux (RHEL)",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Fedora",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Arch Linux",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Alpine Linux",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Unix",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Windows",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Windows Server",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "macOS",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Android OS",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "iOS",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "POSIX",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Systemd",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Shell",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Kernel",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "File Systems",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Virtual Memory",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Process Management",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Inter-Process Communication (IPC)",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Device Drivers",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "RTOS",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Embedded Linux",
+      "category": "Operating Systems"
+    },
+    {
+      "name": "Communication",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Verbal Communication",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Written Communication",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Teamwork",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Team Collaboration",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Leadership",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Problem Solving",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Critical Thinking",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Time Management",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Adaptability",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Work Ethic",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Conflict Resolution",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Presentation Skills",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Emotional Intelligence",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Active Listening",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Decision Making",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Negotiation",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Interpersonal Skills",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Stress Management",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Creative Thinking",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Analytical Thinking",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Mentoring",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Public Speaking",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Customer Service",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Collaboration",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Self-Motivation",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Attention to Detail",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Multi-Tasking",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Ownership",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Accountability",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Empathy",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Networking",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Continuous Learning",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Agile Mindset",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Cultural Awareness",
+      "category": "Soft Skills"
+    }
+  ]
+}

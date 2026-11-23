@@ -123,7 +123,7 @@ class TestUS02Upload:
         assert client.get(f"/uploads/{stored}").status_code == 404   # not publicly served
 
     def test_officer_cannot_upload(self, client):
-        login(client, email="officer@dau.ac.in", role="officer")
+        login(client, email="officer@dau.ac.in", role="placement_officer")
         assert upload(client, "sample_resume.pdf").status_code == 403
 
 

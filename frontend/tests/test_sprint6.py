@@ -27,7 +27,7 @@ from resume_parser import extract_text
 SAMPLES = os.path.join(os.path.dirname(__file__), "..", "sample_resumes")
 PW = "Password@123"
 STUDENT, OFFICER, ADMIN = "alex.rivera@dau.ac.in", "officer@dau.ac.in", "admin@dau.ac.in"
-ROLE_OF = {STUDENT: "student", OFFICER: "officer", ADMIN: "admin"}
+ROLE_OF = {STUDENT: "student", OFFICER: "placement_officer", ADMIN: "admin"}
 
 
 @pytest.fixture
@@ -100,6 +100,8 @@ class TestUS16Access:
         resume = student_resume(client)
         login(client, email)
         expected = ROLE_OF[email] in PERMISSIONS[permission][1]
+        if ROLE_OF[email] == "placement_officer":       # career counselors have the same staff access
+            assert ("career_counselor" in PERMISSIONS[permission][1]) == expected
         assert self.attempt(client, permission, resume) == expected
 
     def test_every_private_page_needs_login(self, client):

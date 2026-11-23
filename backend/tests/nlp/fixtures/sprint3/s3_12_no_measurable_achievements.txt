@@ -1,0 +1,21 @@
+Pooja Nair
+pooja.nair@gmail.com | +91 96620 44556 | github.com/poojan
+
+EDUCATION
+B.Tech in Computer Science, PDEU, 2022 - 2026, CGPA 8.3/10
+
+TECHNICAL SKILLS
+Languages: Python, JavaScript
+Frameworks: Flask, React
+Tools: Git
+
+EXPERIENCE
+Web Developer Intern
+Brightsoft Solutions | Vadodara | Jun 2025 - Jul 2025
+- Developed pages for the company website using React.
+- Fixed bugs in the Flask backend.
+
+PROJECTS
+Notes Sharing App | Flask, React
+- Built a notes sharing app where students upload and search notes.
+- Implemented login and file upload features.

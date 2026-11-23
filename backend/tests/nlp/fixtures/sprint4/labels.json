@@ -1,0 +1,462 @@
+{
+  "_methodology": "Written by reading each document before running the system. relevance: 0 = irrelevant or the student is not eligible, 1 = weak / stretch, 2 = reasonable fit, 3 = strong fit and eligible. jobs: expected skills use the taxonomy's canonical names where the taxonomy has the skill; skills the taxonomy lacks are still listed (an honest miss). acceptable = reasonable extra skills that are not counted as false positives. skill_pairs: interchangeable = a requirement for A is met by B. gaps: required skills the student clearly has / clearly lacks (either-or alternatives excluded).",
+  "candidates": {
+    "s3_01_strong": "sprint3/s3_01_strong.txt",
+    "s3_06_detailed_projects": "sprint3/s3_06_detailed_projects.txt",
+    "s3_08_no_work_experience": "sprint3/s3_08_no_work_experience.txt",
+    "s3_11_measurable_achievements": "sprint3/s3_11_measurable_achievements.txt",
+    "s3_12_no_measurable_achievements": "sprint3/s3_12_no_measurable_achievements.txt",
+    "r_frontend": "sprint4/resumes/r_frontend.txt",
+    "r_data": "sprint4/resumes/r_data.txt"
+  },
+  "relevance": {
+    "s3_01_strong": {
+      "j01_backend_intern": 3,
+      "j02_frontend_intern": 1,
+      "j03_data_analyst": 2,
+      "j04_ml_intern": 2,
+      "j05_embedded_intern": 0,
+      "j06_devops_intern": 2,
+      "j07_fullstack_sde": 1,
+      "j08_mechanical_design": 0
+    },
+    "s3_06_detailed_projects": {
+      "j01_backend_intern": 2,
+      "j02_frontend_intern": 1,
+      "j03_data_analyst": 1,
+      "j04_ml_intern": 3,
+      "j05_embedded_intern": 0,
+      "j06_devops_intern": 2,
+      "j07_fullstack_sde": 0,
+      "j08_mechanical_design": 0
+    },
+    "s3_08_no_work_experience": {
+      "j01_backend_intern": 1,
+      "j02_frontend_intern": 0,
+      "j03_data_analyst": 0,
+      "j04_ml_intern": 0,
+      "j05_embedded_intern": 3,
+      "j06_devops_intern": 0,
+      "j07_fullstack_sde": 0,
+      "j08_mechanical_design": 0
+    },
+    "s3_11_measurable_achievements": {
+      "j01_backend_intern": 2,
+      "j02_frontend_intern": 0,
+      "j03_data_analyst": 1,
+      "j04_ml_intern": 1,
+      "j05_embedded_intern": 0,
+      "j06_devops_intern": 3,
+      "j07_fullstack_sde": 0,
+      "j08_mechanical_design": 0
+    },
+    "s3_12_no_measurable_achievements": {
+      "j01_backend_intern": 1,
+      "j02_frontend_intern": 2,
+      "j03_data_analyst": 1,
+      "j04_ml_intern": 1,
+      "j05_embedded_intern": 0,
+      "j06_devops_intern": 1,
+      "j07_fullstack_sde": 0,
+      "j08_mechanical_design": 0
+    },
+    "r_frontend": {
+      "j01_backend_intern": 1,
+      "j02_frontend_intern": 3,
+      "j03_data_analyst": 0,
+      "j04_ml_intern": 0,
+      "j05_embedded_intern": 0,
+      "j06_devops_intern": 0,
+      "j07_fullstack_sde": 0,
+      "j08_mechanical_design": 0
+    },
+    "r_data": {
+      "j01_backend_intern": 1,
+      "j02_frontend_intern": 0,
+      "j03_data_analyst": 3,
+      "j04_ml_intern": 0,
+      "j05_embedded_intern": 0,
+      "j06_devops_intern": 0,
+      "j07_fullstack_sde": 0,
+      "j08_mechanical_design": 0
+    }
+  },
+  "jobs": {
+    "j01_backend_intern": {
+      "title": "Software Development Engineer Intern",
+      "company": "Razorpay",
+      "job_type": "internship",
+      "required": [
+        "Python",
+        "Java",
+        "SQL",
+        "PostgreSQL",
+        "MySQL",
+        "RESTful APIs",
+        "Git"
+      ],
+      "preferred": [
+        "Docker",
+        "Amazon Web Services (AWS)",
+        "Redis",
+        "Spring Boot",
+        "Django"
+      ],
+      "acceptable": [],
+      "min_cgpa": 7.0,
+      "batches": [
+        2026,
+        2027
+      ],
+      "fresher_eligible": true
+    },
+    "j02_frontend_intern": {
+      "title": "Frontend Developer Intern",
+      "company": "Swiggy",
+      "job_type": "internship",
+      "required": [
+        "JavaScript",
+        "HTML",
+        "CSS",
+        "React",
+        "Git"
+      ],
+      "preferred": [
+        "TypeScript",
+        "Next.js",
+        "Tailwind CSS"
+      ],
+      "acceptable": [],
+      "min_cgpa": 6.5,
+      "batches": [
+        2026,
+        2027
+      ],
+      "fresher_eligible": true
+    },
+    "j03_data_analyst": {
+      "title": "Data Analyst",
+      "company": "Mu Sigma",
+      "job_type": "full_time",
+      "required": [
+        "Python",
+        "SQL",
+        "Excel",
+        "Statistics"
+      ],
+      "preferred": [
+        "Power BI",
+        "Tableau",
+        "Pandas"
+      ],
+      "acceptable": [],
+      "min_cgpa": null,
+      "batches": [
+        2026
+      ],
+      "fresher_eligible": true
+    },
+    "j04_ml_intern": {
+      "title": "Machine Learning Research Intern",
+      "company": "Sarvam AI",
+      "job_type": "internship",
+      "required": [
+        "Python",
+        "PyTorch",
+        "TensorFlow",
+        "Machine Learning",
+        "NumPy"
+      ],
+      "preferred": [
+        "Natural Language Processing (NLP)",
+        "Hugging Face",
+        "Transformers",
+        "Docker"
+      ],
+      "acceptable": [
+        "Deep Learning",
+        "Artificial Intelligence"
+      ],
+      "min_cgpa": 8.0,
+      "batches": [
+        2026,
+        2027
+      ],
+      "fresher_eligible": true
+    },
+    "j05_embedded_intern": {
+      "title": "Embedded Systems Intern",
+      "company": "Texas Instruments",
+      "job_type": "internship",
+      "required": [
+        "C",
+        "C++",
+        "Microcontrollers",
+        "Arduino",
+        "Embedded C",
+        "Digital Electronics"
+      ],
+      "preferred": [
+        "MATLAB",
+        "Python",
+        "PCB Design"
+      ],
+      "acceptable": [],
+      "min_cgpa": 7.5,
+      "batches": [
+        2027
+      ],
+      "fresher_eligible": true
+    },
+    "j06_devops_intern": {
+      "title": "DevOps Engineering Intern",
+      "company": "Postman",
+      "job_type": "internship",
+      "required": [
+        "Linux",
+        "Docker",
+        "Kubernetes",
+        "Git",
+        "Python",
+        "Bash"
+      ],
+      "preferred": [
+        "Amazon Web Services (AWS)",
+        "Prometheus",
+        "Terraform",
+        "Go"
+      ],
+      "acceptable": [
+        "CI/CD"
+      ],
+      "min_cgpa": 7.0,
+      "batches": [
+        2026,
+        2027
+      ],
+      "fresher_eligible": true
+    },
+    "j07_fullstack_sde": {
+      "title": "Software Engineer - Full Stack",
+      "company": "Infosys",
+      "job_type": "full_time",
+      "required": [
+        "Java",
+        "Spring Boot",
+        "Angular",
+        "React",
+        "SQL"
+      ],
+      "preferred": [
+        "Amazon Web Services (AWS)",
+        "Jenkins",
+        "Microservices"
+      ],
+      "acceptable": [],
+      "min_cgpa": null,
+      "batches": [],
+      "fresher_eligible": false,
+      "min_years": 2.0
+    },
+    "j08_mechanical_design": {
+      "title": "Graduate Engineer Trainee - Mechanical Design",
+      "company": "Larsen & Toubro",
+      "job_type": "full_time",
+      "required": [
+        "AutoCAD",
+        "SolidWorks",
+        "Engineering Drawing",
+        "Strength of Materials"
+      ],
+      "preferred": [],
+      "acceptable": [],
+      "min_cgpa": null,
+      "batches": [
+        2026
+      ],
+      "fresher_eligible": true
+    }
+  },
+  "skill_pairs": [
+    [
+      "React.js",
+      "React",
+      true
+    ],
+    [
+      "ReactJS",
+      "React",
+      true
+    ],
+    [
+      "JS",
+      "JavaScript",
+      true
+    ],
+    [
+      "Postgres",
+      "PostgreSQL",
+      true
+    ],
+    [
+      "k8s",
+      "Kubernetes",
+      true
+    ],
+    [
+      "Node",
+      "Node.js",
+      true
+    ],
+    [
+      "golang",
+      "Go",
+      true
+    ],
+    [
+      "AWS",
+      "Amazon Web Services",
+      true
+    ],
+    [
+      "ML",
+      "Machine Learning",
+      true
+    ],
+    [
+      "TS",
+      "TypeScript",
+      true
+    ],
+    [
+      "Py",
+      "Python",
+      true
+    ],
+    [
+      "MariaDB",
+      "MySQL",
+      true
+    ],
+    [
+      "Java",
+      "JavaScript",
+      false
+    ],
+    [
+      "C",
+      "C++",
+      false
+    ],
+    [
+      "C#",
+      "C",
+      false
+    ],
+    [
+      "MySQL",
+      "PostgreSQL",
+      false
+    ],
+    [
+      "Docker",
+      "Kubernetes",
+      false
+    ],
+    [
+      "Python",
+      "Django",
+      false
+    ],
+    [
+      "TensorFlow",
+      "PyTorch",
+      false
+    ],
+    [
+      "React",
+      "React Native",
+      false
+    ],
+    [
+      "Angular",
+      "React",
+      false
+    ],
+    [
+      "SQL",
+      "NoSQL",
+      false
+    ],
+    [
+      "Spring Boot",
+      "Spring",
+      false
+    ],
+    [
+      "HTML",
+      "CSS",
+      false
+    ]
+  ],
+  "gaps": {
+    "s3_11_measurable_achievements|j01_backend_intern": {
+      "have": [
+        "Python",
+        "SQL",
+        "PostgreSQL",
+        "Git"
+      ],
+      "missing": [
+        "RESTful APIs"
+      ]
+    },
+    "s3_08_no_work_experience|j05_embedded_intern": {
+      "have": [
+        "C",
+        "C++"
+      ],
+      "missing": []
+    },
+    "r_frontend|j02_frontend_intern": {
+      "have": [
+        "JavaScript",
+        "HTML",
+        "CSS",
+        "React",
+        "Git"
+      ],
+      "missing": []
+    },
+    "r_data|j03_data_analyst": {
+      "have": [
+        "Python",
+        "SQL",
+        "Excel",
+        "Statistics"
+      ],
+      "missing": []
+    },
+    "r_data|j01_backend_intern": {
+      "have": [
+        "Python",
+        "SQL"
+      ],
+      "missing": [
+        "RESTful APIs",
+        "Git"
+      ]
+    },
+    "s3_12_no_measurable_achievements|j02_frontend_intern": {
+      "have": [
+        "JavaScript",
+        "React",
+        "Git"
+      ],
+      "missing": [
+        "HTML",
+        "CSS"
+      ]
+    }
+  }
+}

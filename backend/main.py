@@ -1,11 +1,22 @@
-
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
 from app.routers.auth import router as auth_router
 from app.routers.resumes import router as resumes_router
 from app.routers.resume_insights import router as resume_insights_router
 from app.routers.officer import router as officer_router
 from app.routers.admin import router as admin_router
+from app.routers.dashboard import router as dashboard_router
+from app.routers.opportunities import router as opportunities_router
+from app.routers.admin_audit import router as admin_audit_router
+from app.routers.governance import router as governance_router
+
+try:
+    from app.routers.fairness import router as fairness_router
+except ImportError:
+    fairness_router = None
+
+from app.services.resume_parser import ResumeParsingError
 
 
 app = FastAPI(
@@ -15,14 +26,36 @@ app = FastAPI(
 )
 
 
+@app.exception_handler(ResumeParsingError)
+async def resume_parsing_exception_handler(
+    request: Request,
+    exc: ResumeParsingError,
+):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "detail": exc.message,
+            "error_code": exc.error_code,
+        },
+    )
+
+
+# Register API routers
 app.include_router(auth_router)
 app.include_router(resumes_router)
+app.include_router(admin_audit_router)
 app.include_router(resume_insights_router)
 app.include_router(officer_router)
 app.include_router(admin_router)
+app.include_router(dashboard_router)
+app.include_router(opportunities_router)
+app.include_router(governance_router)
+
+if fairness_router is not None:
+    app.include_router(fairness_router)
 
 
-@app.get("/")
+@router_root := app.get("/")
 def root():
     return {
         "message": "Resume Analyzer API is running",
