@@ -1,4 +1,3 @@
-
 import os
 import logging
 from pathlib import Path
@@ -115,15 +114,12 @@ async def upload_resume(
         },
     }
 
-
 @router.delete("/{resume_id}/erase")
 def erase_resume(
     resume_id: str,
     current_user: UserResponse = Depends(get_current_user),
 ):
-    """
-    Permanently erase a resume owned by the authenticated student.
-    """
+    """Permanently erase a resume owned by the authenticated student."""
 
     try:
         parsed_resume_id = UUID(resume_id)
@@ -173,7 +169,6 @@ def erase_resume(
 
                 storage_key = resume[0]
 
-                # Only allow a filename, never a user-supplied path.
                 if not storage_key or Path(storage_key).name != storage_key:
                     raise HTTPException(
                         status_code=500,
@@ -203,10 +198,8 @@ def erase_resume(
                         f"{parsed_resume_id}_{uuid4().hex}.pending"
                     )
 
-                    # Move the file out of normal storage before DB deletion.
                     os.replace(original_path, staged_path)
 
-                # Explicitly remove known extraction data.
                 conn.execute(
                     "DELETE FROM resume_sections WHERE resume_id = %s",
                     (parsed_resume_id,),
@@ -217,7 +210,6 @@ def erase_resume(
                     (parsed_resume_id,),
                 )
 
-                # Delete the resume only after its dependent data.
                 deleted = conn.execute(
                     """
                     DELETE FROM resumes
@@ -233,18 +225,15 @@ def erase_resume(
                         detail="Resume not found.",
                     )
 
-            # The database transaction has successfully committed.
-            database_committed = True
+        database_committed = True
 
-        # Permanently remove the staged file after the DB commit.
         if staged_path and staged_path.exists():
             try:
                 staged_path.unlink()
             except OSError:
-                # Do not restore the file after the DB record is deleted.
                 logger.critical(
-                    "Resume database record was erased, but its staged file "
-                    "could not be deleted. Manual cleanup required: %s",
+                    "Resume database record deleted, but physical file "
+                    "cleanup is pending: %s",
                     staged_path,
                     exc_info=True,
                 )
@@ -252,22 +241,18 @@ def erase_resume(
                 return {
                     "status": "erased",
                     "resume_id": str(parsed_resume_id),
-                    "message": (
-                        "Resume data was erased from the database, but the "
-                        "stored file is awaiting administrator cleanup."
-                    ),
                     "file_cleanup_pending": True,
+                    "message": "Database deletion completed. Administrator cleanup required.",
                 }
 
         return {
             "status": "erased",
             "resume_id": str(parsed_resume_id),
-            "message": "Resume and extracted data erased successfully.",
             "file_cleanup_pending": False,
+            "message": "Resume and extracted data erased successfully.",
         }
 
     except HTTPException:
-        # Restore the file only if the database transaction did not commit.
         if (
             not database_committed
             and staged_path
@@ -279,15 +264,13 @@ def erase_resume(
                 os.replace(staged_path, original_path)
             except OSError:
                 logger.exception(
-                    "CRITICAL: Could not restore staged resume file."
+                    "Could not restore staged resume file."
                 )
-
         raise
 
     except Exception as exc:
         logger.exception("Resume erasure failed.")
 
-        # Restore the original file only if the DB transaction failed.
         if (
             not database_committed
             and staged_path
@@ -299,13 +282,10 @@ def erase_resume(
                 os.replace(staged_path, original_path)
             except OSError:
                 logger.exception(
-                    "CRITICAL: Could not restore staged resume file."
+                    "Could not restore staged resume file."
                 )
 
         raise HTTPException(
             status_code=500,
-            detail=(
-                "Resume erasure could not be completed. "
-                "Contact the administrator if the problem continues."
-            ),
+            detail="Resume erasure could not be completed.",
         ) from exc

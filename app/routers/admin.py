@@ -1,31 +1,69 @@
-from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.routers.auth import UserResponse, get_current_user
+from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel, Field
+
+from app.dependencies.roles import require_admin
+from app.routers.auth import UserResponse
+from app.services.rbac_service import (
+    InvalidRoleError,
+    UnauthorizedActorError,
+    UserNotFoundError,
+    update_user_role,
+)
 from app.services.retention_service import (
+    DEFAULT_RETENTION_DAYS,
     get_retention_summary,
     get_expired_resume_ids,
 )
 
-router = APIRouter(
-    prefix="/admin",
-    tags=["Retention Administration"],
-)
+router = APIRouter(prefix="/admin", tags=["Admin"])
 
 
-def require_admin(
-    current_user: UserResponse = Depends(get_current_user),
-) -> UserResponse:
-    if (current_user.role or "").strip().lower() != "admin":
+class RoleUpdateRequest(BaseModel):
+    role: str = Field(min_length=1, max_length=40)
+
+
+@router.put("/users/{user_id}/role")
+def change_user_role(
+    user_id: str,
+    request: RoleUpdateRequest,
+    admin: UserResponse = Depends(require_admin),
+):
+    try:
+        return update_user_role(
+            user_id,
+            request.role,
+            admin.email,
+        )
+
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid user ID format.",
+        )
+
+    except UnauthorizedActorError as exc:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Administrator access required.",
+            detail=str(exc),
         )
-    return current_user
+
+    except InvalidRoleError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        )
+
+    except UserNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
 
 
 @router.get("/retention/audit")
 def retention_audit(
-    current_user: UserResponse = Depends(require_admin),
+    admin: UserResponse = Depends(require_admin),
 ):
     """View institutional resume-retention metrics."""
 
@@ -35,7 +73,7 @@ def retention_audit(
 
         return {
             "policy": {
-                "retention_days": 365,
+                "retention_days": DEFAULT_RETENTION_DAYS,
                 "expiry_field": "resumes.retention_expires_at",
             },
             "summary": summary,
@@ -45,6 +83,6 @@ def retention_audit(
 
     except Exception as exc:
         raise HTTPException(
-            status_code=500,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Unable to generate retention audit.",
         ) from exc
