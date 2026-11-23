@@ -80,14 +80,11 @@ class ResumePipelineOrchestrator:
     ) -> ExtractedProfileDTO:
         extracted_skills: List[str] = []
         if self.skill_extractor and hasattr(self.skill_extractor, "extract_skills"):
-            try:
-                res = self.skill_extractor.extract_skills(raw_text)
-                if isinstance(res, list):
-                    extracted_skills = res
-                elif isinstance(res, dict) and "skills" in res:
-                    extracted_skills = res["skills"]
-            except Exception:
-                extracted_skills = []
+            res = self.skill_extractor.extract_skills(raw_text)
+            if isinstance(res, list):
+                extracted_skills = res
+            elif isinstance(res, dict) and "skills" in res:
+                extracted_skills = res["skills"]
 
         return ExtractedProfileDTO(
             skills=sorted(list(set(extracted_skills))),
