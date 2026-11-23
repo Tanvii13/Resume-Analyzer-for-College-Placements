@@ -1,5 +1,11 @@
 
 from fastapi import FastAPI
+from app.core.exceptions import register_exception_handlers
+from app.core.middleware import (
+    ExecutionTimingMiddleware,
+    UploadSafeguardMiddleware,
+)
+
 
 from app.routers.auth import router as auth_router
 from app.routers.resumes import router as resumes_router
@@ -15,6 +21,10 @@ app = FastAPI(
     description="Backend API for the Resume Analyzer for College Placements project.",
     version="0.1.0",
 )
+
+register_exception_handlers(app)
+app.add_middleware(UploadSafeguardMiddleware)
+app.add_middleware(ExecutionTimingMiddleware)
 
 app.include_router(auth_router)
 app.include_router(resumes_router)
