@@ -121,10 +121,12 @@ class StaffFriendlySummary(_StaffModel):
 
 
 class StaffAnalysisResult(_StaffModel):
-    """Serializable Sprint 5 Module A output built from existing NLP results."""
+    """Privacy-minimised staff analysis built from existing NLP results.
 
-    filename: str
-    candidate_name: Optional[str] = None
+    Identity, contact details, filenames and raw resume text are deliberately
+    absent.  The backend associates this analysis with an authorised record.
+    """
+
     resume_overview: ResumeOverview
     improvement_overview: ImprovementOverview
     skills_overview: SkillsOverview

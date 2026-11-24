@@ -51,6 +51,7 @@ from app.nlp.schemas import CandidateProfile
 from app.nlp.scoring import ResumeScoringEngine, ScoringWeights
 from app.nlp.scoring.weights import SCORING_RULE_VERSION
 from app.nlp.versioning import build_version_metadata
+from app.nlp.privacy import safe_failure_message
 
 logger = logging.getLogger(__name__)
 
@@ -207,26 +208,27 @@ class ResumeAnalysisPipeline:
             meta.module_status[module] = "ok"
             return result
         except ValidationError as exc:
-            logger.warning("Sprint 3 module '%s' produced invalid output", module, exc_info=True)
+            logger.warning("Sprint 3 module '%s' produced invalid output (%s)", module, type(exc).__name__)
             meta.module_status[module] = "failed"
             meta.errors.append(
                 ModuleError(
                     module=module,
                     error_type="validation_error",
-                    message=str(exc).splitlines()[0],
+                    message=safe_failure_message(module, exc),
                     details=[
-                        {k: v for k, v in e.items() if k in ("loc", "msg", "type")}
+                        {k: v for k, v in e.items() if k in ("loc", "type")}
                         for e in exc.errors()
                     ],
                 )
             )
             return None
         except Exception as exc:  # noqa: BLE001 - isolate module failures
-            logger.exception("Sprint 3 module '%s' failed", module)
+            # Exceptions can contain source resume fragments; do not emit them.
+            logger.error("Sprint 3 module '%s' failed (%s)", module, type(exc).__name__)
             meta.module_status[module] = "failed"
             meta.errors.append(
                 ModuleError(
-                    module=module, error_type="exception", message=f"{type(exc).__name__}: {exc}"
+                module=module, error_type="exception", message=safe_failure_message(module, exc)
                 )
             )
             return None

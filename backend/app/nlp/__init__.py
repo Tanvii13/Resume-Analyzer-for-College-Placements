@@ -88,6 +88,7 @@ from app.nlp.job_matching import (
     parse_multiple_job_descriptions,
 )
 from app.nlp.pipeline import ResumeNLPPipeline, analyze_resume
+from app.nlp.privacy import PrivacyBoundaryError
 from app.nlp.preprocessing import (
     PROTECTED_TECHNICAL_PATTERNS,
     BlockType,
@@ -210,6 +211,7 @@ __all__ = [  # noqa: RUF022
     # Profile Aggregation (Module F)
     "ResumeNLPPipeline",
     "analyze_resume",
+    "PrivacyBoundaryError",
     "CandidateProfile",
     "ConfidenceLevel",
     "ContactSchema",

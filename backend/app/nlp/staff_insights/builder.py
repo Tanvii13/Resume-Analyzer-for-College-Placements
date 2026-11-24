@@ -6,6 +6,7 @@ from typing import Optional
 from app.nlp.analysis import Sprint3AnalysisResult
 from app.nlp.job_matching import JobMatchResult, RequirementType
 from app.nlp.schemas import CandidateProfile, SkillItem
+from app.nlp.privacy import assert_staff_safe
 
 from .schemas import (
     Availability,
@@ -45,9 +46,7 @@ class StaffAnalysisBuilder:
         matches = None if job_matches is None else list(job_matches)
         self._validate_versions(profile, analysis, matches)
         skills = self._skills(profile)
-        return StaffAnalysisResult(
-            filename=profile.filename,
-            candidate_name=profile.contact.full_name,
+        result = StaffAnalysisResult(
             resume_overview=self._resume_overview(analysis),
             improvement_overview=self._improvements(analysis),
             skills_overview=skills,
@@ -59,6 +58,15 @@ class StaffAnalysisBuilder:
                 "job_matching": (matches[0].matching_engine_version if matches else None),
             },
         )
+        assert_staff_safe(
+            result.model_dump_json(),
+            (
+                profile.contact.full_name, profile.contact.email, profile.contact.phone,
+                profile.filename, profile.contact.linkedin_url, profile.contact.github_url,
+                profile.contact.portfolio_url, *profile.contact.coding_profiles.values(),
+            ),
+        )
+        return result
 
     @staticmethod
     def _validate_major(value: str, expected: str, source: str) -> None:

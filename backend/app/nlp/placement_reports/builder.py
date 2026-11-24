@@ -556,8 +556,6 @@ class PlacementReportBuilder:
             if p is not None:
                 needles.update(filter(None, [p.contact.full_name, p.contact.email, p.contact.phone, p.filename,
                                              p.contact.linkedin_url, p.contact.github_url]))
-            if r.staff_analysis is not None:
-                needles.update(filter(None, [r.staff_analysis.candidate_name, r.staff_analysis.filename]))
             if r.analysis is not None:
                 needles.add(r.analysis.filename)
             needles.update(f.candidate_name for f in r.job_fits if f.candidate_name)

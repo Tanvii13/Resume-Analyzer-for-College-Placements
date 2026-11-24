@@ -57,6 +57,7 @@ from app.nlp.sections import (
     classify_sections,
 )
 from app.nlp.versioning import build_version_metadata
+from app.nlp.privacy import safe_failure_message
 
 logger = logging.getLogger(__name__)
 
@@ -192,9 +193,10 @@ class ResumeNLPPipeline:
             metadata.module_status.setdefault(module, "ok")
             return result
         except Exception as exc:  # noqa: BLE001 - one module must not break the profile
-            logger.exception("NLP module '%s' failed", module)
+            # Do not log ``exc``: parser/extractor errors can embed raw resume text.
+            logger.error("NLP module '%s' failed (%s)", module, type(exc).__name__)
             metadata.module_status[module] = "failed"
-            metadata.warnings.append(f"{module} extraction failed: {type(exc).__name__}: {exc}")
+            metadata.warnings.append(safe_failure_message(f"{module} extraction", exc))
             return fallback
 
     @staticmethod

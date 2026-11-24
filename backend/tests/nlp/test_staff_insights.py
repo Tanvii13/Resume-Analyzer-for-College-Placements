@@ -62,7 +62,7 @@ def test_empty_candidate_profile_and_partial_analysis_are_serializable():
     assert result.skills_overview.technical_skills == []
     assert result.job_matching_overview.availability.status == "available"
     assert result.job_matching_overview.best_matching_opportunities == []
-    assert result.model_dump(mode="json")["filename"] == "empty.pdf"
+    assert "filename" not in result.model_dump(mode="json")
 
 
 def test_missing_analysis_sections_are_marked_unavailable():
@@ -89,3 +89,16 @@ def test_builder_does_not_mutate_source_models():
     before = candidate.model_dump(mode="json")
     build_staff_analysis(candidate)
     assert candidate.model_dump(mode="json") == before
+
+
+def test_staff_projection_excludes_identity_and_contact_details():
+    candidate = profile()
+    candidate.filename = "Aarav-Sharma-resume.pdf"
+    candidate.contact.full_name = "Aarav Sharma"
+    candidate.contact.email = "aarav.sharma@example.edu"
+    candidate.contact.phone = "+91 9876543210"
+
+    output = build_staff_analysis(candidate).model_dump_json().lower()
+
+    for value in (candidate.filename, candidate.contact.full_name, candidate.contact.email, candidate.contact.phone):
+        assert value.lower() not in output
