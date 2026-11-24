@@ -42,20 +42,22 @@ class _Model(BaseModel):
 
 class NLPProcessingRequest(_Model):
     """Input payload to the NLP pipeline."""
-    resume_id: Optional[str] = None
-    filename: str
-    text: str  # Extracted text from Sprint 1 ResumeParseResult
+    # Required for the authorised processing call, but unsafe to expose in a
+    # debug representation because it can include resume content or identity.
+    resume_id: Optional[str] = Field(None, repr=False)
+    filename: str = Field(repr=False)
+    text: str = Field(repr=False)  # Extracted text from Sprint 1 ResumeParseResult
 
 
 class ContactSchema(_Model):
     """Candidate identity and contact details (Module C output, validated)."""
-    full_name: Optional[str] = Field(None, description="Extracted candidate name")
-    email: Optional[str] = Field(None, description="Primary email address")
-    phone: Optional[str] = Field(None, description="Formatted phone number")
-    linkedin_url: Optional[str] = None
-    github_url: Optional[str] = None
-    portfolio_url: Optional[str] = None
-    coding_profiles: Dict[str, str] = Field(default_factory=dict)
+    full_name: Optional[str] = Field(None, description="Extracted candidate name", repr=False)
+    email: Optional[str] = Field(None, description="Primary email address", repr=False)
+    phone: Optional[str] = Field(None, description="Formatted phone number", repr=False)
+    linkedin_url: Optional[str] = Field(None, repr=False)
+    github_url: Optional[str] = Field(None, repr=False)
+    portfolio_url: Optional[str] = Field(None, repr=False)
+    coding_profiles: Dict[str, str] = Field(default_factory=dict, repr=False)
     confidence: float = Field(1.0, ge=0.0, le=1.0)
 
 
@@ -72,7 +74,7 @@ class EducationEntry(_Model):
     cgpa: Optional[float] = Field(None, ge=0.0)
     cgpa_scale: Optional[float] = Field(None, gt=0.0)
     percentage: Optional[float] = Field(None, ge=0.0, le=100.0)
-    raw_text: Optional[str] = None
+    raw_text: Optional[str] = Field(None, repr=False)
     confidence: float = Field(1.0, ge=0.0, le=1.0)
 
 
@@ -95,7 +97,7 @@ class ExperienceEntry(_Model):
     responsibilities: List[str] = Field(default_factory=list)
     technologies_used: List[str] = Field(default_factory=list)
     source_section: Optional[str] = None
-    raw_text: Optional[str] = None
+    raw_text: Optional[str] = Field(None, repr=False)
     confidence: float = Field(1.0, ge=0.0, le=1.0)
 
 
@@ -109,7 +111,7 @@ class ProjectEntry(_Model):
     start_date: Optional[str] = None
     end_date: Optional[str] = None
     highlights: List[str] = Field(default_factory=list)
-    raw_text: Optional[str] = None
+    raw_text: Optional[str] = Field(None, repr=False)
     confidence: float = Field(1.0, ge=0.0, le=1.0)
 
 
@@ -130,7 +132,7 @@ class SectionSummary(_Model):
 
 class PipelineMetadata(_Model):
     """Run diagnostics. Module failures land in `warnings` instead of raising."""
-    resume_id: Optional[str] = None
+    resume_id: Optional[str] = Field(None, repr=False)
     processing_time_ms: float = 0.0
     module_status: Dict[str, str] = Field(default_factory=dict)  # module -> 'ok' | 'failed' | 'skipped'
     warnings: List[str] = Field(default_factory=list)
@@ -141,20 +143,20 @@ class PipelineMetadata(_Model):
 
 class CandidateProfile(_Model):
     """Unified structured output for the Sprint 2 NLP pipeline."""
-    filename: str
-    contact: ContactSchema = Field(default_factory=ContactSchema)
-    education: List[EducationEntry] = Field(default_factory=list)
-    experience: List[ExperienceEntry] = Field(default_factory=list)
-    internships: List[ExperienceEntry] = Field(default_factory=list)
-    projects: List[ProjectEntry] = Field(default_factory=list)
+    filename: str = Field(repr=False)
+    contact: ContactSchema = Field(default_factory=ContactSchema, repr=False)
+    education: List[EducationEntry] = Field(default_factory=list, repr=False)
+    experience: List[ExperienceEntry] = Field(default_factory=list, repr=False)
+    internships: List[ExperienceEntry] = Field(default_factory=list, repr=False)
+    projects: List[ProjectEntry] = Field(default_factory=list, repr=False)
     technical_skills: List[SkillItem] = Field(default_factory=list)
     soft_skills: List[SkillItem] = Field(default_factory=list)
     skills_by_category: Dict[str, List[str]] = Field(default_factory=dict)
-    certifications: List[str] = Field(default_factory=list)
-    achievements: List[str] = Field(default_factory=list)
-    extracurricular: List[str] = Field(default_factory=list)
+    certifications: List[str] = Field(default_factory=list, repr=False)
+    achievements: List[str] = Field(default_factory=list, repr=False)
+    extracurricular: List[str] = Field(default_factory=list, repr=False)
     section_summary: SectionSummary = Field(default_factory=SectionSummary)
-    metadata: PipelineMetadata = Field(default_factory=PipelineMetadata)
+    metadata: PipelineMetadata = Field(default_factory=PipelineMetadata, repr=False)
     pipeline_version: str = PIPELINE_VERSION
 
 

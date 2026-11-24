@@ -52,7 +52,7 @@ def test_compare_runs_every_stage(report):
 
 
 def test_compare_output(report):
-    assert report.candidate_name == "Nikhil Joshi"
+    assert "candidate_name" not in report.model_dump(mode="json")
     assert report.job.title.startswith("Software Development Engineer Intern")
     assert report.match is not None and report.skill_gap is not None
     assert 0 <= report.relevance_score <= 100 and report.fit_tier is not None
@@ -132,7 +132,8 @@ def test_matcher_failure_isolated():
     r = wf.compare(RESUME, JD)
     assert r.metadata.stage_status["matching"] == "failed"
     assert r.job is not None  # earlier stage output kept
-    assert "exploded" in r.metadata.errors[0].message
+    assert "RuntimeError" in r.metadata.errors[0].message
+    assert "exploded" not in r.metadata.errors[0].message
 
 
 def test_jd_without_skills_warns(wf):

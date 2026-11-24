@@ -132,7 +132,6 @@ class CommonGap(_RankModel):
 
 
 class OpportunityRankingReport(_RankModel):
-    candidate_name: str | None = None
     total_evaluated: int = 0
     suitable_count: int = 0
     has_suitable_matches: bool = False

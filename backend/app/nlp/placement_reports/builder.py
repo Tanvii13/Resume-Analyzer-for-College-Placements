@@ -558,7 +558,6 @@ class PlacementReportBuilder:
                                              p.contact.linkedin_url, p.contact.github_url]))
             if r.analysis is not None:
                 needles.add(r.analysis.filename)
-            needles.update(f.candidate_name for f in r.job_fits if f.candidate_name)
         leaks = []
         for n in needles:
             n = (n or "").strip().lower()

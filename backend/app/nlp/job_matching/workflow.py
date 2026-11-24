@@ -50,6 +50,7 @@ from app.nlp.job_matching.skill_gap_schemas import (
     SkillGapStatus,
 )
 from app.nlp.pipeline import ResumeNLPPipeline
+from app.nlp.privacy import safe_failure_message
 from app.nlp.schemas import CandidateProfile
 
 T = TypeVar("T")
@@ -78,7 +79,6 @@ class JobFitReport(BaseModel):
     """Result of comparing one resume with one job description (US-11, US-13)."""
 
     model_config = ConfigDict(extra="forbid", validate_assignment=True)
-    candidate_name: str | None = None
     job: ParsedJobDescription | None = None
     match: JobMatchResult | None = None
     skill_gap: SkillGapReport | None = None
@@ -167,8 +167,6 @@ class JobMatchingWorkflow:
 
         profile = self._run("resume", meta, lambda: self._profile(resume, filename))
         parsed = self._run("job_description", meta, lambda: self._job(job, job_id))
-        if profile is not None:
-            report.candidate_name = profile.contact.full_name
         jd_text = job if isinstance(job, str) else (job.get("description") if isinstance(job, dict)
                                                     else getattr(job, "description", None))
         if jd_text:
@@ -266,13 +264,15 @@ class JobMatchingWorkflow:
         except ValidationError as exc:
             meta.stage_status[stage] = "failed"
             meta.errors.append(WorkflowError(
-                stage=stage, error_type="validation_error", message=str(exc).splitlines()[0],
-                details=[{k: v for k, v in e.items() if k in ("loc", "msg", "type")} for e in exc.errors()],
+                stage=stage, error_type="validation_error", message=safe_failure_message(stage, exc),
+                details=[{k: v for k, v in e.items() if k in ("loc", "type")} for e in exc.errors()],
             ))
             return None
         except Exception as exc:  # noqa: BLE001 - isolate stage failures
             meta.stage_status[stage] = "failed"
-            meta.errors.append(WorkflowError(stage=stage, error_type="exception", message=f"{type(exc).__name__}: {exc}"))
+            meta.errors.append(WorkflowError(
+                stage=stage, error_type="exception", message=safe_failure_message(stage, exc)
+            ))
             return None
         finally:
             meta.stage_timings_ms[stage] = round((time.perf_counter() - start) * 1000, 2)
