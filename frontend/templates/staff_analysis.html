@@ -37,6 +37,25 @@
     <p class="muted">
       {{ analysis.method_note }}
     </p>
+    {% with assist_text = "Scores and checks are worked out automatically and can be wrong. Use them as one input alongside the resume and the student. The final decision is yours: the tool never rejects anyone." %}{% include "_assist_note.html" %}{% endwith %}
+  </section>
+
+  <!-- Sprint 6 · US-18: the human decision, recorded by the officer (never by the tool) -->
+  <section class="card staff-panel" id="review">
+    <h2>Your Review</h2>
+    <p class="muted">The score above is one input. Record your own judgement after looking at the resume and talking to the student.</p>
+    {% if review %}
+      <p class="review-saved"><strong>{{ review.decision }}</strong> · {{ review.by }} · {{ review.when }}{% if review.note %}<br><span class="muted">{{ review.note }}</span>{% endif %}</p>
+    {% endif %}
+    <form method="POST" action="{{ url_for('save_review', student_email=student.email, resume_id=resume.id) }}" class="review-form">{{ csrf_field() }}
+      <label for="decision">Decision</label>
+      <select id="decision" name="decision">
+        {% for option in review_options %}<option {% if (review.decision if review else review_options[0]) == option %}selected{% endif %}>{{ option }}</option>{% endfor %}
+      </select>
+      <label for="note">Note (optional)</label>
+      <textarea id="note" name="note" rows="3" maxlength="500" placeholder="What you discussed or agreed with the student">{{ review.note if review }}</textarea>
+      <button type="submit" class="btn btn-primary btn-sm">Save Review</button>
+    </form>
   </section>
 
   <section class="card staff-panel">
@@ -74,6 +93,10 @@
     {% endfor %}
 
   </section>
+
+  <!-- Sprint 6 · US-17: staff see only what the task needs -->
+  <p class="muted small">Shown to staff: the analysis only. The student's phone number, links and full resume text aren't shown here. This view is recorded and the student can see it.</p>
+  {% with concern_about = "Score for " ~ resume.filename ~ " (" ~ student.name ~ ")" %}{% include "_report_concern.html" %}{% endwith %}
 
 </div>
 

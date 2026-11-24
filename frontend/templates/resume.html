@@ -1,3 +1,10 @@
+{% extends "base.html" %}
+{# The extends/blocks header was lost in an earlier merge, so this page showed without styles or navigation.
+   Restored in Sprint 6 (no design change: it now uses the same layout as every other page). #}
+{% block title %}{{ resume.filename }}{% endblock %}
+{% block nav %}{% include "_app_nav.html" %}{% endblock %}
+
+{% block content %}
 <div class="container page">
   <a href="{{ url_for('dashboard') }}" class="back-link">
     <svg width="12" height="20" viewBox="0 0 12 20" fill="none" aria-hidden="true">
@@ -32,7 +39,7 @@
   <section class="analysis-panel" aria-labelledby="analysis-title">
     <div class="analysis-heading">
       <div>
-        <p class="eyebrow">Sprint 2 · Resume analysis</p>
+        <p class="eyebrow">Resume analysis</p>
         <h2 id="analysis-title">Placement readiness</h2>
         <p class="muted">
           {{ analysis.summary }} · Based on the text we could read in this resume.
@@ -91,12 +98,14 @@
     </div>
 
     <p class="analysis-note">{{ analysis.method_note }}</p>
+    {% include "_assist_note.html" %}
+    {% with concern_about = "Score for " ~ resume.filename %}{% include "_report_concern.html" %}{% endwith %}
   </section>
 
   <!-- Sprint 3: Advanced Resume Analysis -->
   <section class="sprint3-section" aria-labelledby="sprint3-title">
     <div class="section-heading">
-      <p class="eyebrow">Sprint 3 · Advanced analysis</p>
+      <p class="eyebrow">Advanced analysis</p>
       <h2 id="sprint3-title">Detailed Resume Insights</h2>
       <p class="muted">
         Understand your resume's strengths and areas for improvement.
@@ -227,4 +236,10 @@
   <p class="muted small center">
     <a class="btn btn-secondary" href="{{ url_for('matching', resume_id=resume.id) }}">Compare with a job</a>
   </p>
+
+  <!-- Sprint 6 · US-17: the student can delete their data at any time -->
+  <form method="POST" action="{{ url_for('delete_resume', resume_id=resume.id) }}" class="delete-resume" onsubmit="return confirm('Delete this resume and its analysis? This can\'t be undone.')">{{ csrf_field() }}
+    <button type="submit" class="link-danger">Delete this resume</button>
+  </form>
 </div>
+{% endblock %}

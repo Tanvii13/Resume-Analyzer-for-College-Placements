@@ -1,5 +1,5 @@
 """
-Sprint 1 acceptance tests â€” one test group per user story.
+Sprint 1 acceptance tests — one test group per user story.
 Run with:  pytest -v
 """
 
@@ -29,7 +29,7 @@ def upload(client, filename, data=None):
     if data is None:
         with open(os.path.join(SAMPLES, filename), "rb") as f:
             data = f.read()
-    return client.post("/upload", data={"resume": (io.BytesIO(data), filename)},
+    return client.post("/upload", data={"consent": "on", "resume": (io.BytesIO(data), filename)},
                        content_type="multipart/form-data")
 
 
