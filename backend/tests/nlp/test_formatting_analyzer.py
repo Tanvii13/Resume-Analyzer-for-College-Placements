@@ -157,7 +157,7 @@ May 2024 - July 2024
 • Developed microservices using FastAPI.
 - Configured Docker containers for deployment.
 * Wrote unit tests and integration tests.
-• 
+•
 
 PROJECTS
 Cloud Storage Engine

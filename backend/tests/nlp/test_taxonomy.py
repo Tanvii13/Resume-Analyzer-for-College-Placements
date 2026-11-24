@@ -109,7 +109,7 @@ class TestSkillsTaxonomy:
         """Taxonomy must contain all 15 required categories with at least one skill each."""
         data = load_skills_taxonomy()
         categories = data.get("categories", [])
-        
+
         # Check all 15 expected categories are present
         for cat in EXPECTED_CATEGORIES:
             assert cat in categories, f"Missing category: {cat}"
@@ -163,7 +163,7 @@ class TestSkillAliases:
         all_skills = set(s.strip().lower() for s in get_all_canonical_skills())
         alias_data = load_skill_aliases()
         aliases = alias_data.get("aliases", {})
-        
+
         orphaned = {}
         for alias, target in aliases.items():
             if target.strip().lower() not in all_skills:
