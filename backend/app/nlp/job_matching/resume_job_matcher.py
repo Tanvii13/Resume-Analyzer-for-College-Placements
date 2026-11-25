@@ -156,13 +156,9 @@ class ResumeJobMatcher:
         )
         scoring_explanations.extend(explanations)
 
-        # Candidate name from contact if available
-        cand_name = getattr(candidate.contact, "full_name", None)
-
         return JobMatchResult(
             job_id=job.job_id,
             job_title=job.title,
-            candidate_name=cand_name,
             overall_score=round(overall_score, 2),
             confidence=round(confidence, 2),
             confidence_level=conf_level,

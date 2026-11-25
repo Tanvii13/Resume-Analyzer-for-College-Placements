@@ -200,7 +200,6 @@ class OpportunityRanker:
 
         suitable = [r for r in ranked if r.is_suitable]
         report = OpportunityRankingReport(
-            candidate_name=candidate.contact.full_name,
             total_evaluated=total,
             suitable_count=len(suitable),
             has_suitable_matches=bool(suitable),

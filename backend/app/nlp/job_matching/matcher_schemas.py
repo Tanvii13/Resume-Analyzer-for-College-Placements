@@ -123,7 +123,6 @@ class JobMatchResult(_MatchModel):
     """
     job_id: str | None = Field(None, description="Identifier of the job posting")
     job_title: str | None = Field(None, description="Title of the job posting")
-    candidate_name: str | None = Field(None, description="Candidate name if available")
     overall_score: float = Field(0.0, ge=0.0, le=100.0, description="Deterministic overall match score (0-100)")
     confidence: float = Field(1.0, ge=0.0, le=1.0, description="Overall confidence of the match evaluation")
     confidence_level: ConfidenceLevel = Field(ConfidenceLevel.HIGH, description="Confidence categorical tier")
